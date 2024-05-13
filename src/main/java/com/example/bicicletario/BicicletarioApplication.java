@@ -6,8 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BicicletarioApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BicicletarioApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BicicletarioApplication.class, args);
 
+        System.out.println("Hello World");
+    }
 }
