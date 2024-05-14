@@ -26,6 +26,18 @@ public class Bicicleta {
     @Column(name = "status")
     public Status status;
 
+    public Bicicleta(String marca, String modelo, String ano, int numero, Status status) {
+        this.marca = marca;
+        this.modelo = modelo;
+        this.ano = ano;
+        this.numero = numero;
+        this.status = status;
+    }
+
+    public Bicicleta() {
+
+    }
+
     public int getId() {
         return id;
     }
