@@ -55,11 +55,11 @@ jobs:
         run: zip -r my-app.zip .
 
       - name: Upload to S3
-        run: aws s3 cp my-app.zip s3://my-s3-bucket/my-app.zip
+        run: aws s3 cp my-app.zip s3://bicicletario-bucket/my-app.zip
 
       - name: Deploy to CodeDeploy
         run: |
           aws deploy create-deployment \
-            --application-name my-application \
-            --deployment-group-name my-deployment-group \
-            --s3-location bucket=my-s3-bucket,key=my-app.zip,bundleType=zip
+            --application-name bicicletario \
+            --deployment-group-name bicicletario_deploy \
+            --s3-location bucket=bicicletario-bucket,key=my-app.zip,bundleType=zip
