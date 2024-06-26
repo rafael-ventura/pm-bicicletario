@@ -9,7 +9,6 @@ import java.util.List;
 public class BicicletaRepository {
 
     public List<Bicicleta> listarBicicletas() {
-        //TODO
         return null;
     }
 
@@ -25,11 +24,10 @@ public class BicicletaRepository {
     }
 
     public void salvarBicicleta(Bicicleta bicicleta) {
-        //TODO
+
     }
 
     public void deletarBicicleta(int id) {
-        //TODO
     }
 
 
