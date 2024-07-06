@@ -20,7 +20,7 @@ public class TrancaController {
     }
 
     @PostMapping("/integrarNaRede")
-    public ResponseEntity<?> integrarNaRede(@RequestBody IntegrarBicicletaNaRedeDTO dto) {
+    public ResponseEntity<String> integrarNaRede(@RequestBody IntegrarBicicletaNaRedeDTO dto) {
         try {
             trancaService.integrarNaRede(dto);
             return ResponseEntity.status(HttpStatus.OK).body("Dados cadastrados");
@@ -30,12 +30,12 @@ public class TrancaController {
     }
 
     @PostMapping("/retirarDaRede")
-    public String retirarDaRede(@RequestBody RetirarTrancaDaRedeDTO dto) {
+    public ResponseEntity<String> retirarDaRede(@RequestBody RetirarTrancaDaRedeDTO dto) {
         try {
             trancaService.retirarDaRede(dto);
-            return ("tranca foi retirada com sucesso!");
+            return ResponseEntity.status(HttpStatus.OK).body("Tranca foi retirada com sucesso!");
         } catch (IllegalArgumentException e) {
-            return e.getMessage();
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
         }
     }
 
@@ -60,7 +60,7 @@ public class TrancaController {
     }
 
     @DeleteMapping("/{idTranca}")
-    public ResponseEntity<?> removerTranca(@PathVariable Long idTranca) {
+    public ResponseEntity<String> removerTranca(@PathVariable Long idTranca) {
         trancaService.removerTranca(idTranca);
         return ResponseEntity.ok("Tranca removida");
     }
@@ -71,19 +71,19 @@ public class TrancaController {
     }
 
     @PostMapping("/{idTranca}/trancar")
-    public ResponseEntity<?> trancarTranca(@PathVariable Long idTranca, @RequestBody(required = false) Long bicicletaId) {
+    public ResponseEntity<String> trancarTranca(@PathVariable Long idTranca, @RequestBody(required = false) Long bicicletaId) {
         trancaService.trancarTranca(idTranca, bicicletaId);
         return ResponseEntity.ok("Ação bem sucedida");
     }
 
     @PostMapping("/{idTranca}/destrancar")
-    public ResponseEntity<?> destrancarTranca(@PathVariable Long idTranca, @RequestBody(required = false) Long bicicletaId) {
+    public ResponseEntity<String> destrancarTranca(@PathVariable Long idTranca, @RequestBody(required = false) Long bicicletaId) {
         trancaService.destrancarTranca(idTranca, bicicletaId);
         return ResponseEntity.ok("Ação bem sucedida");
     }
 
     @PostMapping("/{idTranca}/status/{acao}")
-    public ResponseEntity<?> alterarStatusTranca(@PathVariable Long idTranca, @PathVariable String acao) {
+    public ResponseEntity<String> alterarStatusTranca(@PathVariable Long idTranca, @PathVariable String acao) {
         trancaService.alterarStatusTranca(idTranca, acao);
         return ResponseEntity.ok("Ação bem sucedida");
     }
