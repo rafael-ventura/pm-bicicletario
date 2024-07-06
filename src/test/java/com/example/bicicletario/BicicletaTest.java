@@ -12,7 +12,7 @@ class BicicletaTest {
     void testGettersAndSetters() {
         Bicicleta bicicleta = new Bicicleta();
 
-        bicicleta.setId(1);
+        bicicleta.setId(1L);
         assertEquals(1, bicicleta.getId());
 
         bicicleta.setMarca("Caloi");
