@@ -4,7 +4,7 @@ package com.example.bicicletario.bicicletario.dto;
 * DTO para integrar bicicleta na rede
 * */
 
-public class IntegrarNaRedeDTO {
+public class IntegrarTrancaNaRedeDTO {
     private Long idTranca;
     private Long idBicicleta;
     private Long idFuncionario;

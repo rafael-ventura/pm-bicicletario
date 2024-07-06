@@ -1,6 +1,6 @@
 package com.example.bicicletario.bicicletario.domain;
 
-import com.example.bicicletario.bicicletario.domain.enums.Status;
+import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,7 +9,7 @@ public class Bicicleta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
+    public Long id;
 
     @Column(name = "marca")
     public String marca;
@@ -23,8 +23,9 @@ public class Bicicleta {
     @Column(name = "numero")
     public int numero;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    public Status status;
+    public StatusBicicleta statusBicicleta;
 
     //dataInsercaoTranca
     @Column(name = "data_insercao_tranca")
@@ -34,23 +35,23 @@ public class Bicicleta {
     @JoinColumn(name = "tranca_id")
     private Tranca tranca;
 
-    public Bicicleta(String marca, String modelo, String ano, int numero, Status status) {
+    public Bicicleta(String marca, String modelo, String ano, int numero, StatusBicicleta statusBicicleta) {
         this.marca = marca;
         this.modelo = modelo;
         this.ano = ano;
         this.numero = numero;
-        this.status = status;
+        this.statusBicicleta = statusBicicleta;
     }
 
     public Bicicleta() {
 
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -86,12 +87,12 @@ public class Bicicleta {
         this.numero = numero;
     }
 
-    public Status getStatus() {
-        return status;
+    public StatusBicicleta getStatus() {
+        return statusBicicleta;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setStatus(StatusBicicleta statusBicicleta) {
+        this.statusBicicleta = statusBicicleta;
     }
 
     public String getDataInsercaoTranca() {

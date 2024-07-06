@@ -2,8 +2,8 @@ package com.example.bicicletario.bicicletario.web;
 
 import com.example.bicicletario.bicicletario.application.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Tranca;
-import com.example.bicicletario.bicicletario.dto.IntegrarNaRedeDTO;
-import com.example.bicicletario.bicicletario.dto.RetirarDaRedeDTO;
+import com.example.bicicletario.bicicletario.dto.IntegrarBicicletaNaRedeDTO;
+import com.example.bicicletario.bicicletario.dto.RetirarTrancaDaRedeDTO;
 import com.example.bicicletario.bicicletario.dto.TrancaDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class TrancaController {
     }
 
     @PostMapping("/integrarNaRede")
-    public ResponseEntity<?> integrarNaRede(@RequestBody IntegrarNaRedeDTO dto) {
+    public ResponseEntity<?> integrarNaRede(@RequestBody IntegrarBicicletaNaRedeDTO dto) {
         try {
             trancaService.integrarNaRede(dto);
             return ResponseEntity.status(HttpStatus.OK).body("Dados cadastrados");
@@ -30,12 +30,12 @@ public class TrancaController {
     }
 
     @PostMapping("/retirarDaRede")
-    public ResponseEntity<?> retirarDaRede(@RequestBody RetirarDaRedeDTO dto) {
+    public String retirarDaRede(@RequestBody RetirarTrancaDaRedeDTO dto) {
         try {
             trancaService.retirarDaRede(dto);
-            return ResponseEntity.status(HttpStatus.OK).body("Dados cadastrados");
+            return ("tranca foi retirada com sucesso!");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
+            return e.getMessage();
         }
     }
 

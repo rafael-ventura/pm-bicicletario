@@ -1,29 +1,12 @@
-package com.example.bicicletario.bicicletario.domain;
+package com.example.bicicletario.bicicletario.dto;
 
-import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
-import jakarta.persistence.*;
-
-@Entity
-@Table
-public class Tranca {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class BicicletaDTO {
     private Long id;
-
-    @Column(name = "status")
-    private StatusTranca status;
-
-    @Column(nullable = false, unique = true)
     private int numero;
-
-    @Column(nullable = false)
     private String localizacao;
-
-    @Column(nullable = false)
-    private String anoDeFabricacao; //esta como string no swagger, mas TODO verificar!
-
-    @Column(nullable = false)
+    private String anoDeFabricacao;
     private String modelo;
+    private String status;
 
     public Long getId() {
         return id;
@@ -31,14 +14,6 @@ public class Tranca {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public StatusTranca getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusTranca status) {
-        this.status = status;
     }
 
     public int getNumero() {
@@ -71,5 +46,13 @@ public class Tranca {
 
     public void setModelo(String modelo) {
         this.modelo = modelo;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

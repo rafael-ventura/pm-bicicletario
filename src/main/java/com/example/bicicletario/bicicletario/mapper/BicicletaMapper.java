@@ -1,15 +1,15 @@
 package com.example.bicicletario.bicicletario.mapper;
 
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
-import com.example.bicicletario.bicicletario.dto.IntegrarNaRedeDTO;
+import com.example.bicicletario.bicicletario.dto.BicicletaDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface BicicletaMapper {
 
-    @Mapping(target = "idTranca", source = "dto.idTranca")
-    Bicicleta toBicicleta(IntegrarNaRedeDTO dto);
+    @Mapping(target = "id", source = "id")
+    Bicicleta toBicicleta(BicicletaDTO dto);
 
-    IntegrarNaRedeDTO toDto(Bicicleta bicicleta);
+    BicicletaDTO toDto(Bicicleta bicicleta);
 }

@@ -2,8 +2,9 @@ package com.example.bicicletario.bicicletario.web;
 
 import com.example.bicicletario.bicicletario.application.BicicletaService;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
-import com.example.bicicletario.bicicletario.dto.IntegrarNaRedeDTO;
-import com.example.bicicletario.bicicletario.dto.RetirarDaRedeDTO;
+import com.example.bicicletario.bicicletario.dto.BicicletaDTO;
+import com.example.bicicletario.bicicletario.dto.IntegrarBicicletaNaRedeDTO;
+import com.example.bicicletario.bicicletario.dto.RetirarBicicletaDaRedeDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +27,12 @@ public class BicicletaController {
     }
 
     @PostMapping("/bicicletas")
-    public Bicicleta criarBicicleta(Bicicleta bicicleta) {
+    public BicicletaDTO criarBicicleta(BicicletaDTO bicicleta) {
         return bicicletaService.criarBicicleta(bicicleta);
     }
 
     @PostMapping("/bicicleta/integrarNaRede")
-    public ResponseEntity<IntegrarNaRedeDTO> integrarNaRede(@RequestBody IntegrarNaRedeDTO dto) {
+    public ResponseEntity<IntegrarBicicletaNaRedeDTO> integrarNaRede(@RequestBody IntegrarBicicletaNaRedeDTO dto) {
         try {
             bicicletaService.integrarNaRede(dto);
             return ResponseEntity.status(HttpStatus.OK).body(dto);
@@ -41,7 +42,7 @@ public class BicicletaController {
     }
 
     @PostMapping("/bicicleta/retirarDaRede")
-    public ResponseEntity<RetirarDaRedeDTO> retirarDaRede(@RequestBody RetirarDaRedeDTO dto) {
+    public ResponseEntity<RetirarBicicletaDaRedeDTO> retirarDaRede(@RequestBody RetirarBicicletaDaRedeDTO dto) {
         try {
             bicicletaService.retirarDaRede(dto);
             return ResponseEntity.status(HttpStatus.OK).body(dto);

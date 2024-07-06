@@ -4,11 +4,13 @@ package com.example.bicicletario.bicicletario.dto;
 * DTO para retirar bicicleta da rede
 * */
 
-public class RetirarDaRedeDTO {
+import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
+
+public class RetirarTrancaDaRedeDTO {
     private Long idTranca;
     private Long idBicicleta;
     private Long idFuncionario;
-    private String statusAcaoReparador;
+    private StatusAcaoReparador statusAcaoReparador;
 
     public Long getIdTranca() {
         return idTranca;
@@ -34,11 +36,11 @@ public class RetirarDaRedeDTO {
         this.idFuncionario = idFuncionario;
     }
 
-    public String getStatusAcaoReparador() {
+    public StatusAcaoReparador getStatusAcaoReparador() {
         return statusAcaoReparador;
     }
 
-    public void setStatusAcaoReparador(String statusAcaoReparador) {
+    public void setStatusAcaoReparador(StatusAcaoReparador statusAcaoReparador) {
         this.statusAcaoReparador = statusAcaoReparador;
     }
 }
