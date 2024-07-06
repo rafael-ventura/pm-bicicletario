@@ -128,6 +128,26 @@ class BicicletaServiceTest {
             bicicletaService.integrarNaRede(dto);
         });
 
-        assertEquals("Tranca não está disponível", exception.getMessage());
+        assertEquals("Tranca não encontrada", exception.getMessage());
+    }
+
+    @Test
+    public void integrarNaRedeTrancaNaoEncontrada() {
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
+        dto.setIdBicicleta(1L);
+        dto.setIdTranca(1L);
+        dto.setIdFuncionario(1L);
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatus(StatusBicicleta.NOVA);
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+
+        when(trancaRepository.findById(1L)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            bicicletaService.integrarNaRede(dto);
+        });
+
+        assertEquals("Tranca não encontrada", exception.getMessage());
     }
 }

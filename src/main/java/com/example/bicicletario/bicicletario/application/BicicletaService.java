@@ -20,6 +20,8 @@ import java.util.Optional;
 @Service
 public class BicicletaService {
 
+    private static final String TRANKA_NAO_ENCONTRADA = "Tranca não encontrada";
+
     private final BicicletaRepository bicicletaRepository;
     private final TrancaRepository trancaRepository;
     private final BicicletaMapper bicicletaMapper;
@@ -54,7 +56,7 @@ public class BicicletaService {
 
         Optional<Tranca> trancaOpt = trancaRepository.findById(dto.getIdTranca());
         if (trancaOpt.isEmpty() || trancaOpt.get().getStatus() != StatusTranca.LIVRE) {
-            throw new IllegalArgumentException("Tranca não está disponível");
+            throw new IllegalArgumentException(TRANKA_NAO_ENCONTRADA);
         }
 
         Tranca tranca = trancaOpt.get();
@@ -91,7 +93,7 @@ public class BicicletaService {
 
         Optional<Tranca> trancaOpt = trancaRepository.findById(dto.getIdTranca());
         if (trancaOpt.isEmpty() || trancaOpt.get().getStatus() != StatusTranca.OCUPADA) {
-            throw new IllegalArgumentException("Tranca não está ocupada");
+            throw new IllegalArgumentException(TRANKA_NAO_ENCONTRADA);
         }
 
         Tranca tranca = trancaOpt.get();
@@ -110,13 +112,12 @@ public class BicicletaService {
     }
 
     private boolean isFuncionarioValido(Long idFuncionario, Long idFuncionarioReparador) {
-        // Implementar a lógica correta de validação do funcionário
-        // Substituir com a lógica real de validação
+        // Chamar endpoint de validação de funcionário
         return true; // Substituir com a validação real
     }
 
     private void enviarEmailReparador(Bicicleta bicicleta, Long idFuncionario) throws Exception {
-        // Lógica para enviar email ao reparador
-        // Substituir com a lógica real de envio de email
+       // Chamar futuro endpoint de envio de email
+        System.out.println("Email enviado para o reparador");
     }
 }
