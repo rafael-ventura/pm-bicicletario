@@ -2,12 +2,15 @@ package com.example.bicicletario.bicicletario.web;
 
 import com.example.bicicletario.bicicletario.application.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Tranca;
+import com.example.bicicletario.bicicletario.dto.BicicletaDTO;
 import com.example.bicicletario.bicicletario.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.dto.RetirarTrancaDaRedeDTO;
 import com.example.bicicletario.bicicletario.dto.TrancaDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tranca")
@@ -40,23 +43,27 @@ public class TrancaController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listarTrancas() {
-        return ResponseEntity.ok(trancaService.listarTrancas());
+    public ResponseEntity<List<Tranca>> listarTrancas() {
+        List<Tranca> trancas = trancaService.listarTrancas();
+        return ResponseEntity.ok(trancas);
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrarTranca(@RequestBody TrancaDTO tranca) {
-        return ResponseEntity.status(HttpStatus.OK).body(trancaService.cadastrarTranca(tranca));
+    public ResponseEntity<Tranca> cadastrarTranca(@RequestBody TrancaDTO tranca) {
+        Tranca trancaCadastrada = trancaService.cadastrarTranca(tranca);
+        return ResponseEntity.status(HttpStatus.OK).body(trancaCadastrada);
     }
 
     @GetMapping("/{idTranca}")
-    public ResponseEntity<?> obterTranca(@PathVariable Long idTranca) {
-        return ResponseEntity.ok(trancaService.obterTranca(idTranca));
+    public ResponseEntity<Tranca> obterTranca(@PathVariable Long idTranca) {
+        Tranca tranca = trancaService.obterTranca(idTranca);
+        return ResponseEntity.ok(tranca);
     }
 
     @PutMapping("/{idTranca}")
-    public ResponseEntity<?> editarTranca(@PathVariable Long idTranca, @RequestBody Tranca tranca) {
-        return ResponseEntity.ok(trancaService.editarTranca(idTranca, tranca));
+    public ResponseEntity<Tranca> editarTranca(@PathVariable Long idTranca, @RequestBody TrancaDTO tranca) {
+        Tranca trancaEditada = trancaService.editarTranca(idTranca, tranca);
+        return ResponseEntity.ok(trancaEditada);
     }
 
     @DeleteMapping("/{idTranca}")
@@ -66,8 +73,9 @@ public class TrancaController {
     }
 
     @GetMapping("/{idTranca}/bicicleta")
-    public ResponseEntity<?> obterBicicletaNaTranca(@PathVariable Long idTranca) {
-        return ResponseEntity.ok(trancaService.obterBicicletaNaTranca(idTranca));
+    public ResponseEntity<Tranca> obterBicicletaNaTranca(@PathVariable Long idTranca) {
+        Tranca bicicleta = trancaService.obterBicicletaNaTranca(idTranca);
+        return ResponseEntity.ok(bicicleta);
     }
 
     @PostMapping("/{idTranca}/trancar")

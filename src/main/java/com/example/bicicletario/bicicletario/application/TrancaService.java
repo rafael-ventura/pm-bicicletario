@@ -90,9 +90,9 @@ public class TrancaService {
         return trancaRepository.findById(idTranca).orElseThrow(() -> new IllegalArgumentException("Tranca não encontrada"));
     }
 
-    public Tranca editarTranca(Long idTranca, Tranca tranca) {
+    public Tranca editarTranca(Long idTranca, TrancaDTO tranca) {
         Tranca existente = trancaRepository.findById(idTranca).orElseThrow(() -> new IllegalArgumentException("Tranca não encontrada"));
-        existente.setStatus(tranca.getStatus());
+        existente.setStatus(StatusTranca.valueOf(tranca.getStatus()));
         return trancaRepository.save(existente);
     }
 
