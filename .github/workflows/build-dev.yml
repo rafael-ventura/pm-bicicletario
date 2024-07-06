@@ -3,10 +3,10 @@ name: CI/CD Pipeline - SonarCloud Analysis for Dev Branch
 on:
   push:
     branches:
-      - dev-rafa-equipamento
+      - dev-rafael-equipamento
   pull_request:
     branches:
-      - dev-rafa-equipamento
+      - dev-rafael-equipamento
 
 jobs:
   sonarcloud:
