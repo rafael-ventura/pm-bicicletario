@@ -62,4 +62,9 @@ class BicicletaTest {
         assertEquals(Status.DISPONIVEL, bicicleta.getStatus());
     }
 
+    @Test
+    void shouldCreateBicicleta() {
+
+    }
+
 }

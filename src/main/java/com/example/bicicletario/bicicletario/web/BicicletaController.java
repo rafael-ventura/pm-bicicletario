@@ -1,12 +1,12 @@
 package com.example.bicicletario.bicicletario.web;
 
 import com.example.bicicletario.bicicletario.application.BicicletaService;
-import com.example.bicicletario.bicicletario.domain.enums.Status;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.bicicletario.bicicletario.dto.IntegrarNaRedeDTO;
+import com.example.bicicletario.bicicletario.dto.RetirarDaRedeDTO;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,13 +22,32 @@ public class BicicletaController {
 
     @GetMapping("/bicicletas")
     public List<Bicicleta> listarBicicletas() {
-        return List.of(new Bicicleta("marca", "modelo", "2021", 1, Status.DISPONIVEL));
-
+        return bicicletaService.listarBicicletas();
     }
 
     @PostMapping("/bicicletas")
     public Bicicleta criarBicicleta(Bicicleta bicicleta) {
         return bicicletaService.criarBicicleta(bicicleta);
+    }
+
+    @PostMapping("/bicicleta/integrarNaRede")
+    public ResponseEntity<IntegrarNaRedeDTO> integrarNaRede(@RequestBody IntegrarNaRedeDTO dto) {
+        try {
+            bicicletaService.integrarNaRede(dto);
+            return ResponseEntity.status(HttpStatus.OK).body(dto);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
+        }
+    }
+
+    @PostMapping("/bicicleta/retirarDaRede")
+    public ResponseEntity<RetirarDaRedeDTO> retirarDaRede(@RequestBody RetirarDaRedeDTO dto) {
+        try {
+            bicicletaService.retirarDaRede(dto);
+            return ResponseEntity.status(HttpStatus.OK).body(dto);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
+        }
     }
 
 }

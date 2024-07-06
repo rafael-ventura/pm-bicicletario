@@ -26,6 +26,14 @@ public class Bicicleta {
     @Column(name = "status")
     public Status status;
 
+    //dataInsercaoTranca
+    @Column(name = "data_insercao_tranca")
+    public String dataInsercaoTranca;
+
+    @ManyToOne
+    @JoinColumn(name = "tranca_id")
+    private Tranca tranca;
+
     public Bicicleta(String marca, String modelo, String ano, int numero, Status status) {
         this.marca = marca;
         this.modelo = modelo;
@@ -84,5 +92,21 @@ public class Bicicleta {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String getDataInsercaoTranca() {
+        return dataInsercaoTranca;
+    }
+
+    public void setDataInsercaoTranca(String dataInsercaoTranca) {
+        this.dataInsercaoTranca = dataInsercaoTranca;
+    }
+
+    public Tranca getTranca() {
+        return tranca;
+    }
+
+    public void setTranca(Tranca tranca) {
+        this.tranca = tranca;
     }
 }
