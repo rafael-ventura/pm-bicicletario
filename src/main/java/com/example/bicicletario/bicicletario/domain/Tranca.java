@@ -1,5 +1,6 @@
 package com.example.bicicletario.bicicletario.domain;
 
+import com.example.bicicletario.bicicletario.domain.enums.Status;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,7 +11,7 @@ public class Tranca {
     private Long id;
 
     @Column(name = "status")
-    private String status;
+    private Status status;
 
     @Column(nullable = false, unique = true)
     private int numero;
@@ -32,11 +33,43 @@ public class Tranca {
         this.id = id;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public int getNumero() {
+        return numero;
+    }
+
+    public void setNumero(int numero) {
+        this.numero = numero;
+    }
+
+    public String getLocalizacao() {
+        return localizacao;
+    }
+
+    public void setLocalizacao(String localizacao) {
+        this.localizacao = localizacao;
+    }
+
+    public String getAnoDeFabricacao() {
+        return anoDeFabricacao;
+    }
+
+    public void setAnoDeFabricacao(String anoDeFabricacao) {
+        this.anoDeFabricacao = anoDeFabricacao;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
     }
 }
