@@ -22,13 +22,21 @@ public class BicicletaController {
     }
 
     @GetMapping("/bicicletas")
-    public List<Bicicleta> listarBicicletas() {
-        return bicicletaService.listarBicicletas();
+    public ResponseEntity<List<Bicicleta>> listarBicicletas() {
+        try {
+            return ResponseEntity.ok(bicicletaService.listarBicicletas());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @PostMapping("/bicicletas")
-    public BicicletaDTO criarBicicleta(BicicletaDTO bicicleta) {
-        return bicicletaService.criarBicicleta(bicicleta);
+    public ResponseEntity<BicicletaDTO> criarBicicleta(@RequestBody BicicletaDTO bicicleta) {
+        try {
+            return ResponseEntity.ok(bicicletaService.criarBicicleta(bicicleta));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @PostMapping("/bicicleta/integrarNaRede")
@@ -38,6 +46,8 @@ public class BicicletaController {
             return ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -48,10 +58,8 @@ public class BicicletaController {
             return ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
 }
-
-
-
