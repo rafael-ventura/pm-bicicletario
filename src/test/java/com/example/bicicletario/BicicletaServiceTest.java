@@ -16,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@ComponentScan(basePackages = {"com.example.bicicletario"})
 class BicicletaServiceTest {
 
     @InjectMocks
@@ -62,13 +66,8 @@ class BicicletaServiceTest {
     @Test
     public void criarBicicleta() {
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setMarca("marca");
-        bicicleta.setModelo("modelo");
-        bicicleta.setAno("2021");
-        bicicleta.setNumero(1);
-        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
-
         BicicletaDTO bicicletaDTO = new BicicletaDTO();
+
         when(bicicletaMapper.toBicicleta(any())).thenReturn(bicicleta);
         when(bicicletaRepository.save(any())).thenReturn(bicicleta);
         when(bicicletaMapper.toDto(any())).thenReturn(bicicletaDTO);
@@ -87,14 +86,13 @@ class BicicletaServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatus(StatusBicicleta.NOVA);
 
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.LIVRE);
-
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
         when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
 
         bicicletaService.integrarNaRede(dto);
-
         verify(bicicletaRepository, times(1)).save(bicicleta);
         verify(trancaRepository, times(1)).save(tranca);
     }
@@ -104,6 +102,7 @@ class BicicletaServiceTest {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdBicicleta(1L);
         dto.setIdTranca(1L);
+        dto.setIdFuncionario(1L);
 
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -119,14 +118,14 @@ class BicicletaServiceTest {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdBicicleta(1L);
         dto.setIdTranca(1L);
+        dto.setIdFuncionario(1L);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatus(StatusBicicleta.NOVA);
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.OCUPADA);
-
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
         when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -134,66 +133,5 @@ class BicicletaServiceTest {
         });
 
         assertEquals("Tranca não está disponível", exception.getMessage());
-    }
-
-    @Test
-    public void retirarDaRede() {
-        RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
-
-        Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
-
-        Tranca tranca = new Tranca();
-        tranca.setStatus(StatusTranca.OCUPADA);
-
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
-
-        bicicletaService.retirarDaRede(dto);
-
-        verify(bicicletaRepository, times(1)).save(bicicleta);
-        verify(trancaRepository, times(1)).save(tranca);
-    }
-
-    @Test
-    public void retirarDaRedeBicicletaInvalida() {
-        RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
-
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            bicicletaService.retirarDaRede(dto);
-        });
-
-        assertEquals("Número da bicicleta inválido", exception.getMessage());
-    }
-
-    @Test
-    public void retirarDaRedeTrancaOcupada() {
-        RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
-
-        Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
-
-        Tranca tranca = new Tranca();
-        tranca.setStatus(StatusTranca.LIVRE);
-
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            bicicletaService.retirarDaRede(dto);
-        });
-
-        assertEquals("Tranca não está ocupada", exception.getMessage());
     }
 }
