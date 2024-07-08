@@ -20,7 +20,7 @@ public class Tranca {
     private String localizacao;
 
     @Column(nullable = false)
-    private String anoDeFabricacao; //esta como string no swagger, mas TODO verificar!
+    private String anoDeFabricacao;
 
     @Column(nullable = false)
     private String modelo;
