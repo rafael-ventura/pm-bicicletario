@@ -2,12 +2,11 @@ package com.example.bicicletario.bicicletario.application;
 
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Tranca;
-import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
-import com.example.bicicletario.bicicletario.dto.BicicletaDTO;
-import com.example.bicicletario.bicicletario.dto.IntegrarBicicletaNaRedeDTO;
-import com.example.bicicletario.bicicletario.dto.RetirarBicicletaDaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.BicicletaDTO;
+import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
 import com.example.bicicletario.bicicletario.mapper.BicicletaMapper;
@@ -111,12 +110,12 @@ public class BicicletaService {
         }
     }
 
-    private boolean isFuncionarioValido(Long idFuncionario, Long idFuncionarioReparador) {
+    public boolean isFuncionarioValido(Long idFuncionario, Long idFuncionarioReparador) {
         // Chamar endpoint de validação de funcionário
         return true; // Substituir com a validação real
     }
 
-    private void enviarEmailReparador(Bicicleta bicicleta, Long idFuncionario) throws Exception {
+    public void enviarEmailReparador(Bicicleta bicicleta, Long idFuncionario) {
        // Chamar futuro endpoint de envio de email
         System.out.println("Email enviado para o reparador");
     }

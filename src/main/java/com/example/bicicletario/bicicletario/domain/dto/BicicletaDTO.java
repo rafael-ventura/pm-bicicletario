@@ -1,11 +1,20 @@
-package com.example.bicicletario.bicicletario.dto;
+package com.example.bicicletario.bicicletario.domain.dto;
 
-public class NovaTrancaDTO {
+public class BicicletaDTO {
+    private Long id;
     private int numero;
     private String localizacao;
     private String anoDeFabricacao;
     private String modelo;
     private String status;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public int getNumero() {
         return numero;

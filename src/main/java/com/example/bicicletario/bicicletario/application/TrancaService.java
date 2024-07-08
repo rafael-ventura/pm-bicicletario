@@ -2,9 +2,9 @@ package com.example.bicicletario.bicicletario.application;
 
 import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
-import com.example.bicicletario.bicicletario.dto.IntegrarBicicletaNaRedeDTO;
-import com.example.bicicletario.bicicletario.dto.RetirarTrancaDaRedeDTO;
-import com.example.bicicletario.bicicletario.dto.TrancaDTO;
+import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.TrancaDTO;
 import com.example.bicicletario.bicicletario.mapper.TrancaMapper;
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;

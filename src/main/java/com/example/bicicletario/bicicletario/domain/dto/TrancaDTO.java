@@ -1,4 +1,4 @@
-package com.example.bicicletario.bicicletario.dto;
+package com.example.bicicletario.bicicletario.domain.dto;
 
 /*
 * DTO para integrar bicicleta na rede

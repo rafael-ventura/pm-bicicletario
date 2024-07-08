@@ -1,10 +1,10 @@
-package com.example.bicicletario.bicicletario.dto;
+package com.example.bicicletario.bicicletario.domain.dto;
 
 /*
 * DTO para integrar bicicleta na rede
 * */
 
-public class IntegrarBicicletaNaRedeDTO {
+public class IntegrarTrancaNaRedeDTO {
     private Long idTranca;
     private Long idBicicleta;
     private Long idFuncionario;

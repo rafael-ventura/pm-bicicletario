@@ -5,9 +5,9 @@ import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
-import com.example.bicicletario.bicicletario.dto.BicicletaDTO;
-import com.example.bicicletario.bicicletario.dto.IntegrarBicicletaNaRedeDTO;
-import com.example.bicicletario.bicicletario.dto.RetirarBicicletaDaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.BicicletaDTO;
+import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
 import com.example.bicicletario.bicicletario.mapper.BicicletaMapper;
@@ -149,5 +149,95 @@ class BicicletaServiceTest {
         });
 
         assertEquals("Tranca não encontrada", exception.getMessage());
+    }
+
+    @Test
+    public void integrarNaRedeEmailErro() {
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
+        dto.setIdBicicleta(1L);
+        dto.setIdTranca(1L);
+        dto.setIdFuncionario(1L);
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatus(StatusBicicleta.EM_REPARO);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.LIVRE);
+        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+
+        // Remova doThrow e crie uma implementação que lança a exceção
+        bicicletaService = spy(new BicicletaService(bicicletaRepository, trancaRepository, bicicletaMapper) {
+            @Override
+            public void enviarEmailReparador(Bicicleta bicicleta, Long idFuncionario) {
+                throw new IllegalArgumentException("Erro no envio do email");
+            }
+        });
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            bicicletaService.integrarNaRede(dto);
+        });
+
+        assertEquals("Erro no envio do email", exception.getMessage());
+    }
+
+    @Test
+    public void integrarNaRedeFuncionarioInvalido() {
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
+        dto.setIdBicicleta(1L);
+        dto.setIdTranca(1L);
+        dto.setIdFuncionario(2L);
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatus(StatusBicicleta.EM_REPARO);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.LIVRE);
+        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+
+        // Remova doReturn e crie uma implementação que retorna false
+        bicicletaService = spy(new BicicletaService(bicicletaRepository, trancaRepository, bicicletaMapper) {
+            @Override
+            public boolean isFuncionarioValido(Long idFuncionario, Long idFuncionarioReparador) {
+                return false;
+            }
+        });
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            bicicletaService.integrarNaRede(dto);
+        });
+
+        assertEquals("Funcionário inválido para esta operação", exception.getMessage());
+    }
+
+    @Test
+    public void retirarDaRedeEmailErro() {
+        RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
+        dto.setIdBicicleta(1L);
+        dto.setIdTranca(1L);
+        dto.setIdFuncionario(1L);
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.OCUPADA);
+        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+
+        // Remova doThrow e crie uma implementação que lança a exceção
+        bicicletaService = spy(new BicicletaService(bicicletaRepository, trancaRepository, bicicletaMapper) {
+            @Override
+            public void enviarEmailReparador(Bicicleta bicicleta, Long idFuncionario) {
+                throw new IllegalArgumentException("Erro no envio do email");
+            }
+        });
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            bicicletaService.retirarDaRede(dto);
+        });
+
+        assertEquals("Erro no envio do email", exception.getMessage());
     }
 }

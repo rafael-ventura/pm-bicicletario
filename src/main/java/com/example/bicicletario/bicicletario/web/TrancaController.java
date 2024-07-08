@@ -2,10 +2,9 @@ package com.example.bicicletario.bicicletario.web;
 
 import com.example.bicicletario.bicicletario.application.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Tranca;
-import com.example.bicicletario.bicicletario.dto.BicicletaDTO;
-import com.example.bicicletario.bicicletario.dto.IntegrarBicicletaNaRedeDTO;
-import com.example.bicicletario.bicicletario.dto.RetirarTrancaDaRedeDTO;
-import com.example.bicicletario.bicicletario.dto.TrancaDTO;
+import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.TrancaDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

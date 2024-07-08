@@ -1,9 +1,9 @@
 package com.example.bicicletario.bicicletario.mapper;
 
 import com.example.bicicletario.bicicletario.domain.Tranca;
-import com.example.bicicletario.bicicletario.dto.IntegrarBicicletaNaRedeDTO;
-import com.example.bicicletario.bicicletario.dto.RetirarBicicletaDaRedeDTO;
-import com.example.bicicletario.bicicletario.dto.TrancaDTO;
+import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.TrancaDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
