@@ -1,4 +1,4 @@
-package com.example.bicicletario;
+package com.example.bicicletario.Services;
 
 import com.example.bicicletario.bicicletario.application.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Tranca;

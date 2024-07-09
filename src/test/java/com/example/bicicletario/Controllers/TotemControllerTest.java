@@ -1,0 +1,136 @@
+package com.example.bicicletario.Controllers;
+
+import com.example.bicicletario.bicicletario.application.TotemService;
+import com.example.bicicletario.bicicletario.domain.dto.BicicletaDTO;
+import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
+import com.example.bicicletario.bicicletario.domain.dto.TotemDTO;
+import com.example.bicicletario.bicicletario.domain.dto.TrancaDTO;
+import com.example.bicicletario.bicicletario.web.TotemController;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+public class TotemControllerTest {
+
+    @InjectMocks
+    private TotemController totemController;
+
+    @Mock
+    private TotemService totemService;
+
+    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+        this.mockMvc = MockMvcBuilders.standaloneSetup(totemController).build();
+        this.objectMapper = new ObjectMapper();
+    }
+
+    @Test
+    public void listarTotens() throws Exception {
+        TotemDTO totem = new TotemDTO();
+        totem.setId(1L);
+        totem.setLocalizacao("Localizacao");
+        totem.setDescricao("Descricao");
+
+        when(totemService.listarTotens()).thenReturn(List.of(totem));
+
+        mockMvc.perform(get("/api/totem"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(totem))));
+    }
+
+    @Test
+    public void cadastrarTotem() throws Exception {
+        NovoTotemDTO novoTotem = new NovoTotemDTO();
+        novoTotem.setLocalizacao("Localizacao");
+        novoTotem.setDescricao("Descricao");
+
+        TotemDTO totem = new TotemDTO();
+        totem.setId(1L);
+        totem.setLocalizacao("Localizacao");
+        totem.setDescricao("Descricao");
+
+        when(totemService.cadastrarTotem(any(NovoTotemDTO.class))).thenReturn(totem);
+
+        mockMvc.perform(post("/api/totem")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(novoTotem)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(totem)));
+    }
+
+    @Test
+    public void editarTotem() throws Exception {
+        TotemDTO totem = new TotemDTO();
+        totem.setId(1L);
+        totem.setLocalizacao("Nova Localizacao");
+        totem.setDescricao("Nova Descricao");
+
+        when(totemService.editarTotem(any(Long.class), any(TotemDTO.class))).thenReturn(totem);
+
+        mockMvc.perform(put("/api/totem/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(totem)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(totem)));
+    }
+
+    @Test
+    public void removerTotem() throws Exception {
+        mockMvc.perform(delete("/api/totem/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Totem removido"));
+    }
+
+    @Test
+    public void listarTrancas() throws Exception {
+        TrancaDTO tranca = new TrancaDTO();
+        tranca.setId(1L);
+        tranca.setStatus("DISPONIVEL");
+
+        when(totemService.listarTrancas(any(Long.class))).thenReturn(List.of(tranca));
+
+        mockMvc.perform(get("/api/totem/1/trancas"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(tranca))));
+    }
+
+    @Test
+    public void listarBicicletas() throws Exception {
+        BicicletaDTO bicicleta = new BicicletaDTO();
+        bicicleta.setId(1L);
+        bicicleta.setNumero(1);
+        bicicleta.setModelo("Modelo");
+        bicicleta.setAnoDeFabricacao("2021");
+        bicicleta.setStatus("DISPONIVEL");
+
+
+        when(totemService.listarBicicletas(any(Long.class))).thenReturn(List.of(bicicleta));
+
+        mockMvc.perform(get("/api/totem/1/bicicletas"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(bicicleta))));
+    }
+}
