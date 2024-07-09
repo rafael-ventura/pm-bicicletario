@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -58,6 +59,14 @@ public class TotemControllerTest {
     }
 
     @Test
+    public void listarTotens_ThrowsException() throws Exception {
+        when(totemService.listarTotens()).thenThrow(new RuntimeException("Error"));
+
+        mockMvc.perform(get("/api/totem"))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
     public void cadastrarTotem() throws Exception {
         NovoTotemDTO novoTotem = new NovoTotemDTO();
         novoTotem.setLocalizacao("Localizacao");
@@ -79,6 +88,17 @@ public class TotemControllerTest {
     }
 
     @Test
+    public void cadastrarTotem_ThrowsIllegalArgumentException() throws Exception {
+        when(totemService.cadastrarTotem(any(NovoTotemDTO.class))).thenThrow(new IllegalArgumentException("Error"));
+
+        mockMvc.perform(post("/api/totem")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new NovoTotemDTO())))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string("Error"));
+    }
+
+    @Test
     public void editarTotem() throws Exception {
         TotemDTO totem = new TotemDTO();
         totem.setId(1L);
@@ -96,10 +116,30 @@ public class TotemControllerTest {
     }
 
     @Test
+    public void editarTotem_ThrowsIllegalArgumentException() throws Exception {
+        when(totemService.editarTotem(any(Long.class), any(TotemDTO.class))).thenThrow(new IllegalArgumentException("Error"));
+
+        mockMvc.perform(put("/api/totem/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new TotemDTO())))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string("Error"));
+    }
+
+    @Test
     public void removerTotem() throws Exception {
         mockMvc.perform(delete("/api/totem/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Totem removido"));
+    }
+
+    @Test
+    public void removerTotem_ThrowsIllegalArgumentException() throws Exception {
+        Mockito.doThrow(new IllegalArgumentException("Error")).when(totemService).removerTotem(any(Long.class));
+
+        mockMvc.perform(delete("/api/totem/1"))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string("Error"));
     }
 
     @Test
@@ -117,6 +157,14 @@ public class TotemControllerTest {
     }
 
     @Test
+    public void listarTrancas_ThrowsException() throws Exception {
+        when(totemService.listarTrancas(any(Long.class))).thenThrow(new RuntimeException("Error"));
+
+        mockMvc.perform(get("/api/totem/1/trancas"))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
     public void listarBicicletas() throws Exception {
         BicicletaDTO bicicleta = new BicicletaDTO();
         bicicleta.setId(1L);
@@ -125,7 +173,6 @@ public class TotemControllerTest {
         bicicleta.setAnoDeFabricacao("2021");
         bicicleta.setStatus("DISPONIVEL");
 
-
         when(totemService.listarBicicletas(any(Long.class))).thenReturn(List.of(bicicleta));
 
         mockMvc.perform(get("/api/totem/1/bicicletas"))
@@ -133,4 +180,13 @@ public class TotemControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(List.of(bicicleta))));
     }
+
+    @Test
+    public void listarBicicletas_ThrowsException() throws Exception {
+        when(totemService.listarBicicletas(any(Long.class))).thenThrow(new RuntimeException("Error"));
+
+        mockMvc.perform(get("/api/totem/1/bicicletas"))
+                .andExpect(status().isInternalServerError());
+    }
+
 }
