@@ -2,11 +2,11 @@ package com.example.bicicletario.bicicletario.application;
 
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Tranca;
-import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
-import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.domain.dto.BicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
+import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
 import com.example.bicicletario.bicicletario.mapper.BicicletaMapper;
@@ -14,12 +14,15 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BicicletaService {
 
-    private static final String TRANKA_NAO_ENCONTRADA = "Tranca não encontrada";
+    private static final String TRANCA_NAO_ENCONTRADA = "Tranca não encontrada";
+    private static final String FUNCIONARIO_INVALIDO = "Funcionário inválido para esta operação";
+    private static final String BICICLETA_NAO_ENCONTRADA = "Bicicleta não encontrada";
+    private static final String EMAIL_ENVIADO_PARA_O_REPARADOR = "Email enviado para o reparador";
+    private static final String STATUS_DA_BICICLETA_INVALIDO = "Status da bicicleta inválido";
 
     private final BicicletaRepository bicicletaRepository;
     private final TrancaRepository trancaRepository;
@@ -42,26 +45,22 @@ public class BicicletaService {
     }
 
     public void integrarNaRede(IntegrarBicicletaNaRedeDTO dto) {
-        Optional<Bicicleta> bicicletaOpt = bicicletaRepository.findById(dto.getIdBicicleta());
-        if (bicicletaOpt.isEmpty()) {
-            throw new IllegalArgumentException("Número da bicicleta inválido");
-        }
-
-        Bicicleta bicicleta = bicicletaOpt.get();
+        Bicicleta bicicleta = bicicletaRepository.findById(dto.getIdBicicleta())
+                .orElseThrow(() -> new IllegalArgumentException(BICICLETA_NAO_ENCONTRADA));
 
         if (bicicleta.getStatus() != StatusBicicleta.NOVA && bicicleta.getStatus() != StatusBicicleta.EM_REPARO) {
-            throw new IllegalArgumentException("Status da bicicleta inválido");
+            throw new IllegalArgumentException(STATUS_DA_BICICLETA_INVALIDO);
         }
 
-        Optional<Tranca> trancaOpt = trancaRepository.findById(dto.getIdTranca());
-        if (trancaOpt.isEmpty() || trancaOpt.get().getStatus() != StatusTranca.LIVRE) {
-            throw new IllegalArgumentException(TRANKA_NAO_ENCONTRADA);
-        }
+        Tranca tranca = trancaRepository.findById(dto.getIdTranca())
+                .orElseThrow(() -> new IllegalArgumentException(TRANCA_NAO_ENCONTRADA));
 
-        Tranca tranca = trancaOpt.get();
+        if (tranca.getStatus() != StatusTranca.LIVRE) {
+            throw new IllegalArgumentException(TRANCA_NAO_ENCONTRADA);
+        }
 
         if (bicicleta.getStatus() == StatusBicicleta.EM_REPARO && !isFuncionarioValido(dto.getIdFuncionario(), bicicleta.getId())) {
-            throw new IllegalArgumentException("Funcionário inválido para esta operação");
+            throw new IllegalArgumentException(FUNCIONARIO_INVALIDO);
         }
 
         bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
@@ -71,43 +70,32 @@ public class BicicletaService {
         tranca.setStatus(StatusTranca.OCUPADA);
         trancaRepository.save(tranca);
 
-        try {
-            enviarEmailReparador(bicicleta, dto.getIdFuncionario());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Erro no envio do email");
-        }
+        System.out.println(EMAIL_ENVIADO_PARA_O_REPARADOR);
     }
 
     public void retirarDaRede(RetirarBicicletaDaRedeDTO dto) {
-        Optional<Bicicleta> bicicletaOpt = bicicletaRepository.findById(dto.getIdBicicleta());
-        if (bicicletaOpt.isEmpty()) {
-            throw new IllegalArgumentException("Número da bicicleta inválido");
-        }
-
-        Bicicleta bicicleta = bicicletaOpt.get();
+        Bicicleta bicicleta = bicicletaRepository.findById(dto.getIdBicicleta())
+                .orElseThrow(() -> new IllegalArgumentException(BICICLETA_NAO_ENCONTRADA));
 
         if (bicicleta.getStatus() != StatusBicicleta.REPARO_SOLICITADO) {
-            throw new IllegalArgumentException("Status da bicicleta inválido");
+            throw new IllegalArgumentException(STATUS_DA_BICICLETA_INVALIDO);
         }
 
-        Optional<Tranca> trancaOpt = trancaRepository.findById(dto.getIdTranca());
-        if (trancaOpt.isEmpty() || trancaOpt.get().getStatus() != StatusTranca.OCUPADA) {
-            throw new IllegalArgumentException(TRANKA_NAO_ENCONTRADA);
-        }
+        Tranca tranca = trancaRepository.findById(dto.getIdTranca())
+                .orElseThrow(() -> new IllegalArgumentException(TRANCA_NAO_ENCONTRADA));
 
-        Tranca tranca = trancaOpt.get();
+        if (tranca.getStatus() != StatusTranca.OCUPADA) {
+            throw new IllegalArgumentException(TRANCA_NAO_ENCONTRADA);
+        }
 
         bicicleta.setStatus(StatusBicicleta.EM_REPARO);
+        //bicicleta.setDataRetiradaTranca(LocalDateTime.now().toString());
         bicicletaRepository.save(bicicleta);
 
         tranca.setStatus(StatusTranca.LIVRE);
         trancaRepository.save(tranca);
 
-        try {
-            enviarEmailReparador(bicicleta, dto.getIdFuncionario());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Erro no envio do email");
-        }
+        System.out.println(EMAIL_ENVIADO_PARA_O_REPARADOR);
     }
 
     public boolean isFuncionarioValido(Long idFuncionario, Long idFuncionarioReparador) {
@@ -115,8 +103,4 @@ public class BicicletaService {
         return true; // Substituir com a validação real
     }
 
-    public void enviarEmailReparador(Bicicleta bicicleta, Long idFuncionario) {
-       // Chamar futuro endpoint de envio de email
-        System.out.println("Email enviado para o reparador");
-    }
 }

@@ -1,12 +1,14 @@
 package com.example.bicicletario.Services;
 
 import com.example.bicicletario.bicicletario.application.TrancaService;
+import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Tranca;
-import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
-import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.TrancaDTO;
+import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
+import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
+import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
 import com.example.bicicletario.bicicletario.mapper.TrancaMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +27,9 @@ class TrancaServiceTest {
 
     @Mock
     private TrancaRepository trancaRepository;
+
+    @Mock
+    private BicicletaRepository bicicletaRepository;
 
     @Mock
     private TrancaMapper trancaMapper;
@@ -80,7 +85,7 @@ class TrancaServiceTest {
             trancaService.retirarDaRede(dto);
         });
 
-        assertEquals("Número da tranca inválido", exception.getMessage());
+        assertEquals("Tranca não encontrada", exception.getMessage());
     }
 
     @Test
@@ -134,7 +139,6 @@ class TrancaServiceTest {
 
         assertEquals("Status de ação do reparador inválido", exception.getMessage());
     }
-
 
     @Test
     void listarTrancas() {
@@ -217,28 +221,38 @@ class TrancaServiceTest {
     void trancarTranca() {
         Tranca tranca = new Tranca();
         tranca.setId(1L);
+        tranca.setStatus(StatusTranca.LIVRE); // Certifique-se de que a tranca está livre inicialmente
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1L);
 
         when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
-        when(trancaRepository.save(tranca)).thenReturn(tranca);
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
         trancaService.trancarTranca(1L, 1L);
 
         assertEquals(StatusTranca.OCUPADA, tranca.getStatus());
         verify(trancaRepository, times(1)).save(tranca);
+        verify(bicicletaRepository, times(1)).save(bicicleta);
     }
 
     @Test
     void destrancarTranca() {
         Tranca tranca = new Tranca();
         tranca.setId(1L);
+        tranca.setStatus(StatusTranca.OCUPADA); // Certifique-se de que a tranca está ocupada inicialmente
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1L);
 
         when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
-        when(trancaRepository.save(tranca)).thenReturn(tranca);
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
         trancaService.destrancarTranca(1L, 1L);
 
         assertEquals(StatusTranca.LIVRE, tranca.getStatus());
         verify(trancaRepository, times(1)).save(tranca);
+        verify(bicicletaRepository, times(1)).save(bicicleta);
     }
 
     @Test
