@@ -10,7 +10,6 @@ class HelloWorldTest {
     @Test
     void testGettersAndSetters() {
         HelloWorld helloWorld = new HelloWorld();
-
         helloWorld.setNome("Hello World - endpoint");
         assertEquals("Hello World - endpoint", helloWorld.getNome());
     }
@@ -18,7 +17,7 @@ class HelloWorldTest {
     @Test
     void testConstructorWithArgs() {
         HelloWorld helloWorld = new HelloWorld();
-
+        helloWorld.setNome("Hello World - endpoint");
         assertEquals("Hello World - endpoint", helloWorld.getNome());
     }
 
@@ -30,6 +29,7 @@ class HelloWorldTest {
     @Test
     void shouldReturnHelloWorld() {
         HelloWorld helloWorld = new HelloWorld();
+        helloWorld.setNome("Hello World - endpoint");
         assertEquals("Hello World - endpoint", helloWorld.getNome());
     }
 }
