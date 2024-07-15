@@ -3,8 +3,8 @@ package com.example.bicicletario.bicicletario.web;
 import com.example.bicicletario.bicicletario.application.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
-import com.example.bicicletario.bicicletario.domain.dto.TrancaDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +48,7 @@ public class TrancaController {
     }
 
     @PostMapping
-    public ResponseEntity<Tranca> cadastrarTranca(@RequestBody TrancaDTO tranca) {
+    public ResponseEntity<Tranca> cadastrarTranca(@RequestBody NovaTrancaDTO tranca) {
         Tranca trancaCadastrada = trancaService.cadastrarTranca(tranca);
         return ResponseEntity.status(HttpStatus.OK).body(trancaCadastrada);
     }
@@ -60,7 +60,7 @@ public class TrancaController {
     }
 
     @PutMapping("/{idTranca}")
-    public ResponseEntity<Tranca> editarTranca(@PathVariable Long idTranca, @RequestBody TrancaDTO tranca) {
+    public ResponseEntity<Tranca> editarTranca(@PathVariable Long idTranca, @RequestBody NovaTrancaDTO tranca) {
         Tranca trancaEditada = trancaService.editarTranca(idTranca, tranca);
         return ResponseEntity.ok(trancaEditada);
     }

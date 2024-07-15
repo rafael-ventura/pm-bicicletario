@@ -1,10 +1,7 @@
 package com.example.bicicletario.bicicletario.web;
 
 import com.example.bicicletario.bicicletario.application.TotemService;
-import com.example.bicicletario.bicicletario.domain.dto.BicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
-import com.example.bicicletario.bicicletario.domain.dto.TotemDTO;
-import com.example.bicicletario.bicicletario.domain.dto.TrancaDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

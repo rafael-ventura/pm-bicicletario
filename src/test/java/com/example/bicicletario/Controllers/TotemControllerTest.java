@@ -1,10 +1,7 @@
 package com.example.bicicletario.Controllers;
 
 import com.example.bicicletario.bicicletario.application.TotemService;
-import com.example.bicicletario.bicicletario.domain.dto.BicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
-import com.example.bicicletario.bicicletario.domain.dto.TotemDTO;
-import com.example.bicicletario.bicicletario.domain.dto.TrancaDTO;
 import com.example.bicicletario.bicicletario.web.TotemController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -170,7 +167,7 @@ public class TotemControllerTest {
         bicicleta.setId(1L);
         bicicleta.setNumero(1);
         bicicleta.setModelo("Modelo");
-        bicicleta.setAnoDeFabricacao("2021");
+        bicicleta.setAno("2021");
         bicicleta.setStatus("DISPONIVEL");
 
         when(totemService.listarBicicletas(any(Long.class))).thenReturn(List.of(bicicleta));

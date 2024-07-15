@@ -1,7 +1,7 @@
 package com.example.bicicletario.bicicletario.mapper;
 
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
-import com.example.bicicletario.bicicletario.domain.dto.BicicletaDTO;
+import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -11,9 +11,9 @@ import java.util.List;
 public interface BicicletaMapper {
 
     @Mapping(target = "id", source = "id")
-    Bicicleta toBicicleta(BicicletaDTO dto);
+    Bicicleta toEntity(NovaBicicletaDTO dto);
 
-    BicicletaDTO toDto(Bicicleta bicicleta);
+    NovaBicicletaDTO toDto(Bicicleta bicicleta);
 
-    List<BicicletaDTO> toBicicletaDTOs(List<Bicicleta> bicicletas);
+    List<NovaBicicletaDTO> toDtoList(List<Bicicleta> bicicletas);
 }

@@ -3,7 +3,6 @@ package com.example.bicicletario.Services;
 import com.example.bicicletario.bicicletario.application.BicicletaService;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Tranca;
-import com.example.bicicletario.bicicletario.domain.dto.BicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
@@ -71,7 +70,7 @@ class BicicletaServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         BicicletaDTO bicicletaDTO = new BicicletaDTO();
 
-        when(bicicletaMapper.toBicicleta(any())).thenReturn(bicicleta);
+        when(bicicletaMapper.toEntity(any())).thenReturn(bicicleta);
         when(bicicletaRepository.save(any())).thenReturn(bicicleta);
         when(bicicletaMapper.toDto(any())).thenReturn(bicicletaDTO);
 

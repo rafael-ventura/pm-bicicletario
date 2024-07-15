@@ -5,8 +5,8 @@ package com.example.bicicletario.bicicletario.domain.dto;
 * */
 
 public class IntegrarTrancaNaRedeDTO {
+    private Long idTotem;
     private Long idTranca;
-    private Long idBicicleta;
     private Long idFuncionario;
 
     public Long getIdTranca() {
@@ -17,12 +17,12 @@ public class IntegrarTrancaNaRedeDTO {
         this.idTranca = idTranca;
     }
 
-    public Long getIdBicicleta() {
-        return idBicicleta;
+    public Long getIdTotem() {
+        return idTotem;
     }
 
-    public void setIdBicicleta(Long idBicicleta) {
-        this.idBicicleta = idBicicleta;
+    public void setIdTotem(Long idTotem) {
+        this.idTotem = idTotem;
     }
 
     public Long getIdFuncionario() {

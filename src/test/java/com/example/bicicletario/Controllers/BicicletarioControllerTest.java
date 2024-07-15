@@ -2,8 +2,8 @@ package com.example.bicicletario.Controllers;
 
 import com.example.bicicletario.bicicletario.application.BicicletaService;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
-import com.example.bicicletario.bicicletario.domain.dto.BicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.web.BicicletaController;
@@ -68,24 +68,22 @@ class BicicletarioControllerTest {
 
     @Test
     void criarBicicleta() throws Exception {
-        BicicletaDTO bicicletaDTO = new BicicletaDTO();
-        bicicletaDTO.setStatus("NOVA");
+        NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
+        bicicletaDTO.setStatus(StatusBicicleta.NOVA);
         bicicletaDTO.setModelo("modelo");
-        bicicletaDTO.setLocalizacao("localizacao");
         bicicletaDTO.setNumero(1);
         bicicletaDTO.setModelo("modelo");
-        bicicletaDTO.setAnoDeFabricacao("2021");
+        bicicletaDTO.setAno("2021");
 
-        BicicletaDTO createdBicicletaDTO = new BicicletaDTO();
-        createdBicicletaDTO.setStatus("NOVA");
-        createdBicicletaDTO.setModelo("modelo");
-        createdBicicletaDTO.setLocalizacao("localizacao");
-        createdBicicletaDTO.setNumero(2);
-        createdBicicletaDTO.setModelo("modelo");
-        createdBicicletaDTO.setAnoDeFabricacao("2021");
+        NovaBicicletaDTO bicicletaDTO2 = new NovaBicicletaDTO();
+        bicicletaDTO.setStatus(StatusBicicleta.NOVA);
+        bicicletaDTO.setModelo("modelo");
+        bicicletaDTO.setNumero(2);
+        bicicletaDTO.setModelo("modelo");
+        bicicletaDTO.setAno("2021");
 
 
-        when(bicicletaService.criarBicicleta(any(BicicletaDTO.class))).thenReturn(createdBicicletaDTO);
+        when(bicicletaService.criarBicicleta(any(NovaBicicletaDTO.class))).thenReturn(bicicletaDTO2);
 
         mockMvc.perform(post("/api/bicicletas")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -96,7 +94,7 @@ class BicicletarioControllerTest {
 
     @Test
     void criarBicicleta_ThrowsException() throws Exception {
-        when(bicicletaService.criarBicicleta(any(BicicletaDTO.class))).thenThrow(new RuntimeException("Error"));
+        when(bicicletaService.criarBicicleta(any(NovaBicicletaDTO.class))).thenThrow(new RuntimeException("Error"));
 
         mockMvc.perform(post("/api/bicicletas")
                         .contentType(MediaType.APPLICATION_JSON)

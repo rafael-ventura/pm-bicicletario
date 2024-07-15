@@ -2,8 +2,8 @@ package com.example.bicicletario.bicicletario.mapper;
 
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
-import com.example.bicicletario.bicicletario.domain.dto.TrancaDTO;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -11,11 +11,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface TrancaMapper {
 
-    Tranca toTranca(TrancaDTO dto);
+    Tranca toEntity(NovaTrancaDTO dto);
     TrancaDTO toDto(Tranca tranca);
+    IntegrarBicicletaNaRedeDTO toDtoIntegrarBicicleta(Tranca tranca);
+    RetirarBicicletaDaRedeDTO toDtoRetirarBicicleta(Tranca tranca);
 
-    IntegrarBicicletaNaRedeDTO toDtoFromTranca(Tranca tranca);
-    RetirarBicicletaDaRedeDTO toDtoFromRetirarTranca(Tranca tranca);
-
-    List<TrancaDTO> toTrancaDTOs(List<Tranca> trancas);
+    List<TrancaDTO> toDtoList(List<Tranca> trancas);
 }
+

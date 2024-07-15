@@ -5,7 +5,6 @@ import com.example.bicicletario.bicicletario.application.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
-import com.example.bicicletario.bicicletario.domain.dto.TrancaDTO;
 import com.example.bicicletario.bicicletario.web.TrancaController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

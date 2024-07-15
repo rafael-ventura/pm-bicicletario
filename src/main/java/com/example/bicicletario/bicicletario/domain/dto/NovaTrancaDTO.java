@@ -1,11 +1,13 @@
 package com.example.bicicletario.bicicletario.domain.dto;
 
+import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
+
 public class NovaTrancaDTO {
     private int numero;
     private String localizacao;
     private String anoDeFabricacao;
     private String modelo;
-    private String status;
+    private StatusTranca status;
 
     public int getNumero() {
         return numero;
@@ -39,11 +41,11 @@ public class NovaTrancaDTO {
         this.modelo = modelo;
     }
 
-    public String getStatus() {
+    public StatusTranca getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusTranca status) {
         this.status = status;
     }
 }

@@ -1,8 +1,8 @@
 package com.example.bicicletario.bicicletario.web;
 
 import com.example.bicicletario.bicicletario.application.BicicletaService;
-import com.example.bicicletario.bicicletario.domain.dto.BicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ public class BicicletaController {
     }
 
     @PostMapping("/bicicletas")
-    public ResponseEntity<?> criarBicicleta(@RequestBody BicicletaDTO bicicleta) {
+    public ResponseEntity<?> criarBicicleta(@RequestBody NovaBicicletaDTO bicicleta) {
         try {
             return ResponseEntity.ok(bicicletaService.criarBicicleta(bicicleta));
         } catch (Exception e) {

@@ -4,8 +4,8 @@ import com.example.bicicletario.bicicletario.application.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
-import com.example.bicicletario.bicicletario.domain.dto.TrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
@@ -148,10 +148,10 @@ class TrancaServiceTest {
 
     @Test
     void cadastrarTranca() {
-        TrancaDTO trancaDTO = new TrancaDTO();
+        NovaTrancaDTO trancaDTO = new NovaTrancaDTO();
         Tranca tranca = new Tranca();
 
-        when(trancaMapper.toTranca(trancaDTO)).thenReturn(tranca);
+        when(trancaMapper.toEntity(trancaDTO)).thenReturn(tranca);
         when(trancaRepository.save(tranca)).thenReturn(tranca);
 
         trancaService.cadastrarTranca(trancaDTO);
@@ -184,8 +184,8 @@ class TrancaServiceTest {
 
     @Test
     void editarTranca() {
-        TrancaDTO trancaDTO = new TrancaDTO();
-        trancaDTO.setStatus(StatusTranca.LIVRE.toString());
+        NovaTrancaDTO trancaDTO = new NovaTrancaDTO();
+        trancaDTO.setStatus(StatusTranca.LIVRE);
 
         Tranca tranca = new Tranca();
         tranca.setId(1L);

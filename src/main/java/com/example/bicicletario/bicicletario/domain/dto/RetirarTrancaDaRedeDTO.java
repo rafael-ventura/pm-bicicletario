@@ -7,8 +7,8 @@ package com.example.bicicletario.bicicletario.domain.dto;
 import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
 
 public class RetirarTrancaDaRedeDTO {
+    private Long idTotem;
     private Long idTranca;
-    private Long idBicicleta;
     private Long idFuncionario;
     private StatusAcaoReparador statusAcaoReparador;
 
@@ -20,12 +20,12 @@ public class RetirarTrancaDaRedeDTO {
         this.idTranca = idTranca;
     }
 
-    public Long getIdBicicleta() {
-        return idBicicleta;
+    public Long getIdTotem() {
+        return idTotem;
     }
 
-    public void setIdBicicleta(Long idBicicleta) {
-        this.idBicicleta = idBicicleta;
+    public void setIdTotem(Long idTotem) {
+        this.idTotem = idTotem;
     }
 
     public Long getIdFuncionario() {
