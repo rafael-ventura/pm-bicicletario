@@ -20,7 +20,7 @@ public class Ciclista {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(name = "nome")
     private String nome;
@@ -31,8 +31,8 @@ public class Ciclista {
     @Column(name = "cpf")
     private String cpf;
 
-    @Column(name = "data_nascimento")
-    private String dataNascimento;
+    @Column(name = "nascimento")
+    private String nascimento;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "nacionalidade")
@@ -51,11 +51,11 @@ public class Ciclista {
 
     // Getters and Setters
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -83,12 +83,12 @@ public class Ciclista {
         this.cpf = cpf;
     }
 
-    public String getDataNascimento() {
-        return dataNascimento;
+    public String getNascimento() {
+        return nascimento;
     }
 
-    public void setDataNascimento(String dataNascimento) {
-        this.dataNascimento = dataNascimento;
+    public void setNascimento(String nascimento) {
+        this.nascimento = nascimento;
     }
 
     public Nacionalidade getNacionalidade() {

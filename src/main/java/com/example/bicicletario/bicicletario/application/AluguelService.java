@@ -63,46 +63,8 @@ public class AluguelService {
         return aluguel;
     }
 
-    public Aluguel devolverBicicleta(Long idCiclista, Long idBicicleta) {
-        Aluguel aluguel = aluguelRepository.findByCiclistaIdAndBicicletaIdAndDataHoraFimIsNull(idCiclista, idBicicleta)
-                .orElseThrow(() -> new IllegalArgumentException("Aluguel não encontrado."));
-
-        aluguel.setHoraFim(String.valueOf(LocalDateTime.now()));
-        int valor = calcularValor(aluguel.getHoraInicio(), aluguel.getHoraFim());
-        aluguel.setCobranca(valor);
-        aluguelRepository.save(aluguel);
-
-/*        Bicicleta bicicleta = aluguel.getBicicleta();
-        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
-        bicicletaRepository.save(bicicleta);*/
-
-        enviarEmailDevolucao(aluguel.getCiclista(), aluguel);
-
-        return aluguel;
-    }
-
-    private Integer calcularValor(String dataHoraInicio, String dataHoraFim) {
-        LocalDateTime inicio = LocalDateTime.parse(dataHoraInicio);
-        LocalDateTime fim = LocalDateTime.parse(dataHoraFim);
-        Duration duration = Duration.between(inicio, fim);
-        long minutos = duration.toMinutes();
-
-        int valor = 10; // Valor base para as duas primeiras horas
-
-        if (minutos > 120) {
-            minutos -= 120;
-            valor += (minutos / 30) * 5; // Valor adicional para cada meia hora adicional
-        }
-
-        return valor;
-    }
-
     private void enviarEmailAluguel(String email, Aluguel aluguel) {
         //TODO: chamar microsservico Externo - tem o endpoint de envio de email
-    }
-
-    private void enviarEmailDevolucao(Long ciclistaId, Aluguel aluguel) {
-        // Lógica para enviar email
-        System.out.println("Email de confirmação de devolução enviado para: " + ciclistaId);
+        System.out.println("Email de confirmação de devolução enviado com sucesso!");
     }
 }

@@ -3,6 +3,7 @@ package com.example.bicicletario.bicicletario.application;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.CiclistaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
+import com.example.bicicletario.bicicletario.domain.enums.Nacionalidade;
 import com.example.bicicletario.bicicletario.domain.enums.StatusCiclista;
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
 import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
@@ -27,8 +28,8 @@ public class CiclistaService {
 
     public CiclistaDTO cadastrarCiclista(NovoCiclistaDTO novoCiclistaDTO) {
         Ciclista ciclista = ciclistaMapper.toEntity(novoCiclistaDTO);
-        validarCamposObrigatorios(ciclista);
-        validarSenha(ciclista.getSenha(), ciclista.getConfirmacaoSenha());
+        validarCamposObrigatorios(novoCiclistaDTO);
+        validarSenha(novoCiclistaDTO.getSenha(), novoCiclistaDTO.getConfirmacaoSenha());
         validarEmail(novoCiclistaDTO.getEmail());
 
         ciclista = ciclistaRepository.save(ciclista);
@@ -37,29 +38,24 @@ public class CiclistaService {
     }
 
     public Optional<CiclistaDTO> obterCiclista(Long idCiclista) {
-        return ciclistaRepository.findById(idCiclista)
-                .map(ciclistaMapper::toDto);
+        return ciclistaRepository.findById(idCiclista).map(ciclistaMapper::toDto);
     }
 
-    public CiclistaDTO alterarCiclista(Long idCiclista, CiclistaDTO ciclistaDTO) {
-        validarCamposObrigatorios(ciclistaDTO);
-        validarSenha(ciclistaDTO.getSenha(), ciclistaDTO.getConfirmacaoSenha());
+    public CiclistaDTO alterarCiclista(int idCiclista, NovoCiclistaDTO novoCiclistaDTO) {
+        validarCamposObrigatorios(novoCiclistaDTO);
+        validarSenha(novoCiclistaDTO.getSenha(), novoCiclistaDTO.getConfirmacaoSenha());
+        validarEmail(novoCiclistaDTO.getEmail());
+        Ciclista ciclista = ciclistaMapper.toEntity(novoCiclistaDTO);
+        ciclista.setId(idCiclista);
 
-        Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow();
-        ciclista.setNome(ciclistaDTO.getNome());
-        ciclista.setEmail(ciclistaDTO.getEmail());
-        ciclista.setCpf(ciclistaDTO.getCpf());
-        ciclista.setDataNascimento(ciclistaDTO.getDataNascimento());
-        ciclista.setNacionalidade(ciclistaDTO.getNacionalidade());
-        ciclista.setStatusCiclista(ciclistaDTO.getStatusCiclista());
         ciclista = ciclistaRepository.save(ciclista);
         return ciclistaMapper.toDto(ciclista);
     }
 
-    public void ativarCiclista(Long idCiclista) {
+    public CiclistaDTO ativarCiclista(Long idCiclista) {
         Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow();
         ciclista.setStatusCiclista(StatusCiclista.ATIVO);
-        ciclistaRepository.save(ciclista);
+        return ciclistaMapper.toDto(ciclistaRepository.save(ciclista));
     }
 
     public boolean permiteAluguel(int idCiclista) {
@@ -78,34 +74,43 @@ public class CiclistaService {
     }
 
     private void validarCamposObrigatorios(NovoCiclistaDTO novoCiclistaDTO) {
-        if (novoCiclistaDTO.getNacionalidade().equals("Brasileiro")) {
+        // se tiver algum campo null retornar erro: todos os campos são obrigatórios
+        if (novoCiclistaDTO.getNome() == null ||
+                novoCiclistaDTO.getNome().isEmpty() ||
+                novoCiclistaDTO.getEmail() == null ||
+                novoCiclistaDTO.getEmail().isEmpty() ||
+                novoCiclistaDTO.getNascimento() == null ||
+                novoCiclistaDTO.getNascimento().isEmpty() ||
+                novoCiclistaDTO.getNacionalidade() == null
+        ) {
+            throw new IllegalArgumentException("Todos os campos são obrigatórios.");
+        }
+
+        if (novoCiclistaDTO.getNacionalidade().equals(Nacionalidade.BRASILEIRO)) {
             if (novoCiclistaDTO.getCpf() == null || novoCiclistaDTO.getCpf().isEmpty()) {
                 throw new IllegalArgumentException("CPF é obrigatório para brasileiros.");
             }
-        } else {
-            if (novoCiclistaDTO.getPassaporte() == null || novoCiclistaDTO.getPassaporte().isEmpty() ||
-                    novoCiclistaDTO.getNacionalidade() == null || novoCiclistaDTO.getNacionalidade().isEmpty()) {
-                throw new IllegalArgumentException("Passaporte e país são obrigatórios para estrangeiros.");
-            }
+            // se for brasileiro, o CPF deve ser válido
+            validarCPF(novoCiclistaDTO.getCpf());
         }
-    }
-
-    private void validarCamposObrigatorios(CiclistaDTO ciclistaDTO) {
-        if (ciclistaDTO.getNacionalidade().equals("Brasileiro")) {
-            if (ciclistaDTO.getCpf() == null || ciclistaDTO.getCpf().isEmpty()) {
-                throw new IllegalArgumentException("CPF é obrigatório para brasileiros.");
-            }
-        } else {
-            if (ciclistaDTO.getPassaporte() == null || ciclistaDTO.getPassaporte().isEmpty() ||
-                    ciclistaDTO.getPais() == null || ciclistaDTO.getPais().isEmpty()) {
-                throw new IllegalArgumentException("Passaporte e país são obrigatórios para estrangeiros.");
+        if (novoCiclistaDTO.getNacionalidade().equals(Nacionalidade.ESTRANGEIRO)) {
+            if (novoCiclistaDTO.getPassaporte() == null || novoCiclistaDTO.getPassaporte() == null) {
+                throw new IllegalArgumentException("Passaporte e País são obrigatórios para estrangeiros.");
             }
         }
     }
 
     private void validarSenha(String senha, String confirmacaoSenha) {
-        if (senha == null || confirmacaoSenha == null || !senha.equals(confirmacaoSenha)) {
+        if (senha == null || !senha.equals(confirmacaoSenha)) {
             throw new IllegalArgumentException("As senhas não coincidem.");
+        }
+    }
+
+    private void validarCPF(String cpf) {
+        String cpfRegex = "\\d{11}";
+        Pattern pattern = Pattern.compile(cpfRegex);
+        if (cpf == null || !pattern.matcher(cpf).matches()) {
+            throw new IllegalArgumentException("CPF inválido. O CPF deve conter 11 dígitos e apenas números.");
         }
     }
 
@@ -114,6 +119,9 @@ public class CiclistaService {
         Pattern pattern = Pattern.compile(emailRegex);
         if (email == null || !pattern.matcher(email).matches()) {
             throw new IllegalArgumentException("Email inválido.");
+        }
+        if (existeEmail(email)) {
+            throw new IllegalArgumentException("Email já cadastrado.");
         }
     }
 

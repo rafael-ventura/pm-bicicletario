@@ -1,11 +1,13 @@
 package com.example.bicicletario.bicicletario.domain.dto;
 
+import com.example.bicicletario.bicicletario.domain.enums.Nacionalidade;
+
 public class NovoCiclistaDTO {
     private String nome;
     private String email;
     private String cpf;
-    private String dataNascimento;
-    private String nacionalidade;
+    private String nascimento;
+    private Nacionalidade nacionalidade;
     private PassaporteDTO passaporte;
     private String urlFotoDocumento;
     private String senha;
@@ -37,19 +39,19 @@ public class NovoCiclistaDTO {
         this.cpf = cpf;
     }
 
-    public String getDataNascimento() {
-        return dataNascimento;
+    public String getNascimento() {
+        return nascimento;
     }
 
-    public void setDataNascimento(String dataNascimento) {
-        this.dataNascimento = dataNascimento;
+    public void setNascimento(String nascimento) {
+        this.nascimento = nascimento;
     }
 
-    public String getNacionalidade() {
+    public Nacionalidade getNacionalidade() {
         return nacionalidade;
     }
 
-    public void setNacionalidade(String nacionalidade) {
+    public void setNacionalidade(Nacionalidade nacionalidade) {
         this.nacionalidade = nacionalidade;
     }
 

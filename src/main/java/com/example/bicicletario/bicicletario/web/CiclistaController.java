@@ -1,10 +1,8 @@
 package com.example.bicicletario.bicicletario.web;
 
 import com.example.bicicletario.bicicletario.application.CiclistaService;
-import com.example.bicicletario.bicicletario.domain.dto.BicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.CiclistaDTO;
-import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,12 +27,11 @@ public class CiclistaController {
     @GetMapping("/{idCiclista}")
     public ResponseEntity<CiclistaDTO> obterCiclista(@PathVariable Long idCiclista) {
         Optional<CiclistaDTO> ciclista = ciclistaService.obterCiclista(idCiclista);
-        return ciclista.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(404).build());
+        return ciclista.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(404).build());
     }
 
     @PutMapping("/{idCiclista}")
-    public ResponseEntity<CiclistaDTO> alterarCiclista(@PathVariable Long idCiclista, @RequestBody NovoCiclistaDTO novoCiclistaDTO) {
+    public ResponseEntity<CiclistaDTO> alterarCiclista(@PathVariable int idCiclista, @RequestBody NovoCiclistaDTO novoCiclistaDTO) {
         CiclistaDTO ciclista = ciclistaService.alterarCiclista(idCiclista, novoCiclistaDTO);
         return ResponseEntity.ok(ciclista);
     }
@@ -46,7 +43,7 @@ public class CiclistaController {
     }
 
     @GetMapping("/{idCiclista}/permiteAluguel")
-    public ResponseEntity<Boolean> permiteAluguel(@PathVariable Long idCiclista) {
+    public ResponseEntity<Boolean> permiteAluguel(@PathVariable int idCiclista) {
         boolean permite = ciclistaService.permiteAluguel(idCiclista);
         return ResponseEntity.ok(permite);
     }

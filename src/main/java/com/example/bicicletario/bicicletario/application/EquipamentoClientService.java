@@ -3,10 +3,6 @@ package com.example.bicicletario.bicicletario.application;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 
 @Service
 public class EquipamentoClientService {
@@ -20,7 +16,7 @@ public class EquipamentoClientService {
         this.restTemplate = restTemplate;
     }
 
-    public void liberarTranca(Long idTranca, Long idBicicleta) {
+    /*public void liberarTranca(Long idTranca, Long idBicicleta) {
         String url = equipamentoServiceUrl + "/tranca/" + idTranca + "/destrancar";
 
         HttpHeaders headers = new HttpHeaders();
@@ -34,5 +30,7 @@ public class EquipamentoClientService {
         } catch (HttpClientErrorException e) {
             throw new RuntimeException("Erro ao liberar a tranca: " + e.getStatusCode(), e);
         }
-    }
+    }*/
+
+    public void liberarTranca(Long idTranca, Long idBicicleta) {}
 }

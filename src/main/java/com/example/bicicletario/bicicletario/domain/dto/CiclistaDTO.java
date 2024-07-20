@@ -8,7 +8,7 @@ public class CiclistaDTO {
     private String nome;
     private String email;
     private String cpf;
-    private String dataNascimento;
+    private String nascimento;
     private Nacionalidade nacionalidade;
     private String urlFotoDocumento;
     private StatusCiclista statusCiclista;
@@ -47,12 +47,12 @@ public class CiclistaDTO {
         this.cpf = cpf;
     }
 
-    public String getDataNascimento() {
-        return dataNascimento;
+    public String getNascimento() {
+        return nascimento;
     }
 
-    public void setDataNascimento(String dataNascimento) {
-        this.dataNascimento = dataNascimento;
+    public void setNascimento(String nascimento) {
+        this.nascimento = nascimento;
     }
 
     public Nacionalidade getNacionalidade() {
