@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class BicicletaServiceTest {
@@ -50,6 +51,11 @@ class BicicletaServiceTest {
         System.setOut(new PrintStream(consoleContent));
     }
 
+    @AfterEach
+    public void restoreStreams() {
+        System.setOut(originalOut);
+    }
+
     @Test
     public void listarBicicletas() {
         Bicicleta bicicleta = new Bicicleta();
@@ -73,10 +79,9 @@ class BicicletaServiceTest {
 
         when(bicicletaMapper.toEntity(any())).thenReturn(bicicleta);
         when(bicicletaRepository.save(any())).thenReturn(bicicleta);
-        when(bicicletaMapper.toDto(any())).thenReturn(bicicletaDTO);
 
         Bicicleta bicicletaCriada = bicicletaService.criarBicicleta(bicicletaDTO);
-        assertEquals(bicicletaDTO, bicicletaMapper.toDto(bicicletaCriada));
+        assertEquals(bicicleta, bicicletaCriada);
     }
 
     @Test
@@ -269,8 +274,100 @@ class BicicletaServiceTest {
         assertEquals("Tranca não encontrada", exception.getMessage());
     }
 
-    @AfterEach
-    public void restoreStreams() {
-        System.setOut(originalOut);
+    // Testes adicionais para obter, editar, remover e alterar status da bicicleta
+
+    @Test
+    public void obterBicicleta() {
+        Bicicleta bicicleta = new Bicicleta();
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+
+        Bicicleta result = bicicletaService.obterBicicleta(1L);
+        assertEquals(bicicleta, result);
+    }
+
+    @Test
+    public void obterBicicletaInvalida() {
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            bicicletaService.obterBicicleta(1L);
+        });
+
+        assertEquals("Bicicleta não encontrada", exception.getMessage());
+    }
+
+    @Test
+    public void removerBicicleta() {
+        bicicletaService.removerBicicleta(1L);
+        verify(bicicletaRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    public void editarBicicleta() {
+        Bicicleta bicicleta = new Bicicleta();
+        NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
+        bicicletaDTO.setMarca("nova marca");
+        bicicletaDTO.setModelo("novo modelo");
+        bicicletaDTO.setAno("2022");
+        bicicletaDTO.setNumero(2);
+        bicicletaDTO.setStatus(StatusBicicleta.DISPONIVEL);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+
+        Bicicleta result = bicicletaService.editarBicicleta(1L, bicicletaDTO);
+        verify(bicicletaRepository, times(1)).save(bicicleta);
+        assertEquals("nova marca", result.getMarca());
+        assertEquals("novo modelo", result.getModelo());
+        assertEquals("2022", result.getAno());
+        assertEquals(2, result.getNumero());
+        assertEquals(StatusBicicleta.DISPONIVEL, result.getStatus());
+    }
+
+    @Test
+    public void editarBicicletaInvalida() {
+        NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            bicicletaService.editarBicicleta(1L, bicicletaDTO);
+        });
+
+        assertEquals("Bicicleta não encontrada", exception.getMessage());
+    }
+
+    @Test
+    public void alterarStatusBicicletaDisponibilizar() {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+
+        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "disponibilizar");
+        verify(bicicletaRepository, times(1)).save(bicicleta);
+        assertEquals(StatusBicicleta.DISPONIVEL, result.getStatus());
+    }
+
+    @Test
+    public void alterarStatusBicicletaReparar() {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+
+        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "reparar");
+        verify(bicicletaRepository, times(1)).save(bicicleta);
+        assertEquals(StatusBicicleta.REPARO_SOLICITADO, result.getStatus());
+    }
+
+    @Test
+    public void alterarStatusBicicletaInvalido() {
+        Bicicleta bicicleta = new Bicicleta();
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            bicicletaService.alterarStatusBicicleta(1L, "invalido");
+        });
+
+        assertEquals("Dados inválidos", exception.getMessage());
     }
 }
