@@ -1,13 +1,13 @@
 package com.example.bicicletario.Services;
 
 import com.example.bicicletario.bicicletario.application.BicicletaService;
-import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
-import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
+import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
 import com.example.bicicletario.bicicletario.mapper.BicicletaMapper;

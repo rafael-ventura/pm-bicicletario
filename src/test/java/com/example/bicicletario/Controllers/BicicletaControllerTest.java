@@ -18,12 +18,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -151,5 +151,111 @@ class BicicletaControllerTest {
                         .content(objectMapper.writeValueAsString(new RetirarBicicletaDaRedeDTO())))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao retirar bicicleta da rede'}"));
+    }
+
+    @Test
+    void obterBicicleta() throws Exception {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1L);
+        bicicleta.setMarca("marca");
+        bicicleta.setModelo("modelo");
+
+        when(bicicletaService.obterBicicleta(1L)).thenReturn(bicicleta);
+
+        mockMvc.perform(get("/api/bicicleta/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{'id':1,'marca':'marca','modelo':'modelo'}"));
+    }
+
+    @Test
+    void obterBicicleta_ThrowsNoSuchElementException() throws Exception {
+        when(bicicletaService.obterBicicleta(1L)).thenThrow(new NoSuchElementException("Error"));
+
+        mockMvc.perform(get("/api/bicicleta/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().json("{'codigo':'404','mensagem':'Bicicleta não encontrada'}"));
+    }
+
+    @Test
+    void obterBicicleta_ThrowsException() throws Exception {
+        when(bicicletaService.obterBicicleta(1L)).thenThrow(new RuntimeException("Error"));
+
+        mockMvc.perform(get("/api/bicicleta/1"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao obter bicicleta'}"));
+    }
+
+    @Test
+    void editarBicicleta() throws Exception {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1L);
+        bicicleta.setMarca("marca");
+        bicicleta.setModelo("modelo");
+
+        when(bicicletaService.editarBicicleta(any(Long.class), any(NovaBicicletaDTO.class))).thenReturn(bicicleta);
+
+        mockMvc.perform(put("/api/bicicleta/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{'id':1,'marca':'marca','modelo':'modelo'}"));
+    }
+
+    @Test
+    void editarBicicleta_ThrowsIllegalArgumentException() throws Exception {
+        doThrow(new IllegalArgumentException("Error")).when(bicicletaService).editarBicicleta(any(Long.class), any(NovaBicicletaDTO.class));
+
+        mockMvc.perform(put("/api/bicicleta/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().json("{'codigo':'422','mensagem':'Dados inválidos'}"));
+    }
+
+    @Test
+    void editarBicicleta_ThrowsNoSuchElementException() throws Exception {
+        doThrow(new NoSuchElementException("Error")).when(bicicletaService).editarBicicleta(any(Long.class), any(NovaBicicletaDTO.class));
+
+        mockMvc.perform(put("/api/bicicleta/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
+                .andExpect(status().isNotFound())
+                .andExpect(content().json("{'codigo':'404','mensagem':'Bicicleta não encontrada'}"));
+    }
+
+    @Test
+    void editarBicicleta_ThrowsException() throws Exception {
+        doThrow(new RuntimeException("Error")).when(bicicletaService).editarBicicleta(any(Long.class), any(NovaBicicletaDTO.class));
+
+        mockMvc.perform(put("/api/bicicleta/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao editar bicicleta'}"));
+    }
+
+    @Test
+    void removerBicicleta() throws Exception {
+        mockMvc.perform(delete("/api/bicicleta/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Bicicleta removida"));
+    }
+
+    @Test
+    void removerBicicleta_ThrowsNoSuchElementException() throws Exception {
+        doThrow(new NoSuchElementException("Error")).when(bicicletaService).removerBicicleta(any(Long.class));
+
+        mockMvc.perform(delete("/api/bicicleta/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().json("{'codigo':'404','mensagem':'Bicicleta não encontrada'}"));
+    }
+
+    @Test
+    void removerBicicleta_ThrowsException() throws Exception {
+        doThrow(new RuntimeException("Error")).when(bicicletaService).removerBicicleta(any(Long.class));
+
+        mockMvc.perform(delete("/api/bicicleta/1"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao remover bicicleta'}"));
     }
 }
