@@ -79,8 +79,12 @@ public class TrancaController {
 
     @PostMapping("/{idTranca}/trancar")
     public ResponseEntity<String> trancarTranca(@PathVariable Long idTranca, @RequestBody(required = false) Long bicicletaId) {
-        trancaService.trancarTranca(idTranca, bicicletaId);
-        return ResponseEntity.ok("Ação bem sucedida");
+        try {
+            trancaService.trancarTranca(idTranca, bicicletaId);
+            return ResponseEntity.ok("Ação bem sucedida");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
+        }
     }
 
     @PostMapping("/{idTranca}/destrancar")

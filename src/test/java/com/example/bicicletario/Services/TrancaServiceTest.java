@@ -189,6 +189,7 @@ class TrancaServiceTest {
 
         Tranca tranca = new Tranca();
         tranca.setId(1L);
+        tranca.setStatus(StatusTranca.LIVRE);
 
         when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
         when(trancaRepository.save(tranca)).thenReturn(tranca);

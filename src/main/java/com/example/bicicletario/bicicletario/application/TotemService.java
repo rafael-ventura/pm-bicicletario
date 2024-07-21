@@ -33,29 +33,27 @@ public class TotemService {
         this.bicicletaMapper = bicicletaMapper;
     }
 
-    public List<TotemDTO> listarTotens() {
-        return totemMapper.toEntityList(totemRepository.findAll());
+    public List<Totem> listarTotens() {
+        return totemRepository.findAll();
     }
 
-    public TotemDTO cadastrarTotem(NovoTotemDTO totemDTO) {
+    public Totem cadastrarTotem(NovoTotemDTO totemDTO) {
         // R1: Todos os dados do formulário são obrigatórios.
         if (totemDTO.getLocalizacao() == null || totemDTO.getDescricao() == null) {
             throw new IllegalArgumentException("Todos os dados do formulário são obrigatórios");
         }
-        Totem totem = totemMapper.toEntity(totemDTO);
-        totem = totemRepository.save(totem);
-        return totemMapper.toDto(totem);
+        return totemRepository.save(totemMapper.toEntity(totemDTO));
     }
 
-    public TotemDTO editarTotem(Long idTotem, TotemDTO totemDTO) {
+    public Totem editarTotem(Long idTotem, NovoTotemDTO totemDTO) {
         Totem existente = totemRepository.findById(idTotem).orElseThrow(() -> new IllegalArgumentException("Totem não encontrado"));
         // R2: A informação não pode ser editada.
-        if (totemDTO.getId() != null && !totemDTO.getId().equals(idTotem)) {
+        if (existente.getId() != null && !existente.getId().equals(idTotem)) {
             throw new IllegalArgumentException("A informação não pode ser editada");
         }
         existente.setLocalizacao(totemDTO.getLocalizacao());
         existente.setDescricao(totemDTO.getDescricao());
-        return totemMapper.toDto(totemRepository.save(existente));
+        return totemRepository.save(existente);
     }
 
     public void removerTotem(Long idTotem) {
@@ -67,12 +65,12 @@ public class TotemService {
         totemRepository.delete(totem);
     }
 
-    public List<TrancaDTO> listarTrancas(Long idTotem) {
+    public List<Tranca> listarTrancas(Long idTotem) {
         List<Tranca> trancas = trancaRepository.findByTotemId(idTotem);
         return trancaMapper.toDtoList(trancas);
     }
 
-    public List<BicicletaDTO> listarBicicletas(Long idTotem) {
+    public List<Bicicleta> listarBicicletas(Long idTotem) {
         List<Bicicleta> bicicletas = bicicletaRepository.findByTotemId(idTotem);
         return bicicletaMapper.toDtoList(bicicletas);
     }

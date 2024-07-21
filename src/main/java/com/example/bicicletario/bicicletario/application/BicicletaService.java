@@ -33,10 +33,10 @@ public class BicicletaService {
         return bicicletaRepository.findAll();
     }
 
-    public BicicletaDTO criarBicicleta(NovaBicicletaDTO bicicletaDTO) {
+    public Bicicleta criarBicicleta(NovaBicicletaDTO bicicletaDTO) {
         Bicicleta bicicleta = bicicletaMapper.toEntity(bicicletaDTO);
         bicicleta = bicicletaRepository.save(bicicleta);
-        return bicicletaMapper.toDto(bicicleta);
+        return bicicleta;
     }
 
     public void integrarNaRede(IntegrarBicicletaNaRedeDTO dto) {

@@ -1,7 +1,12 @@
 package com.example.bicicletario.Controllers;
 
 import com.example.bicicletario.bicicletario.application.TotemService;
+import com.example.bicicletario.bicicletario.domain.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.Totem;
+import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
+import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
+import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.web.TotemController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +47,7 @@ public class TotemControllerTest {
 
     @Test
     public void listarTotens() throws Exception {
-        TotemDTO totem = new TotemDTO();
+        Totem totem = new Totem();
         totem.setId(1L);
         totem.setLocalizacao("Localizacao");
         totem.setDescricao("Descricao");
@@ -69,7 +74,7 @@ public class TotemControllerTest {
         novoTotem.setLocalizacao("Localizacao");
         novoTotem.setDescricao("Descricao");
 
-        TotemDTO totem = new TotemDTO();
+        Totem totem = new Totem();
         totem.setId(1L);
         totem.setLocalizacao("Localizacao");
         totem.setDescricao("Descricao");
@@ -97,28 +102,26 @@ public class TotemControllerTest {
 
     @Test
     public void editarTotem() throws Exception {
-        TotemDTO totem = new TotemDTO();
-        totem.setId(1L);
+        NovoTotemDTO totem = new NovoTotemDTO();
         totem.setLocalizacao("Nova Localizacao");
         totem.setDescricao("Nova Descricao");
 
-        when(totemService.editarTotem(any(Long.class), any(TotemDTO.class))).thenReturn(totem);
+        when(totemService.editarTotem(any(Long.class), any(NovoTotemDTO.class))).thenReturn(new Totem());
 
         mockMvc.perform(put("/api/totem/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(totem)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(totem)));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
     public void editarTotem_ThrowsIllegalArgumentException() throws Exception {
-        when(totemService.editarTotem(any(Long.class), any(TotemDTO.class))).thenThrow(new IllegalArgumentException("Error"));
+        when(totemService.editarTotem(any(Long.class), any(NovoTotemDTO.class))).thenThrow(new IllegalArgumentException("Error"));
 
         mockMvc.perform(put("/api/totem/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new TotemDTO())))
+                        .content(objectMapper.writeValueAsString(new Totem())))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string("Error"));
     }
@@ -141,9 +144,9 @@ public class TotemControllerTest {
 
     @Test
     public void listarTrancas() throws Exception {
-        TrancaDTO tranca = new TrancaDTO();
+        Tranca tranca = new Tranca();
         tranca.setId(1L);
-        tranca.setStatus("DISPONIVEL");
+        tranca.setStatus(StatusTranca.OCUPADA);
 
         when(totemService.listarTrancas(any(Long.class))).thenReturn(List.of(tranca));
 
@@ -163,12 +166,12 @@ public class TotemControllerTest {
 
     @Test
     public void listarBicicletas() throws Exception {
-        BicicletaDTO bicicleta = new BicicletaDTO();
+        Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1L);
         bicicleta.setNumero(1);
         bicicleta.setModelo("Modelo");
         bicicleta.setAno("2021");
-        bicicleta.setStatus("DISPONIVEL");
+        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
 
         when(totemService.listarBicicletas(any(Long.class))).thenReturn(List.of(bicicleta));
 

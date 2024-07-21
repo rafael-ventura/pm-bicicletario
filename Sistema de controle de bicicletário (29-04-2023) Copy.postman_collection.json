@@ -1,0 +1,6638 @@
+{
+	"info": {
+		"_postman_id": "b48a29a5-bb94-4aa7-9647-1906de82487b",
+		"name": "Sistema de controle de bicicletário (29/04/2023) Copy",
+		"description": "Modelo da disciplina. Documentação relacionada ao sistema de controle de bicicletário. Toda a API está documentada neste arquivo de definição.\n\nContact Support:\n Email: pasemes@uniriotec.br",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14853447",
+		"_collection_link": "https://warped-eclipse-340486.postman.co/workspace/Dev~9c0bf37b-7f17-40c7-ad21-c8a3afe54a68/collection/14853447-b48a29a5-bb94-4aa7-9647-1906de82487b?action=share&source=collection_link&creator=14853447"
+	},
+	"item": [
+		{
+			"name": "ciclista",
+			"item": [
+				{
+					"name": "{idCiclista}",
+					"item": [
+						{
+							"name": "ativar",
+							"item": [
+								{
+									"name": "Ativar cadastro do ciclista",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "x-id-requisicao",
+												"value": "<integer>"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/ciclista/:idCiclista/ativar",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"ciclista",
+												":idCiclista",
+												"ativar"
+											],
+											"variable": [
+												{
+													"key": "idCiclista",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Ciclista ativado",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "x-id-requisicao",
+														"value": "<integer>"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/ciclista/:idCiclista/ativar",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"ciclista",
+														":idCiclista",
+														"ativar"
+													],
+													"variable": [
+														{
+															"key": "idCiclista"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": \"<integer>\",\n  \"status\": \"<string>\",\n  \"nome\": \"<string>\",\n  \"nascimento\": \"<date>\",\n  \"cpf\": \"13741668902\",\n  \"passaporte\": {\n    \"numero\": \"<string>\",\n    \"validade\": \"<date>\",\n    \"pais\": \"KL\"\n  },\n  \"nacionalidade\": \"<string>\",\n  \"email\": \"<email>\",\n  \"urlFotoDocumento\": \"<uri>\"\n}"
+										},
+										{
+											"name": "Não encontrado",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "x-id-requisicao",
+														"value": "<integer>"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/ciclista/:idCiclista/ativar",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"ciclista",
+														":idCiclista",
+														"ativar"
+													],
+													"variable": [
+														{
+															"key": "idCiclista"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+										},
+										{
+											"name": "Dados Inválidos",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "x-id-requisicao",
+														"value": "<integer>"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/ciclista/:idCiclista/ativar",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"ciclista",
+														":idCiclista",
+														"ativar"
+													],
+													"variable": [
+														{
+															"key": "idCiclista"
+														}
+													]
+												}
+											},
+											"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+											"code": 422,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "permiteAluguel",
+							"item": [
+								{
+									"name": "Verifica se o ciclista pode alugar uma bicicleta, já que só pode alugar uma por vez.",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/ciclista/:idCiclista/permiteAluguel",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"ciclista",
+												":idCiclista",
+												"permiteAluguel"
+											],
+											"variable": [
+												{
+													"key": "idCiclista",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "true se puder alugar e false caso contrário",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/ciclista/:idCiclista/permiteAluguel",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"ciclista",
+														":idCiclista",
+														"permiteAluguel"
+													],
+													"variable": [
+														{
+															"key": "idCiclista"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "<boolean>"
+										},
+										{
+											"name": "Não encontrado",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/ciclista/:idCiclista/permiteAluguel",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"ciclista",
+														":idCiclista",
+														"permiteAluguel"
+													],
+													"variable": [
+														{
+															"key": "idCiclista"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "bicicletaAlugada",
+							"item": [
+								{
+									"name": "Obtém bicicleta alugada por um ciclista (ou vazio caso contrário)",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/ciclista/:idCiclista/bicicletaAlugada",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"ciclista",
+												":idCiclista",
+												"bicicletaAlugada"
+											],
+											"variable": [
+												{
+													"key": "idCiclista",
+													"value": "<integer>",
+													"description": "(Required) UUID do ciclista"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Retorna bicicleta caso o ciclista tenha alugado ou vazio caso contrário.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/ciclista/:idCiclista/bicicletaAlugada",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"ciclista",
+														":idCiclista",
+														"bicicletaAlugada"
+													],
+													"variable": [
+														{
+															"key": "idCiclista"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": \"<integer>\",\n  \"marca\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"ano\": \"<string>\",\n  \"numero\": \"<integer>\",\n  \"status\": \"<string>\"\n}"
+										},
+										{
+											"name": "Ciclista não encontrado",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/ciclista/:idCiclista/bicicletaAlugada",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"ciclista",
+														":idCiclista",
+														"bicicletaAlugada"
+													],
+													"variable": [
+														{
+															"key": "idCiclista"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Recupera dados de um ciclista",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/ciclista/:idCiclista",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ciclista",
+										":idCiclista"
+									],
+									"variable": [
+										{
+											"key": "idCiclista",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Retorna ciclista solicitado",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/ciclista/:idCiclista",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"ciclista",
+												":idCiclista"
+											],
+											"variable": [
+												{
+													"key": "idCiclista"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": \"<integer>\",\n  \"status\": \"<string>\",\n  \"nome\": \"<string>\",\n  \"nascimento\": \"<date>\",\n  \"cpf\": \"13741668902\",\n  \"passaporte\": {\n    \"numero\": \"<string>\",\n    \"validade\": \"<date>\",\n    \"pais\": \"KL\"\n  },\n  \"nacionalidade\": \"<string>\",\n  \"email\": \"<email>\",\n  \"urlFotoDocumento\": \"<uri>\"\n}"
+								},
+								{
+									"name": "Requisição mal formada",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/ciclista/:idCiclista",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"ciclista",
+												":idCiclista"
+											],
+											"variable": [
+												{
+													"key": "idCiclista"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								},
+								{
+									"name": "Dados Inválidos",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/ciclista/:idCiclista",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"ciclista",
+												":idCiclista"
+											],
+											"variable": [
+												{
+													"key": "idCiclista"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						},
+						{
+							"name": "Alterar dados de um ciclista",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nome\": \"<string>\",\n  \"nascimento\": \"<date>\",\n  \"cpf\": \"03883972084\",\n  \"passaporte\": {\n    \"numero\": \"<string>\",\n    \"validade\": \"<date>\",\n    \"pais\": \"NS\"\n  },\n  \"nacionalidade\": \"<string>\",\n  \"email\": \"<email>\",\n  \"urlFotoDocumento\": \"<uri>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ciclista/:idCiclista",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ciclista",
+										":idCiclista"
+									],
+									"variable": [
+										{
+											"key": "idCiclista",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados atualizados",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"nome\": \"<string>\",\n  \"nascimento\": \"<date>\",\n  \"cpf\": \"03883972084\",\n  \"passaporte\": {\n    \"numero\": \"<string>\",\n    \"validade\": \"<date>\",\n    \"pais\": \"NS\"\n  },\n  \"nacionalidade\": \"<string>\",\n  \"email\": \"<email>\",\n  \"urlFotoDocumento\": \"<uri>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/ciclista/:idCiclista",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"ciclista",
+												":idCiclista"
+											],
+											"variable": [
+												{
+													"key": "idCiclista"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": \"<integer>\",\n  \"status\": \"<string>\",\n  \"nome\": \"<string>\",\n  \"nascimento\": \"<date>\",\n  \"cpf\": \"13741668902\",\n  \"passaporte\": {\n    \"numero\": \"<string>\",\n    \"validade\": \"<date>\",\n    \"pais\": \"KL\"\n  },\n  \"nacionalidade\": \"<string>\",\n  \"email\": \"<email>\",\n  \"urlFotoDocumento\": \"<uri>\"\n}"
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"nome\": \"<string>\",\n  \"nascimento\": \"<date>\",\n  \"cpf\": \"03883972084\",\n  \"passaporte\": {\n    \"numero\": \"<string>\",\n    \"validade\": \"<date>\",\n    \"pais\": \"NS\"\n  },\n  \"nacionalidade\": \"<string>\",\n  \"email\": \"<email>\",\n  \"urlFotoDocumento\": \"<uri>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/ciclista/:idCiclista",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"ciclista",
+												":idCiclista"
+											],
+											"variable": [
+												{
+													"key": "idCiclista"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								},
+								{
+									"name": "Dados Inválidos",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"nome\": \"<string>\",\n  \"nascimento\": \"<date>\",\n  \"cpf\": \"03883972084\",\n  \"passaporte\": {\n    \"numero\": \"<string>\",\n    \"validade\": \"<date>\",\n    \"pais\": \"NS\"\n  },\n  \"nacionalidade\": \"<string>\",\n  \"email\": \"<email>\",\n  \"urlFotoDocumento\": \"<uri>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/ciclista/:idCiclista",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"ciclista",
+												":idCiclista"
+											],
+											"variable": [
+												{
+													"key": "idCiclista"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "existeEmail",
+					"item": [
+						{
+							"name": "{email}",
+							"item": [
+								{
+									"name": "Verifica se o e-mail já foi utilizado por algum ciclista.",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/ciclista/existeEmail/:email",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"ciclista",
+												"existeEmail",
+												":email"
+											],
+											"variable": [
+												{
+													"key": "email",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "True caso exista o email e false caso contrario.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/ciclista/existeEmail/:email",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"ciclista",
+														"existeEmail",
+														":email"
+													],
+													"variable": [
+														{
+															"key": "email"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "<boolean>"
+										},
+										{
+											"name": "Email não enviado como parâmetro",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/ciclista/existeEmail/:email",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"ciclista",
+														"existeEmail",
+														":email"
+													],
+													"variable": [
+														{
+															"key": "email"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+										},
+										{
+											"name": "Dados Inválidos",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/ciclista/existeEmail/:email",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"ciclista",
+														"existeEmail",
+														":email"
+													],
+													"variable": [
+														{
+															"key": "email"
+														}
+													]
+												}
+											},
+											"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+											"code": 422,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Cadastrar um ciclista",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ciclista\": {\n    \"email\": \"<email>\",\n    \"nacionalidade\": \"<string>\",\n    \"nascimento\": \"<date>\",\n    \"nome\": \"<string>\",\n    \"senha\": \"<string>\",\n    \"cpf\": \"89109490098\",\n    \"passaporte\": {\n      \"numero\": \"<string>\",\n      \"validade\": \"<date>\",\n      \"pais\": \"VO\"\n    },\n    \"urlFotoDocumento\": \"<uri>\"\n  },\n  \"meioDePagamento\": {\n    \"cvv\": \"6397\",\n    \"nomeTitular\": \"<string>\",\n    \"numero\": \"960045\",\n    \"validade\": \"<date>\"\n  }\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/ciclista",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ciclista"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Ciclista cadastrado",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"ciclista\": {\n    \"email\": \"<email>\",\n    \"nacionalidade\": \"<string>\",\n    \"nascimento\": \"<date>\",\n    \"nome\": \"<string>\",\n    \"senha\": \"<string>\",\n    \"cpf\": \"89109490098\",\n    \"passaporte\": {\n      \"numero\": \"<string>\",\n      \"validade\": \"<date>\",\n      \"pais\": \"VO\"\n    },\n    \"urlFotoDocumento\": \"<uri>\"\n  },\n  \"meioDePagamento\": {\n    \"cvv\": \"6397\",\n    \"nomeTitular\": \"<string>\",\n    \"numero\": \"960045\",\n    \"validade\": \"<date>\"\n  }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ciclista",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ciclista"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"<integer>\",\n  \"status\": \"<string>\",\n  \"nome\": \"<string>\",\n  \"nascimento\": \"<date>\",\n  \"cpf\": \"13741668902\",\n  \"passaporte\": {\n    \"numero\": \"<string>\",\n    \"validade\": \"<date>\",\n    \"pais\": \"KL\"\n  },\n  \"nacionalidade\": \"<string>\",\n  \"email\": \"<email>\",\n  \"urlFotoDocumento\": \"<uri>\"\n}"
+						},
+						{
+							"name": "Requisição mal formada",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"ciclista\": {\n    \"email\": \"<email>\",\n    \"nacionalidade\": \"<string>\",\n    \"nascimento\": \"<date>\",\n    \"nome\": \"<string>\",\n    \"senha\": \"<string>\",\n    \"cpf\": \"89109490098\",\n    \"passaporte\": {\n      \"numero\": \"<string>\",\n      \"validade\": \"<date>\",\n      \"pais\": \"VO\"\n    },\n    \"urlFotoDocumento\": \"<uri>\"\n  },\n  \"meioDePagamento\": {\n    \"cvv\": \"6397\",\n    \"nomeTitular\": \"<string>\",\n    \"numero\": \"960045\",\n    \"validade\": \"<date>\"\n  }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ciclista",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ciclista"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+						},
+						{
+							"name": "Dados Inválidos",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"ciclista\": {\n    \"email\": \"<email>\",\n    \"nacionalidade\": \"<string>\",\n    \"nascimento\": \"<date>\",\n    \"nome\": \"<string>\",\n    \"senha\": \"<string>\",\n    \"cpf\": \"89109490098\",\n    \"passaporte\": {\n      \"numero\": \"<string>\",\n      \"validade\": \"<date>\",\n      \"pais\": \"VO\"\n    },\n    \"urlFotoDocumento\": \"<uri>\"\n  },\n  \"meioDePagamento\": {\n    \"cvv\": \"6397\",\n    \"nomeTitular\": \"<string>\",\n    \"numero\": \"960045\",\n    \"validade\": \"<date>\"\n  }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/ciclista",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ciclista"
+									]
+								}
+							},
+							"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "funcionario",
+			"item": [
+				{
+					"name": "{idFuncionario}",
+					"item": [
+						{
+							"name": "Recupera funcionário",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/funcionario/:idFuncionario",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"funcionario",
+										":idFuncionario"
+									],
+									"variable": [
+										{
+											"key": "idFuncionario",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados recuperados",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/funcionario/:idFuncionario",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"funcionario",
+												":idFuncionario"
+											],
+											"variable": [
+												{
+													"key": "idFuncionario"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"matricula\": \"<string>\",\n  \"senha\": \"<string>\",\n  \"confirmacaoSenha\": \"<string>\",\n  \"email\": \"<email>\",\n  \"nome\": \"<string>\",\n  \"idade\": \"<integer>\",\n  \"funcao\": \"<string>\",\n  \"cpf\": \"<string>\"\n}"
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/funcionario/:idFuncionario",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"funcionario",
+												":idFuncionario"
+											],
+											"variable": [
+												{
+													"key": "idFuncionario"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								},
+								{
+									"name": "Dados Inválidos",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/funcionario/:idFuncionario",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"funcionario",
+												":idFuncionario"
+											],
+											"variable": [
+												{
+													"key": "idFuncionario"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						},
+						{
+							"name": "Editar funcionário",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"senha\": \"<string>\",\n  \"confirmacaoSenha\": \"<string>\",\n  \"email\": \"<email>\",\n  \"nome\": \"<string>\",\n  \"idade\": \"<integer>\",\n  \"funcao\": \"<string>\",\n  \"cpf\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/funcionario/:idFuncionario",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"funcionario",
+										":idFuncionario"
+									],
+									"variable": [
+										{
+											"key": "idFuncionario",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados atualizados",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"senha\": \"<string>\",\n  \"confirmacaoSenha\": \"<string>\",\n  \"email\": \"<email>\",\n  \"nome\": \"<string>\",\n  \"idade\": \"<integer>\",\n  \"funcao\": \"<string>\",\n  \"cpf\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/funcionario/:idFuncionario",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"funcionario",
+												":idFuncionario"
+											],
+											"variable": [
+												{
+													"key": "idFuncionario"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"matricula\": \"<string>\",\n  \"senha\": \"<string>\",\n  \"confirmacaoSenha\": \"<string>\",\n  \"email\": \"<email>\",\n  \"nome\": \"<string>\",\n  \"idade\": \"<integer>\",\n  \"funcao\": \"<string>\",\n  \"cpf\": \"<string>\"\n}"
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"senha\": \"<string>\",\n  \"confirmacaoSenha\": \"<string>\",\n  \"email\": \"<email>\",\n  \"nome\": \"<string>\",\n  \"idade\": \"<integer>\",\n  \"funcao\": \"<string>\",\n  \"cpf\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/funcionario/:idFuncionario",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"funcionario",
+												":idFuncionario"
+											],
+											"variable": [
+												{
+													"key": "idFuncionario"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								},
+								{
+									"name": "Dados Inválidos",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"senha\": \"<string>\",\n  \"confirmacaoSenha\": \"<string>\",\n  \"email\": \"<email>\",\n  \"nome\": \"<string>\",\n  \"idade\": \"<integer>\",\n  \"funcao\": \"<string>\",\n  \"cpf\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/funcionario/:idFuncionario",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"funcionario",
+												":idFuncionario"
+											],
+											"variable": [
+												{
+													"key": "idFuncionario"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						},
+						{
+							"name": "Remover funcionário",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/funcionario/:idFuncionario",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"funcionario",
+										":idFuncionario"
+									],
+									"variable": [
+										{
+											"key": "idFuncionario",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados removidos",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/funcionario/:idFuncionario",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"funcionario",
+												":idFuncionario"
+											],
+											"variable": [
+												{
+													"key": "idFuncionario"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/funcionario/:idFuncionario",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"funcionario",
+												":idFuncionario"
+											],
+											"variable": [
+												{
+													"key": "idFuncionario"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								},
+								{
+									"name": "Dados Inválidos",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/funcionario/:idFuncionario",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"funcionario",
+												":idFuncionario"
+											],
+											"variable": [
+												{
+													"key": "idFuncionario"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "recupera funcionários cadastrados",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/funcionario",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"funcionario"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/funcionario",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"funcionario"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"matricula\": \"<string>\",\n    \"senha\": \"<string>\",\n    \"confirmacaoSenha\": \"<string>\",\n    \"email\": \"<email>\",\n    \"nome\": \"<string>\",\n    \"idade\": \"<integer>\",\n    \"funcao\": \"<string>\",\n    \"cpf\": \"<string>\"\n  },\n  {\n    \"matricula\": \"<string>\",\n    \"senha\": \"<string>\",\n    \"confirmacaoSenha\": \"<string>\",\n    \"email\": \"<email>\",\n    \"nome\": \"<string>\",\n    \"idade\": \"<integer>\",\n    \"funcao\": \"<string>\",\n    \"cpf\": \"<string>\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Cadastrar funcionário",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cpf\": \"<string>\",\n  \"email\": \"<email>\",\n  \"funcao\": \"<string>\",\n  \"idade\": \"<integer>\",\n  \"nome\": \"<string>\",\n  \"senha\": \"<string>\",\n  \"confirmacaoSenha\": \"<string>\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/funcionario",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"funcionario"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Dados cadastrados",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"cpf\": \"<string>\",\n  \"email\": \"<email>\",\n  \"funcao\": \"<string>\",\n  \"idade\": \"<integer>\",\n  \"nome\": \"<string>\",\n  \"senha\": \"<string>\",\n  \"confirmacaoSenha\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/funcionario",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"funcionario"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"matricula\": \"<string>\",\n  \"senha\": \"<string>\",\n  \"confirmacaoSenha\": \"<string>\",\n  \"email\": \"<email>\",\n  \"nome\": \"<string>\",\n  \"idade\": \"<integer>\",\n  \"funcao\": \"<string>\",\n  \"cpf\": \"<string>\"\n}"
+						},
+						{
+							"name": "Dados Inválidos",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"cpf\": \"<string>\",\n  \"email\": \"<email>\",\n  \"funcao\": \"<string>\",\n  \"idade\": \"<integer>\",\n  \"nome\": \"<string>\",\n  \"senha\": \"<string>\",\n  \"confirmacaoSenha\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/funcionario",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"funcionario"
+									]
+								}
+							},
+							"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "cartaoDeCredito",
+			"item": [
+				{
+					"name": "{idCiclista}",
+					"item": [
+						{
+							"name": "Recupera dados de cartão de crédito de um ciclista",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/cartaoDeCredito/:idCiclista",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cartaoDeCredito",
+										":idCiclista"
+									],
+									"variable": [
+										{
+											"key": "idCiclista",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados do cartão",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/cartaoDeCredito/:idCiclista",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"cartaoDeCredito",
+												":idCiclista"
+											],
+											"variable": [
+												{
+													"key": "idCiclista"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"cvv\": \"6510\",\n  \"nomeTitular\": \"<string>\",\n  \"numero\": \"54\",\n  \"validade\": \"<date>\",\n  \"id\": \"<integer>\"\n}"
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/cartaoDeCredito/:idCiclista",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"cartaoDeCredito",
+												":idCiclista"
+											],
+											"variable": [
+												{
+													"key": "idCiclista"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								},
+								{
+									"name": "Dados Inválidos",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/cartaoDeCredito/:idCiclista",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"cartaoDeCredito",
+												":idCiclista"
+											],
+											"variable": [
+												{
+													"key": "idCiclista"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						},
+						{
+							"name": "Alterar dados de cartão de crédito de um ciclista",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"cvv\": \"981\",\n  \"nomeTitular\": \"<string>\",\n  \"numero\": \"4221396\",\n  \"validade\": \"<date>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/cartaoDeCredito/:idCiclista",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cartaoDeCredito",
+										":idCiclista"
+									],
+									"variable": [
+										{
+											"key": "idCiclista",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados atualizados",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"cvv\": \"981\",\n  \"nomeTitular\": \"<string>\",\n  \"numero\": \"4221396\",\n  \"validade\": \"<date>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/cartaoDeCredito/:idCiclista",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"cartaoDeCredito",
+												":idCiclista"
+											],
+											"variable": [
+												{
+													"key": "idCiclista"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"cvv\": \"981\",\n  \"nomeTitular\": \"<string>\",\n  \"numero\": \"4221396\",\n  \"validade\": \"<date>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/cartaoDeCredito/:idCiclista",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"cartaoDeCredito",
+												":idCiclista"
+											],
+											"variable": [
+												{
+													"key": "idCiclista"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								},
+								{
+									"name": "Dados Inválidos",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"cvv\": \"981\",\n  \"nomeTitular\": \"<string>\",\n  \"numero\": \"4221396\",\n  \"validade\": \"<date>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/cartaoDeCredito/:idCiclista",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"cartaoDeCredito",
+												":idCiclista"
+											],
+											"variable": [
+												{
+													"key": "idCiclista"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "bicicleta",
+			"item": [
+				{
+					"name": "integrarNaRede",
+					"item": [
+						{
+							"name": "colocar uma bicicleta nova ou retornando de reparo de volta na rede de totens",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"idTranca\": \"<integer>\",\n  \"idBicicleta\": \"<integer>\",\n  \"idFuncionario\": \"<integer>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bicicleta/integrarNaRede",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bicicleta",
+										"integrarNaRede"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados cadastrados",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"idTranca\": \"<integer>\",\n  \"idBicicleta\": \"<integer>\",\n  \"idFuncionario\": \"<integer>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/bicicleta/integrarNaRede",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bicicleta",
+												"integrarNaRede"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Dados Inválidos (ex status inválido da bicicleta ou tranca)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"idTranca\": \"<integer>\",\n  \"idBicicleta\": \"<integer>\",\n  \"idFuncionario\": \"<integer>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/bicicleta/integrarNaRede",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bicicleta",
+												"integrarNaRede"
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "retirarDaRede",
+					"item": [
+						{
+							"name": "retirar bicicleta para reparo ou aposentadoria",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"idTranca\": \"<integer>\",\n  \"idBicicleta\": \"<integer>\",\n  \"idFuncionario\": \"<integer>\",\n  \"statusAcaoReparador\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bicicleta/retirarDaRede",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bicicleta",
+										"retirarDaRede"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados cadastrados",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"idTranca\": \"<integer>\",\n  \"idBicicleta\": \"<integer>\",\n  \"idFuncionario\": \"<integer>\",\n  \"statusAcaoReparador\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/bicicleta/retirarDaRede",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bicicleta",
+												"retirarDaRede"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Dados Inválidos (ex status inválido da bicicleta ou tranca)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"idTranca\": \"<integer>\",\n  \"idBicicleta\": \"<integer>\",\n  \"idFuncionario\": \"<integer>\",\n  \"statusAcaoReparador\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/bicicleta/retirarDaRede",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bicicleta",
+												"retirarDaRede"
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "{idBicicleta}",
+					"item": [
+						{
+							"name": "status",
+							"item": [
+								{
+									"name": "{acao}",
+									"item": [
+										{
+											"name": "Alterar status da bicicleta",
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/bicicleta/:idBicicleta/status/:acao",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"bicicleta",
+														":idBicicleta",
+														"status",
+														":acao"
+													],
+													"variable": [
+														{
+															"key": "idBicicleta",
+															"value": "<integer>",
+															"description": "(Required) "
+														},
+														{
+															"key": "acao",
+															"value": "<string>",
+															"description": "(Required) "
+														}
+													]
+												}
+											},
+											"response": [
+												{
+													"name": "Ação bem sucedida",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/bicicleta/:idBicicleta/status/:acao",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"bicicleta",
+																":idBicicleta",
+																"status",
+																":acao"
+															],
+															"variable": [
+																{
+																	"key": "idBicicleta"
+																},
+																{
+																	"key": "acao"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"id\": \"<integer>\",\n  \"marca\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"ano\": \"<string>\",\n  \"numero\": \"<integer>\",\n  \"status\": \"<string>\"\n}"
+												},
+												{
+													"name": "Não encontrado",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/bicicleta/:idBicicleta/status/:acao",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"bicicleta",
+																":idBicicleta",
+																"status",
+																":acao"
+															],
+															"variable": [
+																{
+																	"key": "idBicicleta"
+																},
+																{
+																	"key": "acao"
+																}
+															]
+														}
+													},
+													"status": "Not Found",
+													"code": 404,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+												},
+												{
+													"name": "Dados Inválidos",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/bicicleta/:idBicicleta/status/:acao",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"bicicleta",
+																":idBicicleta",
+																"status",
+																":acao"
+															],
+															"variable": [
+																{
+																	"key": "idBicicleta"
+																},
+																{
+																	"key": "acao"
+																}
+															]
+														}
+													},
+													"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+													"code": 422,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Obter bicicleta",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/bicicleta/:idBicicleta",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bicicleta",
+										":idBicicleta"
+									],
+									"variable": [
+										{
+											"key": "idBicicleta",
+											"value": "<integer>",
+											"description": "(Required) UUID da bicicleta"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Bicicleta encontrada",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/bicicleta/:idBicicleta",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bicicleta",
+												":idBicicleta"
+											],
+											"variable": [
+												{
+													"key": "idBicicleta"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": \"<integer>\",\n  \"marca\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"ano\": \"<string>\",\n  \"numero\": \"<integer>\",\n  \"status\": \"<string>\"\n}"
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/bicicleta/:idBicicleta",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bicicleta",
+												":idBicicleta"
+											],
+											"variable": [
+												{
+													"key": "idBicicleta"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Editar bicicleta",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"marca\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"ano\": \"<string>\",\n  \"numero\": \"<integer>\",\n  \"status\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bicicleta/:idBicicleta",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bicicleta",
+										":idBicicleta"
+									],
+									"variable": [
+										{
+											"key": "idBicicleta",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados atualizados",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"marca\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"ano\": \"<string>\",\n  \"numero\": \"<integer>\",\n  \"status\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/bicicleta/:idBicicleta",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bicicleta",
+												":idBicicleta"
+											],
+											"variable": [
+												{
+													"key": "idBicicleta"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": \"<integer>\",\n  \"marca\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"ano\": \"<string>\",\n  \"numero\": \"<integer>\",\n  \"status\": \"<string>\"\n}"
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"marca\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"ano\": \"<string>\",\n  \"numero\": \"<integer>\",\n  \"status\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/bicicleta/:idBicicleta",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bicicleta",
+												":idBicicleta"
+											],
+											"variable": [
+												{
+													"key": "idBicicleta"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								},
+								{
+									"name": "Dados Inválidos",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"marca\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"ano\": \"<string>\",\n  \"numero\": \"<integer>\",\n  \"status\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/bicicleta/:idBicicleta",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bicicleta",
+												":idBicicleta"
+											],
+											"variable": [
+												{
+													"key": "idBicicleta"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						},
+						{
+							"name": "Remover bicicleta",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/bicicleta/:idBicicleta",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bicicleta",
+										":idBicicleta"
+									],
+									"variable": [
+										{
+											"key": "idBicicleta",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados removidos",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/bicicleta/:idBicicleta",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bicicleta",
+												":idBicicleta"
+											],
+											"variable": [
+												{
+													"key": "idBicicleta"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/bicicleta/:idBicicleta",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bicicleta",
+												":idBicicleta"
+											],
+											"variable": [
+												{
+													"key": "idBicicleta"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "recupera bicicletas cadastradas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/bicicleta",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bicicleta"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/bicicleta",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bicicleta"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": \"<integer>\",\n    \"marca\": \"<string>\",\n    \"modelo\": \"<string>\",\n    \"ano\": \"<string>\",\n    \"numero\": \"<integer>\",\n    \"status\": \"<string>\"\n  },\n  {\n    \"id\": \"<integer>\",\n    \"marca\": \"<string>\",\n    \"modelo\": \"<string>\",\n    \"ano\": \"<string>\",\n    \"numero\": \"<integer>\",\n    \"status\": \"<string>\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Cadastrar bicicleta",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"marca\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"ano\": \"<string>\",\n  \"numero\": \"<integer>\",\n  \"status\": \"<string>\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bicicleta",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bicicleta"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Dados cadastrados",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"marca\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"ano\": \"<string>\",\n  \"numero\": \"<integer>\",\n  \"status\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bicicleta",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bicicleta"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"<integer>\",\n  \"marca\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"ano\": \"<string>\",\n  \"numero\": \"<integer>\",\n  \"status\": \"<string>\"\n}"
+						},
+						{
+							"name": "Dados Inválidos",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"marca\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"ano\": \"<string>\",\n  \"numero\": \"<integer>\",\n  \"status\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bicicleta",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bicicleta"
+									]
+								}
+							},
+							"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "totem",
+			"item": [
+				{
+					"name": "{idTotem}",
+					"item": [
+						{
+							"name": "trancas",
+							"item": [
+								{
+									"name": "Listar trancas de um totem",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/totem/:idTotem/trancas",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"totem",
+												":idTotem",
+												"trancas"
+											],
+											"variable": [
+												{
+													"key": "idTotem",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "200 OK",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/totem/:idTotem/trancas",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"totem",
+														":idTotem",
+														"trancas"
+													],
+													"variable": [
+														{
+															"key": "idTotem"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"id\": \"<integer>\",\n    \"bicicleta\": \"<integer>\",\n    \"numero\": \"<integer>\",\n    \"localizacao\": \"<string>\",\n    \"anoDeFabricacao\": \"<string>\",\n    \"modelo\": \"<string>\",\n    \"status\": \"<string>\"\n  },\n  {\n    \"id\": \"<integer>\",\n    \"bicicleta\": \"<integer>\",\n    \"numero\": \"<integer>\",\n    \"localizacao\": \"<string>\",\n    \"anoDeFabricacao\": \"<string>\",\n    \"modelo\": \"<string>\",\n    \"status\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "Não encontrado",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/totem/:idTotem/trancas",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"totem",
+														":idTotem",
+														"trancas"
+													],
+													"variable": [
+														{
+															"key": "idTotem"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+										},
+										{
+											"name": "Dados Inválidos",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/totem/:idTotem/trancas",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"totem",
+														":idTotem",
+														"trancas"
+													],
+													"variable": [
+														{
+															"key": "idTotem"
+														}
+													]
+												}
+											},
+											"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+											"code": 422,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "bicicletas",
+							"item": [
+								{
+									"name": "Listar bicicletas de um totem",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/totem/:idTotem/bicicletas",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"totem",
+												":idTotem",
+												"bicicletas"
+											],
+											"variable": [
+												{
+													"key": "idTotem",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "200 OK",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/totem/:idTotem/bicicletas",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"totem",
+														":idTotem",
+														"bicicletas"
+													],
+													"variable": [
+														{
+															"key": "idTotem"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"id\": \"<integer>\",\n    \"marca\": \"<string>\",\n    \"modelo\": \"<string>\",\n    \"ano\": \"<string>\",\n    \"numero\": \"<integer>\",\n    \"status\": \"<string>\"\n  },\n  {\n    \"id\": \"<integer>\",\n    \"marca\": \"<string>\",\n    \"modelo\": \"<string>\",\n    \"ano\": \"<string>\",\n    \"numero\": \"<integer>\",\n    \"status\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "Não encontrado",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/totem/:idTotem/bicicletas",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"totem",
+														":idTotem",
+														"bicicletas"
+													],
+													"variable": [
+														{
+															"key": "idTotem"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+										},
+										{
+											"name": "Dados Inválidos",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/totem/:idTotem/bicicletas",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"totem",
+														":idTotem",
+														"bicicletas"
+													],
+													"variable": [
+														{
+															"key": "idTotem"
+														}
+													]
+												}
+											},
+											"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+											"code": 422,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Editar totem",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"localizacao\": \"<string>\",\n  \"descricao\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/totem/:idTotem",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"totem",
+										":idTotem"
+									],
+									"variable": [
+										{
+											"key": "idTotem",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados cadastrados",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"localizacao\": \"<string>\",\n  \"descricao\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/totem/:idTotem",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"totem",
+												":idTotem"
+											],
+											"variable": [
+												{
+													"key": "idTotem"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"localizacao\": \"<string>\",\n  \"id\": \"<integer>\",\n  \"descricao\": \"<string>\"\n}"
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"localizacao\": \"<string>\",\n  \"descricao\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/totem/:idTotem",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"totem",
+												":idTotem"
+											],
+											"variable": [
+												{
+													"key": "idTotem"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								},
+								{
+									"name": "Dados Inválidos",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"localizacao\": \"<string>\",\n  \"descricao\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/totem/:idTotem",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"totem",
+												":idTotem"
+											],
+											"variable": [
+												{
+													"key": "idTotem"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						},
+						{
+							"name": "Remover totem",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/totem/:idTotem",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"totem",
+										":idTotem"
+									],
+									"variable": [
+										{
+											"key": "idTotem",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Totem removido",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/totem/:idTotem",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"totem",
+												":idTotem"
+											],
+											"variable": [
+												{
+													"key": "idTotem"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Totem não encontrado",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/totem/:idTotem",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"totem",
+												":idTotem"
+											],
+											"variable": [
+												{
+													"key": "idTotem"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "recupera totens cadastrados",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/totem",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"totem"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/totem",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"totem"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"localizacao\": \"<string>\",\n    \"id\": \"<integer>\",\n    \"descricao\": \"<string>\"\n  },\n  {\n    \"localizacao\": \"<string>\",\n    \"id\": \"<integer>\",\n    \"descricao\": \"<string>\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Incluir totem",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"localizacao\": \"<string>\",\n  \"descricao\": \"<string>\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/totem",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"totem"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Dados cadastrados",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"localizacao\": \"<string>\",\n  \"descricao\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/totem",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"totem"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"localizacao\": \"<string>\",\n  \"id\": \"<integer>\",\n  \"descricao\": \"<string>\"\n}"
+						},
+						{
+							"name": "Dados Inválidos",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"localizacao\": \"<string>\",\n  \"descricao\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/totem",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"totem"
+									]
+								}
+							},
+							"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "tranca",
+			"item": [
+				{
+					"name": "integrarNaRede",
+					"item": [
+						{
+							"name": "colocar uma tranca nova ou retornando de reparo de volta na rede de totens",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"idTotem\": \"<integer>\",\n  \"idTranca\": \"<integer>\",\n  \"idFuncionario\": \"<integer>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/tranca/integrarNaRede",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"tranca",
+										"integrarNaRede"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados cadastrados",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"idTotem\": \"<integer>\",\n  \"idTranca\": \"<integer>\",\n  \"idFuncionario\": \"<integer>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/tranca/integrarNaRede",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												"integrarNaRede"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Dados Inválidos",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"idTotem\": \"<integer>\",\n  \"idTranca\": \"<integer>\",\n  \"idFuncionario\": \"<integer>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/tranca/integrarNaRede",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												"integrarNaRede"
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "retirarDaRede",
+					"item": [
+						{
+							"name": "retirar uma tranca para aposentadoria ou reparo",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"idTotem\": \"<integer>\",\n  \"idTranca\": \"<integer>\",\n  \"idFuncionario\": \"<integer>\",\n  \"statusAcaoReparador\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/tranca/retirarDaRede",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"tranca",
+										"retirarDaRede"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados cadastrados",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"idTotem\": \"<integer>\",\n  \"idTranca\": \"<integer>\",\n  \"idFuncionario\": \"<integer>\",\n  \"statusAcaoReparador\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/tranca/retirarDaRede",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												"retirarDaRede"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Dados Inválidos (ex status inválido da tranca)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"idTotem\": \"<integer>\",\n  \"idTranca\": \"<integer>\",\n  \"idFuncionario\": \"<integer>\",\n  \"statusAcaoReparador\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/tranca/retirarDaRede",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												"retirarDaRede"
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "{idTranca}",
+					"item": [
+						{
+							"name": "bicicleta",
+							"item": [
+								{
+									"name": "Obter bicicleta na tranca",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/tranca/:idTranca/bicicleta",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												":idTranca",
+												"bicicleta"
+											],
+											"variable": [
+												{
+													"key": "idTranca",
+													"value": "<integer>",
+													"description": "(Required) UUID ou número da tranca"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Tranca encontrada",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/tranca/:idTranca/bicicleta",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"tranca",
+														":idTranca",
+														"bicicleta"
+													],
+													"variable": [
+														{
+															"key": "idTranca"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": \"<integer>\",\n  \"marca\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"ano\": \"<string>\",\n  \"numero\": \"<integer>\",\n  \"status\": \"<string>\"\n}"
+										},
+										{
+											"name": "Bicicleta não encontrada",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/tranca/:idTranca/bicicleta",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"tranca",
+														":idTranca",
+														"bicicleta"
+													],
+													"variable": [
+														{
+															"key": "idTranca"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+										},
+										{
+											"name": "Id da tranca inválido",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/tranca/:idTranca/bicicleta",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"tranca",
+														":idTranca",
+														"bicicleta"
+													],
+													"variable": [
+														{
+															"key": "idTranca"
+														}
+													]
+												}
+											},
+											"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+											"code": 422,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "trancar",
+							"item": [
+								{
+									"name": "Realiza o trancamento da tranca alterando o status da mesma de acordo. Caso receba o id da bicleta no corpo do post também altera o status da mesma e associa a tranca à bicicleta.",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"bicicleta\": \"<integer>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/tranca/:idTranca/trancar",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												":idTranca",
+												"trancar"
+											],
+											"variable": [
+												{
+													"key": "idTranca",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Ação bem sucedida",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"bicicleta\": \"<integer>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/tranca/:idTranca/trancar",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"tranca",
+														":idTranca",
+														"trancar"
+													],
+													"variable": [
+														{
+															"key": "idTranca"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": \"<integer>\",\n  \"bicicleta\": \"<integer>\",\n  \"numero\": \"<integer>\",\n  \"localizacao\": \"<string>\",\n  \"anoDeFabricacao\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"status\": \"<string>\"\n}"
+										},
+										{
+											"name": "Não encontrado",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"bicicleta\": \"<integer>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/tranca/:idTranca/trancar",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"tranca",
+														":idTranca",
+														"trancar"
+													],
+													"variable": [
+														{
+															"key": "idTranca"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+										},
+										{
+											"name": "Dados Inválidos ou tranca já se encontra trancada",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"bicicleta\": \"<integer>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/tranca/:idTranca/trancar",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"tranca",
+														":idTranca",
+														"trancar"
+													],
+													"variable": [
+														{
+															"key": "idTranca"
+														}
+													]
+												}
+											},
+											"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+											"code": 422,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "destrancar",
+							"item": [
+								{
+									"name": "Realiza o destrancamento da tranca alterando o status da mesma de acordo. Caso receba o id da bicleta no corpo do post também altera o status da mesma e desassocia a tranca à bicicleta.",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"bicicleta\": \"<integer>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/tranca/:idTranca/destrancar",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												":idTranca",
+												"destrancar"
+											],
+											"variable": [
+												{
+													"key": "idTranca",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Ação bem sucedida",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"bicicleta\": \"<integer>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/tranca/:idTranca/destrancar",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"tranca",
+														":idTranca",
+														"destrancar"
+													],
+													"variable": [
+														{
+															"key": "idTranca"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": \"<integer>\",\n  \"bicicleta\": \"<integer>\",\n  \"numero\": \"<integer>\",\n  \"localizacao\": \"<string>\",\n  \"anoDeFabricacao\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"status\": \"<string>\"\n}"
+										},
+										{
+											"name": "Não encontrado",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"bicicleta\": \"<integer>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/tranca/:idTranca/destrancar",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"tranca",
+														":idTranca",
+														"destrancar"
+													],
+													"variable": [
+														{
+															"key": "idTranca"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+										},
+										{
+											"name": "Dados Inválidos",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"bicicleta\": \"<integer>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/tranca/:idTranca/destrancar",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"tranca",
+														":idTranca",
+														"destrancar"
+													],
+													"variable": [
+														{
+															"key": "idTranca"
+														}
+													]
+												}
+											},
+											"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+											"code": 422,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "status",
+							"item": [
+								{
+									"name": "{acao}",
+									"item": [
+										{
+											"name": "Alterar status da tranca",
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/tranca/:idTranca/status/:acao",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"tranca",
+														":idTranca",
+														"status",
+														":acao"
+													],
+													"variable": [
+														{
+															"key": "idTranca",
+															"value": "<integer>",
+															"description": "(Required) "
+														},
+														{
+															"key": "acao",
+															"value": "<string>",
+															"description": "(Required) "
+														}
+													]
+												}
+											},
+											"response": [
+												{
+													"name": "Ação bem sucedida",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/tranca/:idTranca/status/:acao",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"tranca",
+																":idTranca",
+																"status",
+																":acao"
+															],
+															"variable": [
+																{
+																	"key": "idTranca"
+																},
+																{
+																	"key": "acao"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"id\": \"<integer>\",\n  \"bicicleta\": \"<integer>\",\n  \"numero\": \"<integer>\",\n  \"localizacao\": \"<string>\",\n  \"anoDeFabricacao\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"status\": \"<string>\"\n}"
+												},
+												{
+													"name": "Não encontrado",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/tranca/:idTranca/status/:acao",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"tranca",
+																":idTranca",
+																"status",
+																":acao"
+															],
+															"variable": [
+																{
+																	"key": "idTranca"
+																},
+																{
+																	"key": "acao"
+																}
+															]
+														}
+													},
+													"status": "Not Found",
+													"code": 404,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+												},
+												{
+													"name": "Dados Inválidos",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/tranca/:idTranca/status/:acao",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"tranca",
+																":idTranca",
+																"status",
+																":acao"
+															],
+															"variable": [
+																{
+																	"key": "idTranca"
+																},
+																{
+																	"key": "acao"
+																}
+															]
+														}
+													},
+													"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+													"code": 422,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Obter tranca",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/tranca/:idTranca",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"tranca",
+										":idTranca"
+									],
+									"variable": [
+										{
+											"key": "idTranca",
+											"value": "<integer>",
+											"description": "(Required) UUID ou número da tranca"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Tranca encontrada",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/tranca/:idTranca",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												":idTranca"
+											],
+											"variable": [
+												{
+													"key": "idTranca"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": \"<integer>\",\n  \"bicicleta\": \"<integer>\",\n  \"numero\": \"<integer>\",\n  \"localizacao\": \"<string>\",\n  \"anoDeFabricacao\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"status\": \"<string>\"\n}"
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/tranca/:idTranca",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												":idTranca"
+											],
+											"variable": [
+												{
+													"key": "idTranca"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Editar tranca",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"numero\": \"<integer>\",\n  \"localizacao\": \"<string>\",\n  \"anoDeFabricacao\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"status\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/tranca/:idTranca",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"tranca",
+										":idTranca"
+									],
+									"variable": [
+										{
+											"key": "idTranca",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Dados cadastrados",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"numero\": \"<integer>\",\n  \"localizacao\": \"<string>\",\n  \"anoDeFabricacao\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"status\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/tranca/:idTranca",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												":idTranca"
+											],
+											"variable": [
+												{
+													"key": "idTranca"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": \"<integer>\",\n  \"bicicleta\": \"<integer>\",\n  \"numero\": \"<integer>\",\n  \"localizacao\": \"<string>\",\n  \"anoDeFabricacao\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"status\": \"<string>\"\n}"
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"numero\": \"<integer>\",\n  \"localizacao\": \"<string>\",\n  \"anoDeFabricacao\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"status\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/tranca/:idTranca",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												":idTranca"
+											],
+											"variable": [
+												{
+													"key": "idTranca"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								},
+								{
+									"name": "Dados Inválidos",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"numero\": \"<integer>\",\n  \"localizacao\": \"<string>\",\n  \"anoDeFabricacao\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"status\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/tranca/:idTranca",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												":idTranca"
+											],
+											"variable": [
+												{
+													"key": "idTranca"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						},
+						{
+							"name": "Remover tranca",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/tranca/:idTranca",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"tranca",
+										":idTranca"
+									],
+									"variable": [
+										{
+											"key": "idTranca",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Tranca removida",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/tranca/:idTranca",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												":idTranca"
+											],
+											"variable": [
+												{
+													"key": "idTranca"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/tranca/:idTranca",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												":idTranca"
+											],
+											"variable": [
+												{
+													"key": "idTranca"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								},
+								{
+									"name": "Dados Inválidos",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/tranca/:idTranca",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"tranca",
+												":idTranca"
+											],
+											"variable": [
+												{
+													"key": "idTranca"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "recupera trancas cadastradas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/tranca",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tranca"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/tranca",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"tranca"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": \"<integer>\",\n    \"bicicleta\": \"<integer>\",\n    \"numero\": \"<integer>\",\n    \"localizacao\": \"<string>\",\n    \"anoDeFabricacao\": \"<string>\",\n    \"modelo\": \"<string>\",\n    \"status\": \"<string>\"\n  },\n  {\n    \"id\": \"<integer>\",\n    \"bicicleta\": \"<integer>\",\n    \"numero\": \"<integer>\",\n    \"localizacao\": \"<string>\",\n    \"anoDeFabricacao\": \"<string>\",\n    \"modelo\": \"<string>\",\n    \"status\": \"<string>\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Cadastrar tranca",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"numero\": \"<integer>\",\n  \"localizacao\": \"<string>\",\n  \"anoDeFabricacao\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"status\": \"<string>\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tranca",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tranca"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Dados cadastrados",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"numero\": \"<integer>\",\n  \"localizacao\": \"<string>\",\n  \"anoDeFabricacao\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"status\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/tranca",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"tranca"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"<integer>\",\n  \"bicicleta\": \"<integer>\",\n  \"numero\": \"<integer>\",\n  \"localizacao\": \"<string>\",\n  \"anoDeFabricacao\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"status\": \"<string>\"\n}"
+						},
+						{
+							"name": "Dados Inválidos",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"numero\": \"<integer>\",\n  \"localizacao\": \"<string>\",\n  \"anoDeFabricacao\": \"<string>\",\n  \"modelo\": \"<string>\",\n  \"status\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/tranca",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"tranca"
+									]
+								}
+							},
+							"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "enviarEmail",
+			"item": [
+				{
+					"name": "Notificar via email",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"<string>\",\n  \"mensagem\": \"<string>\",\n  \"assunto\": \"<string>\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/enviarEmail",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"enviarEmail"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Externo solicitada",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"<string>\",\n  \"mensagem\": \"<string>\",\n  \"assunto\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/enviarEmail",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"enviarEmail"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"<integer>\",\n  \"email\": \"<string>\",\n  \"assunto\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+						},
+						{
+							"name": "E-mail não existe",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"<string>\",\n  \"mensagem\": \"<string>\",\n  \"assunto\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/enviarEmail",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"enviarEmail"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+						},
+						{
+							"name": "E-mail com formato inválido",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"<string>\",\n  \"mensagem\": \"<string>\",\n  \"assunto\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/enviarEmail",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"enviarEmail"
+									]
+								}
+							},
+							"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "cobranca",
+			"item": [
+				{
+					"name": "{idCobranca}",
+					"item": [
+						{
+							"name": "Obter cobrança",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/cobranca/:idCobranca",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cobranca",
+										":idCobranca"
+									],
+									"variable": [
+										{
+											"key": "idCobranca",
+											"value": "<integer>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Cobrança",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/cobranca/:idCobranca",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"cobranca",
+												":idCobranca"
+											],
+											"variable": [
+												{
+													"key": "idCobranca"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": \"<integer>\",\n  \"status\": \"<string>\",\n  \"horaSolicitacao\": \"<dateTime>\",\n  \"horaFinalizacao\": \"<dateTime>\",\n  \"valor\": \"<number>\",\n  \"ciclista\": \"<integer>\"\n}"
+								},
+								{
+									"name": "Não encontrado",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/cobranca/:idCobranca",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"cobranca",
+												":idCobranca"
+											],
+											"variable": [
+												{
+													"key": "idCobranca"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"codigo\": \"<string>\",\n  \"mensagem\": \"<string>\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Realizar cobrança",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ciclista\": \"<integer>\",\n  \"valor\": \"<number>\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cobranca",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cobranca"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Cobrança solicitada",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"ciclista\": \"<integer>\",\n  \"valor\": \"<number>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/cobranca",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cobranca"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"<integer>\",\n  \"status\": \"<string>\",\n  \"horaSolicitacao\": \"<dateTime>\",\n  \"horaFinalizacao\": \"<dateTime>\",\n  \"valor\": \"<number>\",\n  \"ciclista\": \"<integer>\"\n}"
+						},
+						{
+							"name": "Dados Inválidos",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"ciclista\": \"<integer>\",\n  \"valor\": \"<number>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/cobranca",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cobranca"
+									]
+								}
+							},
+							"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "processaCobrancasEmFila",
+			"item": [
+				{
+					"name": "Processa todas as cobranças atrasadas colocadas em fila previamente.",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/processaCobrancasEmFila",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"processaCobrancasEmFila"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Processamento concluído com sucesso",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/processaCobrancasEmFila",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"processaCobrancasEmFila"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": \"<integer>\",\n    \"status\": \"<string>\",\n    \"horaSolicitacao\": \"<dateTime>\",\n    \"horaFinalizacao\": \"<dateTime>\",\n    \"valor\": \"<number>\",\n    \"ciclista\": \"<integer>\"\n  },\n  {\n    \"id\": \"<integer>\",\n    \"status\": \"<string>\",\n    \"horaSolicitacao\": \"<dateTime>\",\n    \"horaFinalizacao\": \"<dateTime>\",\n    \"valor\": \"<number>\",\n    \"ciclista\": \"<integer>\"\n  }\n]"
+						},
+						{
+							"name": "Dados Inválidos",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/processaCobrancasEmFila",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"processaCobrancasEmFila"
+									]
+								}
+							},
+							"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "filaCobranca",
+			"item": [
+				{
+					"name": "Inclui cobrança na fila de cobrança. Cobranças na fila serão cobradas de tempos em tempos.",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ciclista\": \"<integer>\",\n  \"valor\": \"<number>\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/filaCobranca",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"filaCobranca"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Cobrança Incluida",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"ciclista\": \"<integer>\",\n  \"valor\": \"<number>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/filaCobranca",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"filaCobranca"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"<integer>\",\n  \"status\": \"<string>\",\n  \"horaSolicitacao\": \"<dateTime>\",\n  \"horaFinalizacao\": \"<dateTime>\",\n  \"valor\": \"<number>\",\n  \"ciclista\": \"<integer>\"\n}"
+						},
+						{
+							"name": "Dados Inválidos",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"ciclista\": \"<integer>\",\n  \"valor\": \"<number>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/filaCobranca",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"filaCobranca"
+									]
+								}
+							},
+							"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "aluguel",
+			"item": [
+				{
+					"name": "Realizar aluguel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ciclista\": \"<integer>\",\n  \"trancaInicio\": \"<integer>\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/aluguel",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"aluguel"
+							]
+						},
+						"description": "Realiza uma cobrança de um valor fixo e em caso de aprovada a mesma libera a tranca com a bicicleta escolhida pelo ciclista. A mesma também notifica o ciclista da retirada da bicicleta."
+					},
+					"response": [
+						{
+							"name": "Aluguel realizado",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"ciclista\": \"<integer>\",\n  \"trancaInicio\": \"<integer>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/aluguel",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"aluguel"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"bicicleta\": \"<integer>\",\n  \"horaInicio\": \"<dateTime>\",\n  \"trancaFim\": \"<integer>\",\n  \"horaFim\": \"<dateTime>\",\n  \"cobranca\": \"<integer>\",\n  \"ciclista\": \"<integer>\",\n  \"trancaInicio\": \"<integer>\"\n}"
+						},
+						{
+							"name": "Dados Inválidos",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"ciclista\": \"<integer>\",\n  \"trancaInicio\": \"<integer>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/aluguel",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"aluguel"
+									]
+								}
+							},
+							"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "devolucao",
+			"item": [
+				{
+					"name": "Realizar devolução, sendo invocado de maneira automática pelo hardware do totem ao encostar a bicicleta na tranca.",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idTranca\": \"<integer>\",\n  \"idBicicleta\": \"<integer>\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/devolucao",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"devolucao"
+							]
+						},
+						"description": "Ao se devolver a bicicleta deve-se alterar o estado da tranca, e calcular possíveis custos adicionais a ser pago pelo ciclista e recorre a fila de cobrança para realiza-lo, notificando o ciclista da devolução e da taxa extra paga."
+					},
+					"response": [
+						{
+							"name": "Devolucao realizado",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"idTranca\": \"<integer>\",\n  \"idBicicleta\": \"<integer>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/devolucao",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"devolucao"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"bicicleta\": \"<integer>\",\n  \"horaInicio\": \"<dateTime>\",\n  \"trancaFim\": \"<integer>\",\n  \"horaFim\": \"<dateTime>\",\n  \"cobranca\": \"<integer>\",\n  \"ciclista\": \"<integer>\"\n}"
+						},
+						{
+							"name": "Dados Inválidos",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"idTranca\": \"<integer>\",\n  \"idBicicleta\": \"<integer>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/devolucao",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"devolucao"
+									]
+								}
+							},
+							"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "validaCartaoDeCredito",
+			"item": [
+				{
+					"name": "Valida um cartão de crédito",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cvv\": \"981\",\n  \"nomeTitular\": \"<string>\",\n  \"numero\": \"4221396\",\n  \"validade\": \"<date>\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/validaCartaoDeCredito",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"validaCartaoDeCredito"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Dados atualizados",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"cvv\": \"981\",\n  \"nomeTitular\": \"<string>\",\n  \"numero\": \"4221396\",\n  \"validade\": \"<date>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/validaCartaoDeCredito",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"validaCartaoDeCredito"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Dados Inválidos",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"cvv\": \"981\",\n  \"nomeTitular\": \"<string>\",\n  \"numero\": \"4221396\",\n  \"validade\": \"<date>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/validaCartaoDeCredito",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"validaCartaoDeCredito"
+									]
+								}
+							},
+							"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  },\n  {\n    \"codigo\": \"<string>\",\n    \"mensagem\": \"<string>\"\n  }\n]"
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://virtserver.swaggerhub.com/BOBESPONJAHOKAGE_1/PM-MONITORIA/1"
+		}
+	]
+}

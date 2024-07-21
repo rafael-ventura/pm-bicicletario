@@ -12,10 +12,8 @@ import java.util.List;
 public interface TrancaMapper {
 
     Tranca toEntity(NovaTrancaDTO dto);
-    TrancaDTO toDto(Tranca tranca);
     IntegrarBicicletaNaRedeDTO toDtoIntegrarBicicleta(Tranca tranca);
     RetirarBicicletaDaRedeDTO toDtoRetirarBicicleta(Tranca tranca);
-
-    List<TrancaDTO> toDtoList(List<Tranca> trancas);
+    List<Tranca> toDtoList(List<Tranca> trancas);
 }
 

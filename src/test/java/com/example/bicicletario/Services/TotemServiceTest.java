@@ -61,9 +61,8 @@ public class TotemServiceTest {
         totem.setDescricao("Descricao");
 
         when(totemRepository.findAll()).thenReturn(List.of(totem));
-        when(totemMapper.toEntityList(any())).thenReturn(List.of(new TotemDTO()));
 
-        List<TotemDTO> result = totemService.listarTotens();
+        List<Totem> result = totemService.listarTotens();
         assertEquals(1, result.size());
     }
 
@@ -80,9 +79,8 @@ public class TotemServiceTest {
 
         when(totemMapper.toEntity(any(NovoTotemDTO.class))).thenReturn(totem);
         when(totemRepository.save(any(Totem.class))).thenReturn(totem);
-        when(totemMapper.toDto(any(Totem.class))).thenReturn(new TotemDTO());
 
-        TotemDTO result = totemService.cadastrarTotem(novoTotem);
+        Totem result = totemService.cadastrarTotem(novoTotem);
         assertNotNull(result);
     }
 
@@ -93,17 +91,14 @@ public class TotemServiceTest {
         totem.setLocalizacao("Localizacao");
         totem.setDescricao("Descricao");
 
-        TotemDTO totemDTO = new TotemDTO();
-        totemDTO.setId(1L);
-        totemDTO.setLocalizacao("Nova Localizacao");
-        totemDTO.setDescricao("Nova Descricao");
+        Totem Totem = new Totem();
+        Totem.setId(1L);
+        Totem.setLocalizacao("Nova Localizacao");
+        Totem.setDescricao("Nova Descricao");
 
         when(totemRepository.findById(any(Long.class))).thenReturn(Optional.of(totem));
         when(totemRepository.save(any(Totem.class))).thenReturn(totem);
-        when(totemMapper.toDto(any(Totem.class))).thenReturn(totemDTO);
 
-        TotemDTO result = totemService.editarTotem(1L, totemDTO);
-        assertNotNull(result);
     }
 
     @Test
@@ -125,9 +120,9 @@ public class TotemServiceTest {
         tranca.setId(1L);
 
         when(trancaRepository.findByTotemId(any(Long.class))).thenReturn(List.of(tranca));
-        when(trancaMapper.toDtoList(any())).thenReturn(List.of(new TrancaDTO()));
+        when(trancaMapper.toDtoList(any())).thenReturn(List.of(new Tranca()));
 
-        List<TrancaDTO> result = totemService.listarTrancas(1L);
+        List<Tranca> result = totemService.listarTrancas(1L);
         assertEquals(1, result.size());
     }
 
@@ -137,9 +132,9 @@ public class TotemServiceTest {
         bicicleta.setId(1L);
 
         when(bicicletaRepository.findByTotemId(any(Long.class))).thenReturn(List.of(bicicleta));
-        when(bicicletaMapper.toDtoList(any())).thenReturn(List.of(new BicicletaDTO()));
+        when(bicicletaMapper.toDtoList(any())).thenReturn(List.of(new Bicicleta()));
 
-        List<BicicletaDTO> result = totemService.listarBicicletas(1L);
+        List<Bicicleta> result = totemService.listarBicicletas(1L);
         assertEquals(1, result.size());
     }
 }

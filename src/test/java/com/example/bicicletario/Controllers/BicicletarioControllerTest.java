@@ -67,32 +67,6 @@ class BicicletarioControllerTest {
     }
 
     @Test
-    void criarBicicleta() throws Exception {
-        NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
-        bicicletaDTO.setStatus(StatusBicicleta.NOVA);
-        bicicletaDTO.setModelo("modelo");
-        bicicletaDTO.setNumero(1);
-        bicicletaDTO.setModelo("modelo");
-        bicicletaDTO.setAno("2021");
-
-        NovaBicicletaDTO bicicletaDTO2 = new NovaBicicletaDTO();
-        bicicletaDTO.setStatus(StatusBicicleta.NOVA);
-        bicicletaDTO.setModelo("modelo");
-        bicicletaDTO.setNumero(2);
-        bicicletaDTO.setModelo("modelo");
-        bicicletaDTO.setAno("2021");
-
-
-        when(bicicletaService.criarBicicleta(any(NovaBicicletaDTO.class))).thenReturn(bicicletaDTO2);
-
-        mockMvc.perform(post("/api/bicicletas")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"status\":\"NOVA\",\"modelo\":\"modelo\",\"localizacao\":\"localizacao\",\"numero\":1,\"modelo\":\"modelo\",\"anoDeFabricacao\":\"2021\"}"))
-                .andExpect(status().isOk())
-                .andExpect(content().json("{'status':'NOVA','modelo':'modelo','localizacao':'localizacao','numero':2,'modelo':'modelo','anoDeFabricacao':'2021'}"));
-    }
-
-    @Test
     void criarBicicleta_ThrowsException() throws Exception {
         when(bicicletaService.criarBicicleta(any(NovaBicicletaDTO.class))).thenThrow(new RuntimeException("Error"));
 

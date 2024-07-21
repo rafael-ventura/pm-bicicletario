@@ -4,6 +4,7 @@ import com.example.bicicletario.bicicletario.application.BicicletaService;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
@@ -68,14 +69,14 @@ class BicicletaServiceTest {
     @Test
     public void criarBicicleta() {
         Bicicleta bicicleta = new Bicicleta();
-        BicicletaDTO bicicletaDTO = new BicicletaDTO();
+        NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
 
         when(bicicletaMapper.toEntity(any())).thenReturn(bicicleta);
         when(bicicletaRepository.save(any())).thenReturn(bicicleta);
         when(bicicletaMapper.toDto(any())).thenReturn(bicicletaDTO);
 
-        BicicletaDTO bicicletaCriada = bicicletaService.criarBicicleta(bicicletaDTO);
-        assertEquals(bicicletaDTO, bicicletaCriada);
+        Bicicleta bicicletaCriada = bicicletaService.criarBicicleta(bicicletaDTO);
+        assertEquals(bicicletaDTO, bicicletaMapper.toDto(bicicletaCriada));
     }
 
     @Test
