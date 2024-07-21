@@ -1,6 +1,6 @@
 package com.example.bicicletario.bicicletario.mapper;
 
-import com.example.bicicletario.bicicletario.domain.Totem;
+import com.example.bicicletario.bicicletario.domain.models.Totem;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
 import org.mapstruct.Mapper;
 

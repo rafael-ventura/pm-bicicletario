@@ -1,13 +1,13 @@
 package com.example.bicicletario.bicicletario.application;
 
-import com.example.bicicletario.bicicletario.domain.Bicicleta;
-import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.constants.Constantes;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
+import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
 import com.example.bicicletario.bicicletario.mapper.BicicletaMapper;
@@ -96,6 +96,47 @@ public class BicicletaService {
     public boolean isFuncionarioValido(Long idFuncionario, Long idFuncionarioReparador) {
         // Chamar endpoint de validação de funcionário
         return true; // Substituir com a validação real
+    }
+
+    public Bicicleta obterBicicleta(Long idBicicleta) {
+        return bicicletaRepository.findById(idBicicleta
+        ).orElseThrow(() -> new IllegalArgumentException(Constantes.BICICLETA_NAO_ENCONTRADA));
+    }
+
+    public void removerBicicleta(Long idBicicleta) {
+        bicicletaRepository.deleteById(idBicicleta);
+    }
+
+    public Bicicleta editarBicicleta(Long idBicicleta, NovaBicicletaDTO bicicletaDTO) {
+        Bicicleta bicicleta = bicicletaRepository.findById(idBicicleta)
+                .orElseThrow(() -> new IllegalArgumentException(Constantes.BICICLETA_NAO_ENCONTRADA));
+
+        bicicleta.setMarca(bicicletaDTO.getMarca());
+        bicicleta.setModelo(bicicletaDTO.getModelo());
+        bicicleta.setAno(bicicletaDTO.getAno());
+        bicicleta.setNumero(bicicletaDTO.getNumero());
+        bicicleta.setStatus(bicicletaDTO.getStatus());
+
+        bicicletaRepository.save(bicicleta);
+
+        return bicicleta;
+    }
+
+    public Bicicleta alterarStatusBicicleta(Long idBicicleta, String acao) {
+        Bicicleta bicicleta = bicicletaRepository.findById(idBicicleta)
+                .orElseThrow(() -> new IllegalArgumentException(Constantes.BICICLETA_NAO_ENCONTRADA));
+
+        if (acao.equals("disponibilizar")) {
+            bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+        } else if (acao.equals("reparar")) {
+            bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
+        } else {
+            throw new IllegalArgumentException(Constantes.DADOS_INVALIDOS);
+        }
+
+        bicicletaRepository.save(bicicleta);
+
+        return bicicleta;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.bicicletario.bicicletario.domain;
+package com.example.bicicletario.bicicletario.domain.models;
 
 import jakarta.persistence.*;
 

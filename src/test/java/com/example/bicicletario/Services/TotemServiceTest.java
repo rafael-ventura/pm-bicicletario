@@ -1,9 +1,9 @@
 package com.example.bicicletario.Services;
 
 import com.example.bicicletario.bicicletario.application.TotemService;
-import com.example.bicicletario.bicicletario.domain.Bicicleta;
-import com.example.bicicletario.bicicletario.domain.Totem;
-import com.example.bicicletario.bicicletario.domain.Tranca;
+import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.models.Totem;
+import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TotemRepository;

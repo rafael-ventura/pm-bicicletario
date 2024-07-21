@@ -1,6 +1,6 @@
 package com.example.bicicletario.bicicletario.mapper;
 
-import com.example.bicicletario.bicicletario.domain.Tranca;
+import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;

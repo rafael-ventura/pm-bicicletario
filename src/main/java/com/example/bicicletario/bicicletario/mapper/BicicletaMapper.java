@@ -1,6 +1,6 @@
 package com.example.bicicletario.bicicletario.mapper;
 
-import com.example.bicicletario.bicicletario.domain.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
 import org.mapstruct.Mapper;
 

@@ -1,6 +1,6 @@
 package com.example.bicicletario.bicicletario.infraestructure;
 
-import com.example.bicicletario.bicicletario.domain.Tranca;
+import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

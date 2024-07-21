@@ -1,6 +1,6 @@
 package com.example.bicicletario.bicicletario.infraestructure;
 
-import com.example.bicicletario.bicicletario.domain.Totem;
+import com.example.bicicletario.bicicletario.domain.models.Totem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
