@@ -85,7 +85,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void editarTotem() {
+    void editarTotem() {
         Totem totem = new Totem();
         totem.setId(1L);
         totem.setLocalizacao("Localizacao");
@@ -102,7 +102,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void removerTotem() {
+    void removerTotem() {
         Totem totem = new Totem();
         totem.setId(1L);
 
@@ -115,7 +115,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void listarTrancas() {
+    void listarTrancas() {
         Tranca tranca = new Tranca();
         tranca.setId(1L);
 
@@ -127,7 +127,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void listarBicicletas() {
+    void listarBicicletas() {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1L);
 

@@ -57,7 +57,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void listarBicicletas() {
+    void listarBicicletas() {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setMarca("marca");
         bicicleta.setModelo("modelo");
@@ -73,7 +73,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void criarBicicleta() {
+    void criarBicicleta() {
         Bicicleta bicicleta = new Bicicleta();
         NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
 
@@ -85,7 +85,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void integrarNaRede() {
+    void integrarNaRede() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdBicicleta(1L);
         dto.setIdTranca(1L);
@@ -106,7 +106,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void integrarNaRedeBicicletaInvalida() {
+    void integrarNaRedeBicicletaInvalida() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdBicicleta(1L);
         dto.setIdTranca(1L);
@@ -122,7 +122,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void integrarNaRedeTrancaOcupada() {
+    void integrarNaRedeTrancaOcupada() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdBicicleta(1L);
         dto.setIdTranca(1L);
@@ -144,7 +144,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void integrarNaRedeTrancaNaoEncontrada() {
+    void integrarNaRedeTrancaNaoEncontrada() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdBicicleta(1L);
         dto.setIdTranca(1L);
@@ -164,7 +164,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void integrarNaRedeFuncionarioInvalido() {
+    void integrarNaRedeFuncionarioInvalido() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdBicicleta(1L);
         dto.setIdTranca(1L);
@@ -195,7 +195,7 @@ class BicicletaServiceTest {
     // Novos testes para retirarDaRede
 
     @Test
-    public void retirarDaRede() {
+    void retirarDaRede() {
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
         dto.setIdBicicleta(1L);
         dto.setIdTranca(1L);
@@ -216,7 +216,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void retirarDaRedeBicicletaInvalida() {
+    void retirarDaRedeBicicletaInvalida() {
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
         dto.setIdBicicleta(1L);
         dto.setIdTranca(1L);
@@ -232,7 +232,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void retirarDaRedeTrancaNaoOcupada() {
+    void retirarDaRedeTrancaNaoOcupada() {
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
         dto.setIdBicicleta(1L);
         dto.setIdTranca(1L);
@@ -255,7 +255,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void retirarDaRedeTrancaNaoEncontrada() {
+    void retirarDaRedeTrancaNaoEncontrada() {
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
         dto.setIdBicicleta(1L);
         dto.setIdTranca(1L);
@@ -277,7 +277,7 @@ class BicicletaServiceTest {
     // Testes adicionais para obter, editar, remover e alterar status da bicicleta
 
     @Test
-    public void obterBicicleta() {
+    void obterBicicleta() {
         Bicicleta bicicleta = new Bicicleta();
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
@@ -286,7 +286,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void obterBicicletaInvalida() {
+    void obterBicicletaInvalida() {
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -297,13 +297,13 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void removerBicicleta() {
+    void removerBicicleta() {
         bicicletaService.removerBicicleta(1L);
         verify(bicicletaRepository, times(1)).deleteById(1L);
     }
 
     @Test
-    public void editarBicicleta() {
+    void editarBicicleta() {
         Bicicleta bicicleta = new Bicicleta();
         NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
         bicicletaDTO.setMarca("nova marca");
@@ -324,7 +324,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void editarBicicletaInvalida() {
+    void editarBicicletaInvalida() {
         NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -336,7 +336,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void alterarStatusBicicletaDisponibilizar() {
+    void alterarStatusBicicletaDisponibilizar() {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
 
@@ -348,7 +348,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void alterarStatusBicicletaReparar() {
+    void alterarStatusBicicletaReparar() {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
 
@@ -360,7 +360,7 @@ class BicicletaServiceTest {
     }
 
     @Test
-    public void alterarStatusBicicletaInvalido() {
+    void alterarStatusBicicletaInvalido() {
         Bicicleta bicicleta = new Bicicleta();
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
