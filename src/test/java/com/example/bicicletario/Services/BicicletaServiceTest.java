@@ -63,7 +63,7 @@ class BicicletaServiceTest {
         bicicleta.setModelo("modelo");
         bicicleta.setAno("2021");
         bicicleta.setNumero(1);
-        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
 
         when(bicicletaRepository.findAll()).thenReturn(List.of(bicicleta));
 
@@ -92,7 +92,7 @@ class BicicletaServiceTest {
         dto.setIdFuncionario(1L);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.NOVA);
+        bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
 
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
@@ -129,7 +129,7 @@ class BicicletaServiceTest {
         dto.setIdFuncionario(1L);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.NOVA);
+        bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
         Tranca tranca = new Tranca();
@@ -151,7 +151,7 @@ class BicicletaServiceTest {
         dto.setIdFuncionario(1L);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.NOVA);
+        bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
         when(trancaRepository.findById(1L)).thenReturn(Optional.empty());
@@ -171,14 +171,14 @@ class BicicletaServiceTest {
         dto.setIdFuncionario(2L);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.EM_REPARO);
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
 
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.LIVRE);
         when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
 
-        bicicletaService = spy(new BicicletaService(bicicletaRepository, trancaRepository, bicicletaMapper) {
+        bicicletaService = spy(new BicicletaService(bicicletaMapper, bicicletaRepository, trancaRepository) {
             @Override
             public boolean isFuncionarioValido(Long idFuncionario, Long idFuncionarioReparador) {
                 return false;
@@ -202,7 +202,7 @@ class BicicletaServiceTest {
         dto.setIdFuncionario(1L);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
+        bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
 
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
@@ -239,7 +239,7 @@ class BicicletaServiceTest {
         dto.setIdFuncionario(1L);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
+        bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
 
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
@@ -262,7 +262,7 @@ class BicicletaServiceTest {
         dto.setIdFuncionario(1L);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
+        bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
         when(trancaRepository.findById(1L)).thenReturn(Optional.empty());
@@ -320,7 +320,7 @@ class BicicletaServiceTest {
         assertEquals("novo modelo", result.getModelo());
         assertEquals("2022", result.getAno());
         assertEquals(2, result.getNumero());
-        assertEquals(StatusBicicleta.DISPONIVEL, result.getStatus());
+        assertEquals(StatusBicicleta.DISPONIVEL, result.getStatusBicicleta());
     }
 
     @Test
@@ -338,25 +338,25 @@ class BicicletaServiceTest {
     @Test
     void alterarStatusBicicletaDisponibilizar() {
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
+        bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
 
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
         Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "disponibilizar");
         verify(bicicletaRepository, times(1)).save(bicicleta);
-        assertEquals(StatusBicicleta.DISPONIVEL, result.getStatus());
+        assertEquals(StatusBicicleta.DISPONIVEL, result.getStatusBicicleta());
     }
 
     @Test
     void alterarStatusBicicletaReparar() {
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
 
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
         Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "reparar");
         verify(bicicletaRepository, times(1)).save(bicicleta);
-        assertEquals(StatusBicicleta.REPARO_SOLICITADO, result.getStatus());
+        assertEquals(StatusBicicleta.REPARO_SOLICITADO, result.getStatusBicicleta());
     }
 
     @Test

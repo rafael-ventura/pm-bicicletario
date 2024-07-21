@@ -1,29 +1,25 @@
 package com.example.bicicletario.bicicletario.domain.models;
 
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
-import jakarta.persistence.*;
 
-@Entity
-@Table
+
 public class Tranca {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
-    @Column(name = "status")
-    private StatusTranca status;
+    private Bicicleta bicicleta;
 
-    @Column(nullable = false, unique = true)
     private int numero;
 
-    @Column(nullable = false)
     private String localizacao;
 
-    @Column(nullable = false)
     private String anoDeFabricacao;
 
-    @Column(nullable = false)
     private String modelo;
+
+    private StatusTranca status;
+
+    private Totem totem;
 
     public Long getId() {
         return id;
@@ -72,4 +68,21 @@ public class Tranca {
     public void setModelo(String modelo) {
         this.modelo = modelo;
     }
+
+    public Totem getTotem() {
+        return totem;
+    }
+
+    public void setTotem(Totem totemId) {
+        this.totem = totemId;
+    }
+
+    public Bicicleta getBicicleta() {
+        return bicicleta;
+    }
+
+    public void setBicicleta(Bicicleta bicicleta) {
+        this.bicicleta = bicicleta;
+    }
+
 }

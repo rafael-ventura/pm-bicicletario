@@ -23,10 +23,10 @@ public class BicicletaService {
     private final TrancaRepository trancaRepository;
     private final BicicletaMapper bicicletaMapper;
 
-    public BicicletaService(BicicletaRepository bicicletaRepository, TrancaRepository trancaRepository, BicicletaMapper bicicletaMapper) {
+    public BicicletaService(BicicletaMapper bicicletaMapper, BicicletaRepository bicicletaRepository, TrancaRepository trancaRepository) {
+        this.bicicletaMapper = bicicletaMapper;
         this.bicicletaRepository = bicicletaRepository;
         this.trancaRepository = trancaRepository;
-        this.bicicletaMapper = bicicletaMapper;
     }
 
     public List<Bicicleta> listarBicicletas() {
@@ -43,7 +43,7 @@ public class BicicletaService {
         Bicicleta bicicleta = bicicletaRepository.findById(dto.getIdBicicleta())
                 .orElseThrow(() -> new IllegalArgumentException(Constantes.BICICLETA_NAO_ENCONTRADA));
 
-        if (bicicleta.getStatus() != StatusBicicleta.NOVA && bicicleta.getStatus() != StatusBicicleta.EM_REPARO) {
+        if (bicicleta.getStatusBicicleta() != StatusBicicleta.NOVA && bicicleta.getStatusBicicleta() != StatusBicicleta.EM_REPARO) {
             throw new IllegalArgumentException(Constantes.STATUS_DA_BICICLETA_INVALIDO);
         }
 
@@ -54,11 +54,11 @@ public class BicicletaService {
             throw new IllegalArgumentException(Constantes.TRANCA_NAO_ENCONTRADA);
         }
 
-        if (bicicleta.getStatus() == StatusBicicleta.EM_REPARO && !isFuncionarioValido(dto.getIdFuncionario(), bicicleta.getId())) {
+        if (bicicleta.getStatusBicicleta() == StatusBicicleta.EM_REPARO && !isFuncionarioValido(dto.getIdFuncionario(), bicicleta.getId())) {
             throw new IllegalArgumentException(Constantes.FUNCIONARIO_INVALIDO);
         }
 
-        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
         bicicleta.setDataInsercaoTranca(LocalDateTime.now().toString());
         bicicletaRepository.save(bicicleta);
 
@@ -72,7 +72,7 @@ public class BicicletaService {
         Bicicleta bicicleta = bicicletaRepository.findById(dto.getIdBicicleta())
                 .orElseThrow(() -> new IllegalArgumentException(Constantes.BICICLETA_NAO_ENCONTRADA));
 
-        if (bicicleta.getStatus() != StatusBicicleta.REPARO_SOLICITADO) {
+        if (bicicleta.getStatusBicicleta() != StatusBicicleta.REPARO_SOLICITADO) {
             throw new IllegalArgumentException(Constantes.STATUS_DA_BICICLETA_INVALIDO);
         }
 
@@ -83,7 +83,7 @@ public class BicicletaService {
             throw new IllegalArgumentException(Constantes.TRANCA_NAO_ENCONTRADA);
         }
 
-        bicicleta.setStatus(StatusBicicleta.EM_REPARO);
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
         //bicicleta.setDataRetiradaTranca(LocalDateTime.now().toString());
         bicicletaRepository.save(bicicleta);
 
@@ -115,7 +115,7 @@ public class BicicletaService {
         bicicleta.setModelo(bicicletaDTO.getModelo());
         bicicleta.setAno(bicicletaDTO.getAno());
         bicicleta.setNumero(bicicletaDTO.getNumero());
-        bicicleta.setStatus(bicicletaDTO.getStatus());
+        bicicleta.setStatusBicicleta(bicicletaDTO.getStatus());
 
         bicicletaRepository.save(bicicleta);
 
@@ -127,9 +127,9 @@ public class BicicletaService {
                 .orElseThrow(() -> new IllegalArgumentException(Constantes.BICICLETA_NAO_ENCONTRADA));
 
         if (acao.equals("disponibilizar")) {
-            bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+            bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
         } else if (acao.equals("reparar")) {
-            bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
+            bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
         } else {
             throw new IllegalArgumentException(Constantes.DADOS_INVALIDOS);
         }

@@ -1,34 +1,28 @@
 package com.example.bicicletario.bicicletario.application;
 
-import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
-import com.example.bicicletario.bicicletario.domain.models.Tranca;
+import com.example.bicicletario.bicicletario.domain.constants.Constantes;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
+import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
 import com.example.bicicletario.bicicletario.mapper.TrancaMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.bicicletario.bicicletario.domain.constants.*;
 
 import java.util.List;
 
-
-
 @Service
 public class TrancaService {
-
-
 
     private final TrancaRepository trancaRepository;
     private final TrancaMapper trancaMapper;
     private final BicicletaRepository bicicletaRepository;
 
-    @Autowired
     public TrancaService(TrancaRepository trancaRepository, TrancaMapper trancaMapper, BicicletaRepository bicicletaRepository) {
         this.trancaRepository = trancaRepository;
         this.trancaMapper = trancaMapper;
@@ -118,7 +112,7 @@ public class TrancaService {
                 .orElseThrow(() -> new IllegalArgumentException("Bicicleta não encontrada"));
 
         tranca.setStatus(StatusTranca.OCUPADA);
-        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
         trancaRepository.save(tranca);
         bicicletaRepository.save(bicicleta);
     }
@@ -135,7 +129,7 @@ public class TrancaService {
                 .orElseThrow(() -> new IllegalArgumentException("Bicicleta não encontrada"));
 
         tranca.setStatus(StatusTranca.LIVRE);
-        bicicleta.setStatus(StatusBicicleta.EM_USO);
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
         trancaRepository.save(tranca);
         bicicletaRepository.save(bicicleta);
     }

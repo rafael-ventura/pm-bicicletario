@@ -1,9 +1,9 @@
 package com.example.bicicletario.bicicletario.application;
 
+import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Totem;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
-import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TotemRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
@@ -62,16 +62,17 @@ public class TotemService {
         if (trancaRepository.existsByTotemId(idTotem)) {
             throw new IllegalArgumentException("Totem possui trancas associadas e não pode ser removido");
         }
-        totemRepository.delete(totem);
+        totemRepository.deleteById(idTotem);
     }
+
 
     public List<Tranca> listarTrancas(Long idTotem) {
         List<Tranca> trancas = trancaRepository.findByTotemId(idTotem);
         return trancaMapper.toDtoList(trancas);
     }
 
-    public List<Bicicleta> listarBicicletas(Long idTotem) {
-        List<Bicicleta> bicicletas = bicicletaRepository.findByTotemId(idTotem);
+    public List<Bicicleta> listarBicicletas(Long idTranca) {
+        List<Bicicleta> bicicletas = bicicletaRepository.findByTrancaId(idTranca);
         return bicicletaMapper.toDtoList(bicicletas);
     }
 }

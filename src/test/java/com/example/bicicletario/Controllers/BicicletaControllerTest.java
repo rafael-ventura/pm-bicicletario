@@ -52,20 +52,20 @@ class BicicletaControllerTest {
         bicicleta.setModelo("modelo");
         bicicleta.setAno("2021");
         bicicleta.setNumero(1);
-        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
 
         when(bicicletaService.listarBicicletas()).thenReturn(List.of(bicicleta));
 
-        mockMvc.perform(get("/api/bicicletas"))
+        mockMvc.perform(get("/api/bicicleta"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[{'marca':'marca','modelo':'modelo','ano':'2021','numero':1,'status':'DISPONIVEL'}]"));
+                .andExpect(content().json("[{'marca':'marca','modelo':'modelo','ano':'2021','numero':1,'statusBicicleta':'DISPONIVEL'}]"));
     }
 
     @Test
     void listarBicicletas_ThrowsException() throws Exception {
         when(bicicletaService.listarBicicletas()).thenThrow(new RuntimeException("Error"));
 
-        mockMvc.perform(get("/api/bicicletas"))
+        mockMvc.perform(get("/api/bicicleta"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao listar bicicletas'}"));
     }
@@ -74,7 +74,7 @@ class BicicletaControllerTest {
     void criarBicicleta_ThrowsException() throws Exception {
         when(bicicletaService.criarBicicleta(any(NovaBicicletaDTO.class))).thenThrow(new RuntimeException("Error"));
 
-        mockMvc.perform(post("/api/bicicletas")
+        mockMvc.perform(post("/api/bicicleta")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"status\":\"NOVA\",\"modelo\":\"modelo\",\"localizacao\":\"localizacao\",\"numero\":1,\"modelo\":\"modelo\",\"anoDeFabricacao\":\"2021\"}"))
                 .andExpect(status().isInternalServerError())

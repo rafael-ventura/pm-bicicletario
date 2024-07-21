@@ -214,7 +214,7 @@ public class TotemControllerTest {
         bicicleta.setNumero(1);
         bicicleta.setModelo("Modelo");
         bicicleta.setAno("2021");
-        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
 
         when(totemService.listarBicicletas(any(Long.class))).thenReturn(List.of(bicicleta));
 

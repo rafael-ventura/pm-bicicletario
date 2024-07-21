@@ -1,19 +1,11 @@
 package com.example.bicicletario.bicicletario.domain.models;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table
 public class Totem {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "localizacao")
     private String localizacao;
 
-    @Column(name = "descricao")
     private String descricao;
 
     public Long getId() {

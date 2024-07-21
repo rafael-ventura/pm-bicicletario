@@ -13,7 +13,7 @@ import static com.example.bicicletario.bicicletario.application.utils.ErroUtil.*
 import static com.example.bicicletario.bicicletario.domain.constants.Constantes.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/bicicleta")
 public class BicicletaController {
 
     private final BicicletaService bicicletaService;
@@ -22,7 +22,7 @@ public class BicicletaController {
         this.bicicletaService = bicicletaService;
     }
 
-    @GetMapping("/bicicletas")
+    @GetMapping
     public ResponseEntity<?> listarBicicletas() {
         try {
             return ResponseEntity.ok(bicicletaService.listarBicicletas());
@@ -31,7 +31,7 @@ public class BicicletaController {
         }
     }
 
-    @PostMapping("/bicicletas")
+    @PostMapping
     public ResponseEntity<?> criarBicicleta(@RequestBody NovaBicicletaDTO bicicleta) {
         try {
             return ResponseEntity.ok(bicicletaService.criarBicicleta(bicicleta));
@@ -42,7 +42,7 @@ public class BicicletaController {
         }
     }
 
-    @PostMapping("/bicicleta/integrarNaRede")
+    @PostMapping("/integrarNaRede")
     public ResponseEntity<?> integrarNaRede(@RequestBody IntegrarBicicletaNaRedeDTO dto) {
         try {
             bicicletaService.integrarNaRede(dto);
@@ -54,7 +54,7 @@ public class BicicletaController {
         }
     }
 
-    @PostMapping("/bicicleta/retirarDaRede")
+    @PostMapping("/retirarDaRede")
     public ResponseEntity<?> retirarDaRede(@RequestBody RetirarBicicletaDaRedeDTO dto) {
         try {
             bicicletaService.retirarDaRede(dto);
@@ -66,7 +66,7 @@ public class BicicletaController {
         }
     }
 
-    @GetMapping("/bicicleta/{idBicicleta}")
+    @GetMapping("/{idBicicleta}")
     public ResponseEntity<?> obterBicicleta(@PathVariable Long idBicicleta) {
         try {
             return ResponseEntity.ok(bicicletaService.obterBicicleta(idBicicleta));
@@ -77,7 +77,7 @@ public class BicicletaController {
         }
     }
 
-    @PutMapping("/bicicleta/{idBicicleta}")
+    @PutMapping("/{idBicicleta}")
     public ResponseEntity<?> editarBicicleta(@PathVariable Long idBicicleta, @RequestBody NovaBicicletaDTO bicicletaDTO) {
         try {
             return ResponseEntity.ok(bicicletaService.editarBicicleta(idBicicleta, bicicletaDTO));
@@ -90,7 +90,7 @@ public class BicicletaController {
         }
     }
 
-    @DeleteMapping("/bicicleta/{idBicicleta}")
+    @DeleteMapping("/{idBicicleta}")
     public ResponseEntity<?> removerBicicleta(@PathVariable Long idBicicleta) {
         try {
             bicicletaService.removerBicicleta(idBicicleta);
@@ -102,7 +102,7 @@ public class BicicletaController {
         }
     }
 
-    @PostMapping("/bicicleta/{idBicicleta}/status/{acao}")
+    @PostMapping("/{idBicicleta}/status/{acao}")
     public ResponseEntity<?> alterarStatusBicicleta(@PathVariable Long idBicicleta, @PathVariable String acao) {
         try {
             return ResponseEntity.ok(bicicletaService.alterarStatusBicicleta(idBicicleta, acao));

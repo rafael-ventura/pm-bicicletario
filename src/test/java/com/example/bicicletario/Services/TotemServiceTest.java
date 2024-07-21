@@ -1,10 +1,10 @@
 package com.example.bicicletario.Services;
 
 import com.example.bicicletario.bicicletario.application.TotemService;
+import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Totem;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
-import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TotemRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
@@ -111,7 +111,7 @@ public class TotemServiceTest {
 
         totemService.removerTotem(1L);
 
-        verify(totemRepository, times(1)).delete(totem);
+        verify(totemRepository, times(1)).deleteById(any(Long.class));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class TotemServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1L);
 
-        when(bicicletaRepository.findByTotemId(any(Long.class))).thenReturn(List.of(bicicleta));
+        when(bicicletaRepository.findByTrancaId(any(Long.class))).thenReturn(List.of(bicicleta));
         when(bicicletaMapper.toDtoList(any())).thenReturn(List.of(new Bicicleta()));
 
         List<Bicicleta> result = totemService.listarBicicletas(1L);
