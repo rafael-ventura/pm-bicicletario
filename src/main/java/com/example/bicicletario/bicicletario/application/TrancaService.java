@@ -14,33 +14,52 @@ import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
 import com.example.bicicletario.bicicletario.mapper.TrancaMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-
 @Service
 public class TrancaService {
 
     private final TrancaRepository trancaRepository;
-    private final TrancaMapper trancaMapper;
     private final BicicletaRepository bicicletaRepository;
+    private final TrancaMapper trancaMapper;
+    private final EmailService emailService;
+    private final FuncionarioService funcionarioService;
 
-    public TrancaService(TrancaRepository trancaRepository, TrancaMapper trancaMapper, BicicletaRepository bicicletaRepository) {
+    public TrancaService(TrancaRepository trancaRepository, BicicletaRepository bicicletaRepository, TrancaMapper trancaMapper, EmailService emailService, FuncionarioService funcionarioService) {
         this.trancaRepository = trancaRepository;
-        this.trancaMapper = trancaMapper;
         this.bicicletaRepository = bicicletaRepository;
+        this.trancaMapper = trancaMapper;
+        this.emailService = emailService;
+        this.funcionarioService = funcionarioService;
     }
 
     public void integrarNaRede(IntegrarBicicletaNaRedeDTO dto) {
+        // [E1] Verificar se a tranca existe
         Tranca tranca = trancaRepository.findById(dto.getIdTranca())
                 .orElseThrow(() -> new IllegalArgumentException(Constantes.TRANCA_NAO_ENCONTRADA));
 
-        if (tranca.getStatus() != StatusTranca.LIVRE) {
-            throw new IllegalArgumentException("Tranca não está disponível");
+        // [R3] Verificar o status da tranca
+        if (tranca.getStatus() != StatusTranca.NOVA && tranca.getStatus() != StatusTranca.EM_REPARO) {
+            throw new IllegalArgumentException("Status da tranca inválido");
         }
 
-        tranca.setStatus(StatusTranca.OCUPADA); // Atualizado para ocupada ao integrar bicicleta
+        // [R3] Verificar se o funcionário que está devolvendo a tranca é o mesmo que retirou para reparo
+        if (tranca.getStatus() == StatusTranca.EM_REPARO && !funcionarioService.isFuncionarioValido(dto.getIdFuncionario())) {
+            throw new IllegalArgumentException(Constantes.FUNCIONARIO_INVALIDO);
+        }
+
+        // [R1] Registrar data/hora da inserção no totem, a matrícula do reparador e o número da tranca
+        tranca.setStatus(StatusTranca.LIVRE);
+        tranca.setDataInsercaoTotem(LocalDateTime.now().toString());
         trancaRepository.save(tranca);
 
-        System.out.println(Constantes.EMAIL_ENVIADO_PARA_O_REPARADOR);
+        // [R2] Enviar email para o reparador
+        try {
+            emailService.enviarEmailParaReparador(dto.getIdFuncionario());
+        } catch (Exception e) {
+            // [E2] Tratar erro no envio do email
+            throw new IllegalArgumentException(Constantes.ERROR_ENVIAR_EMAIL);
+        }
     }
 
     public void retirarDaRede(RetirarTrancaDaRedeDTO dto) {
@@ -65,7 +84,11 @@ public class TrancaService {
 
         trancaRepository.save(tranca);
 
-        System.out.println(Constantes.EMAIL_ENVIADO_PARA_O_REPARADOR);
+        try {
+            emailService.enviarEmailParaReparador(dto.getIdFuncionario());
+        } catch (Exception e) {
+            throw new IllegalArgumentException(Constantes.ERROR_ENVIAR_EMAIL);
+        }
     }
 
     private boolean trancaTemBicicleta(Tranca tranca) {

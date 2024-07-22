@@ -11,6 +11,7 @@ import com.example.bicicletario.bicicletario.mapper.BicicletaMapper;
 import com.example.bicicletario.bicicletario.mapper.TotemMapper;
 import com.example.bicicletario.bicicletario.mapper.TrancaMapper;
 import org.springframework.stereotype.Service;
+import com.example.bicicletario.bicicletario.domain.constants.Constantes;
 
 import java.util.List;
 
@@ -38,7 +39,6 @@ public class TotemService {
     }
 
     public Totem cadastrarTotem(NovoTotemDTO totemDTO) {
-        // R1: Todos os dados do formulário são obrigatórios.
         if (totemDTO.getLocalizacao() == null || totemDTO.getDescricao() == null) {
             throw new IllegalArgumentException("Todos os dados do formulário são obrigatórios");
         }
@@ -56,11 +56,11 @@ public class TotemService {
         return totemRepository.save(existente);
     }
 
+
     public void removerTotem(Long idTotem) {
         Totem totem = totemRepository.findById(idTotem).orElseThrow(() -> new IllegalArgumentException("Totem não encontrado"));
-        // R3: Apenas os totens que não possuem nenhuma tranca podem ser excluídos.
         if (trancaRepository.existsByTotemId(idTotem)) {
-            throw new IllegalArgumentException("Totem possui trancas associadas e não pode ser removido");
+            throw new IllegalArgumentException(Constantes.TOTEM_COM_TRANCA);
         }
         totemRepository.deleteById(idTotem);
     }
@@ -71,8 +71,9 @@ public class TotemService {
         return trancaMapper.toDtoList(trancas);
     }
 
-    public List<Bicicleta> listarBicicletas(Long idTranca) {
-        List<Bicicleta> bicicletas = bicicletaRepository.findByTrancaId(idTranca);
+    public List<Bicicleta> listarBicicletas(Long idTotem) {
+        List<Bicicleta> bicicletas = bicicletaRepository.findByTotemId(idTotem);
         return bicicletaMapper.toDtoList(bicicletas);
     }
+
 }

@@ -19,6 +19,8 @@ public class Tranca {
 
     private StatusTranca status;
 
+    private String dataInsercaoTotem;
+
     private Totem totem;
 
     public Long getId() {
@@ -85,4 +87,7 @@ public class Tranca {
         this.bicicleta = bicicleta;
     }
 
+    public void setDataInsercaoTotem(String string) {
+        this.dataInsercaoTotem = string;
+    }
 }
