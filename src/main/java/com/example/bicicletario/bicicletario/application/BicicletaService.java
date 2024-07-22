@@ -44,15 +44,33 @@ public class BicicletaService {
     }
 
     public Bicicleta criarBicicleta(NovaBicicletaDTO bicicletaDTO) {
+        // [R1] Definir status inicial como "NOVA"
         Bicicleta bicicleta = bicicletaMapper.toEntity(bicicletaDTO);
         bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
+        // [R5] O número da bicicleta é gerado pelo sistema
+        return bicicletaRepository.save(bicicleta);
+    }
+
+    public Bicicleta editarBicicleta(Long idBicicleta, NovaBicicletaDTO bicicletaDTO) {
+        // [A1] Editar bicicleta
+        Bicicleta bicicleta = bicicletaRepository.findById(idBicicleta)
+                .orElseThrow(() -> new IllegalArgumentException(Constantes.BICICLETA_NAO_ENCONTRADA));
+
+        // [R3] O número da bicicleta não pode ser editado
+        bicicleta.setMarca(bicicletaDTO.getMarca());
+        bicicleta.setModelo(bicicletaDTO.getModelo());
+        bicicleta.setAno(bicicletaDTO.getAno());
+        bicicleta.setStatusBicicleta(bicicletaDTO.getStatus());
+
         return bicicletaRepository.save(bicicleta);
     }
 
     public void removerBicicleta(Long idBicicleta) {
+        // [A2] Remover bicicleta
         Bicicleta bicicleta = bicicletaRepository.findById(idBicicleta)
                 .orElseThrow(() -> new IllegalArgumentException(Constantes.BICICLETA_NAO_ENCONTRADA));
 
+        // [R4] Verificar se a bicicleta pode ser excluída
         if (bicicleta.getStatusBicicleta() != StatusBicicleta.APOSENTADA) {
             throw new IllegalArgumentException(Constantes.BICICLETA_NAO_APOSENTADA);
         } else if (bicicleta.getDataInsercaoTranca() != null) {
@@ -60,19 +78,6 @@ public class BicicletaService {
         } else {
             bicicletaRepository.deleteById(idBicicleta);
         }
-    }
-
-    public Bicicleta editarBicicleta(Long idBicicleta, NovaBicicletaDTO bicicletaDTO) {
-        Bicicleta bicicleta = bicicletaRepository.findById(idBicicleta)
-                .orElseThrow(() -> new IllegalArgumentException(Constantes.BICICLETA_NAO_ENCONTRADA));
-
-        bicicleta.setMarca(bicicletaDTO.getMarca());
-        bicicleta.setModelo(bicicletaDTO.getModelo());
-        bicicleta.setAno(bicicletaDTO.getAno());
-        bicicleta.setNumero(bicicletaDTO.getNumero());
-        bicicleta.setStatusBicicleta(bicicletaDTO.getStatus());
-
-        return bicicletaRepository.save(bicicleta);
     }
 
     public void integrarNaRede(IntegrarBicicletaNaRedeDTO dto) {

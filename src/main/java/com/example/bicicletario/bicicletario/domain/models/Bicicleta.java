@@ -4,19 +4,19 @@ import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 
 public class Bicicleta {
 
-    public Long id;
+    private Long id;
 
-    public String marca;
+    private String marca;
 
-    public String modelo;
+    private String modelo;
 
-    public String ano;
+    private String ano;
 
-    public int numero;
+    private int numero;
 
-    public StatusBicicleta statusBicicleta;
+    private StatusBicicleta statusBicicleta;
 
-    public String dataInsercaoTranca;
+    private String dataInsercaoTranca;
 
     private String dataRemocaoTranca;
 
