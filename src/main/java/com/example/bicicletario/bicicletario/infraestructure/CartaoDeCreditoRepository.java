@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface CartaoDeCreditoRepository extends JpaRepository<CartaoDeCredito, Long> {
-    Optional<CartaoDeCredito> findByCiclistaId(Long idCiclista);
+    Optional<CartaoDeCredito> findByNomeTitular(String nomeTitular);
 }

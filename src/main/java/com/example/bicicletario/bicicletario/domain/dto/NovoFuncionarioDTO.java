@@ -10,8 +10,7 @@ public class NovoFuncionarioDTO {
     private String funcao;
 
     // Construtor vazio necessário para deserialização JSON
-    public NovoFuncionarioDTO() {
-    }
+    public NovoFuncionarioDTO() {}
 
     // Getters e Setters
     public String getNome() {

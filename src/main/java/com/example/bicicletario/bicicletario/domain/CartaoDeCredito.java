@@ -1,74 +1,69 @@
 package com.example.bicicletario.bicicletario.domain;
 
-import com.example.bicicletario.bicicletario.domain.enums.StatusCiclista;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "ciclista")
+@Table(name = "cartao_de_credito")
 public class CartaoDeCredito {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int id;
 
-    @Column(name = "modelo")
-    public String nome;
+    @Column(name = "nome_titular")
+    public String nomeTitular;
 
-    @Column(name = "ano")
-    public String dataNascimento;
+    @Column(name = "numero")
+    public String numero;
 
-    @Column(name = "status")
-    public StatusCiclista status;
+    @Column(name = "validade")
+    public String validade;
 
-    @JoinColumn(name = "passaporte_id")
-    @OneToOne
-    public CartaoDeCredito cpf;
+    @Column(name = "cvv")
+    public String cvv;
 
-    @Column(name = "email")
-    public String email;
-
-    @Column(name = "url_foto_documento")
-    public String urlFotoDocumento;
-
-
-    public String getNome() {
-        return nome;
+    public int getId() {
+        return id;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getDataNascimento() {
-        return dataNascimento;
+    public String getNomeTitular() {
+        return nomeTitular;
     }
 
-    public void setDataNascimento(String dataNascimento) {
-        this.dataNascimento = dataNascimento;
+    public void setNomeTitular(String nomeTitular) {
+        this.nomeTitular = nomeTitular;
     }
 
-    public StatusCiclista getStatus() {
-        return status;
+    public String getNumero() {
+        return numero;
     }
 
-    public void setStatus(StatusCiclista status) {
-        this.status = status;
+    public void setNumero(String numero) {
+        this.numero = numero;
     }
 
-    public CartaoDeCredito getCpf() {
-        return cpf;
+    public String getValidade() {
+        return validade;
     }
 
-    public void setCpf(CartaoDeCredito cpf) {
-        this.cpf = cpf;
+    public void setValidade(String validade) {
+        this.validade = validade;
     }
 
+    public String getCvv() {
+        return cvv;
+    }
 
+    public void setCvv(String cvv) {
+        this.cvv = cvv;
+    }
 }

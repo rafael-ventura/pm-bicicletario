@@ -1,12 +1,10 @@
 package com.example.bicicletario.bicicletario.domain.dto;
 
-import java.time.LocalDate;
-
 public class NovoCartaoDeCreditoDTO {
 
     private String nomeTitular;
     private String numero;
-    private LocalDate validade;
+    private String validade;
     private String cvv;
 
     // Getters and Setters
@@ -26,11 +24,11 @@ public class NovoCartaoDeCreditoDTO {
         this.numero = numero;
     }
 
-    public LocalDate getValidade() {
+    public String getValidade() {
         return validade;
     }
 
-    public void setValidade(LocalDate validade) {
+    public void setValidade(String validade) {
         this.validade = validade;
     }
 

@@ -1,13 +1,11 @@
 package com.example.bicicletario.bicicletario.application;
 
 import com.example.bicicletario.bicicletario.domain.Funcionario;
-import com.example.bicicletario.bicicletario.domain.dto.ErroDTO;
-import com.example.bicicletario.bicicletario.domain.dto.FuncionarioDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
+import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.infraestructure.FuncionarioRepository;
 import com.example.bicicletario.bicicletario.mapper.FuncionarioMapper;
 import jakarta.transaction.Transactional;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,41 +23,47 @@ public class FuncionarioService {
         this.funcionarioMapper = funcionarioMapper;
     }
 
-    public FuncionarioDTO cadastrarFuncionario(NovoFuncionarioDTO novoFuncionarioDTO) {
+    public NovoFuncionarioDTO cadastrarFuncionario(NovoFuncionarioDTO novoFuncionarioDTO) {
+        validateFuncionarioDTO(novoFuncionarioDTO); // Validar campos obrigatórios
         Funcionario funcionario = funcionarioMapper.toEntity(novoFuncionarioDTO);
-        // Gera a matrícula automaticamente
-        funcionario.setMatricula(generateMatricula());
+        funcionario.setMatricula(generateMatricula()); // Gera a matrícula automaticamente
         funcionario = funcionarioRepository.save(funcionario);
         return funcionarioMapper.toDto(funcionario);
     }
 
-    public List<FuncionarioDTO> listarFuncionarios() {
+    private void validateFuncionarioDTO(NovoFuncionarioDTO dto) {
+        if (dto.getSenha() == null ||
+                dto.getCpf() == null ||
+                dto.getEmail() == null ||
+                dto.getFuncao() == null ||
+                dto.getIdade() == null ||
+                dto.getNome() == null) {
+            throw new InvalidDataException("Missing required fields");
+        }
+    }
+
+    public List<NovoFuncionarioDTO> listarFuncionarios() {
         List<Funcionario> funcionarios = funcionarioRepository.findAll();
         return funcionarioMapper.toDtoList(funcionarios);
     }
 
-    public Optional<FuncionarioDTO> obterFuncionario(Long idFuncionario) {
+    public Optional<NovoFuncionarioDTO> obterFuncionario(Long idFuncionario) {
         return funcionarioRepository.findById(idFuncionario)
                 .map(funcionarioMapper::toDto);
     }
 
-    public ResponseEntity<Object> alterarFuncionario(Long idFuncionario, NovoFuncionarioDTO novoFuncionarioDTO) {
-        try {
-            Funcionario funcionario = funcionarioRepository.findById(idFuncionario)
-                    .orElseThrow(() -> new Exception("Funcionário não encontrado com o ID: " + idFuncionario));
+    public NovoFuncionarioDTO alterarFuncionario(Long idFuncionario, NovoFuncionarioDTO novoFuncionarioDTO) {
+        Funcionario funcionario = funcionarioRepository.findById(idFuncionario)
+                .orElseThrow(() -> new InvalidDataException("Funcionário não encontrado com o ID: " + idFuncionario));
 
-            // Atualiza somente os campos que foram fornecidos no DTO
-            updateEntityWithDto(funcionario, novoFuncionarioDTO);
+        // Atualiza somente os campos que foram fornecidos no DTO
+        updateEntityWithDto(funcionario, novoFuncionarioDTO);
 
-            // Salva o funcionário atualizado no banco de dados
-            funcionario = funcionarioRepository.save(funcionario);
+        // Salva o funcionário atualizado no banco de dados
+        funcionario = funcionarioRepository.save(funcionario);
 
-            // Converte o funcionário atualizado para DTO e retorna
-            return ResponseEntity.ok(funcionarioMapper.toDto(funcionario));
-        } catch (Exception e) {
-            ErroDTO erro = new ErroDTO("422", e.getMessage());
-            return ResponseEntity.unprocessableEntity().body(erro);
-        }
+        // Converte o funcionário atualizado para DTO e retorna
+        return funcionarioMapper.toDto(funcionario);
     }
 
     private void updateEntityWithDto(Funcionario funcionario, NovoFuncionarioDTO novoFuncionarioDTO) {
@@ -86,8 +90,10 @@ public class FuncionarioService {
         }
     }
 
-    public void removerFuncionario(Long idFuncionario) {
-        funcionarioRepository.deleteById(idFuncionario);
+    public void excluirFuncionario(Long idFuncionario) {
+        Funcionario funcionario = funcionarioRepository.findById(idFuncionario)
+                .orElseThrow(() -> new InvalidDataException("Funcionário não encontrado com o ID: " + idFuncionario));
+        funcionarioRepository.delete(funcionario);
     }
 
     private String generateMatricula() {

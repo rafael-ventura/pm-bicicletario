@@ -1,7 +1,6 @@
 package com.example.bicicletario.bicicletario.mapper;
 
 import com.example.bicicletario.bicicletario.domain.Funcionario;
-import com.example.bicicletario.bicicletario.domain.dto.FuncionarioDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,7 +13,7 @@ public interface FuncionarioMapper {
     @Mapping(target = "matricula", ignore = true)
     Funcionario toEntity(NovoFuncionarioDTO novoFuncionarioDTO);
 
-    FuncionarioDTO toDto(Funcionario funcionario);
+    NovoFuncionarioDTO toDto(Funcionario funcionario);
 
-    List<FuncionarioDTO> toDtoList(List<Funcionario> funcionarios);
+    List<NovoFuncionarioDTO> toDtoList(List<Funcionario> funcionarios);
 }

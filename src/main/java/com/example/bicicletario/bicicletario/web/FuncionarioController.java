@@ -1,8 +1,11 @@
 package com.example.bicicletario.bicicletario.web;
 
-import com.example.bicicletario.bicicletario.domain.dto.FuncionarioDTO;
+import com.example.bicicletario.bicicletario.domain.Funcionario;
+import com.example.bicicletario.bicicletario.domain.dto.ErroDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
+import com.example.bicicletario.bicicletario.exception.InvalidDataException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,35 +23,47 @@ public class FuncionarioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FuncionarioDTO>> listarFuncionarios() {
-        List<FuncionarioDTO> funcionarios = funcionarioService.listarFuncionarios();
+    public ResponseEntity<List<NovoFuncionarioDTO>> listarFuncionarios() {
+        List<NovoFuncionarioDTO> funcionarios = funcionarioService.listarFuncionarios();
         return ResponseEntity.ok(funcionarios);
     }
 
     @PostMapping
-    public ResponseEntity<FuncionarioDTO> cadastrarFuncionario(@RequestBody NovoFuncionarioDTO novoFuncionarioDTO) {
-        FuncionarioDTO funcionarioDTO = funcionarioService.cadastrarFuncionario(novoFuncionarioDTO);
-        return ResponseEntity.ok(funcionarioDTO);
+    public ResponseEntity<?> cadastrarFuncionario(@RequestBody NovoFuncionarioDTO novoFuncionarioDTO) {
+        try {
+            NovoFuncionarioDTO funcionarioDTO = funcionarioService.cadastrarFuncionario(novoFuncionarioDTO);
+            return ResponseEntity.ok(funcionarioDTO);
+        } catch (InvalidDataException e) {
+            ErroDTO erroDTO = new ErroDTO("422", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(erroDTO);
+        }
     }
 
     @GetMapping("/{idFuncionario}")
     public ResponseEntity<Object> obterFuncionario(@PathVariable Long idFuncionario) {
-        Optional<FuncionarioDTO> funcionarioDTO = funcionarioService.obterFuncionario(idFuncionario);
-        if (funcionarioDTO.isPresent()) {
-            return ResponseEntity.ok(funcionarioDTO.get());
-        } else {
-            return ResponseEntity.status(404).body("Funcionário não encontrado");
-        }
+        Optional<NovoFuncionarioDTO> funcionarioDTO = funcionarioService.obterFuncionario(idFuncionario);
+        return funcionarioDTO.<ResponseEntity<Object>>map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(404).body("Funcionário não encontrado"));
     }
 
     @PutMapping("/{idFuncionario}")
-    public ResponseEntity<Object> alterarFuncionario(@PathVariable Long idFuncionario, @RequestBody NovoFuncionarioDTO novoFuncionarioDTO) {
-        return funcionarioService.alterarFuncionario(idFuncionario, novoFuncionarioDTO);
+    public ResponseEntity<?> alterarFuncionario(@PathVariable Long idFuncionario, @RequestBody NovoFuncionarioDTO novoFuncionarioDTO) {
+        try {
+            NovoFuncionarioDTO funcionarioDTO = funcionarioService.alterarFuncionario(idFuncionario, novoFuncionarioDTO);
+            return ResponseEntity.ok(funcionarioDTO);
+        } catch (InvalidDataException e) {
+            ErroDTO erroDTO = new ErroDTO("422", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(erroDTO);
+        }
     }
 
     @DeleteMapping("/{idFuncionario}")
-    public ResponseEntity<Object> removerFuncionario(@PathVariable Long idFuncionario) {
-        funcionarioService.removerFuncionario(idFuncionario);
-        return ResponseEntity.ok("Funcionário removido com sucesso");
+    public ResponseEntity<?> excluirFuncionario(@PathVariable Long idFuncionario) {
+        try {
+            funcionarioService.excluirFuncionario(idFuncionario);
+            return ResponseEntity.ok("Funcionário excluído com sucesso");
+        } catch (InvalidDataException e) {
+            ErroDTO erroDTO = new ErroDTO("422", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(erroDTO);
+        }
     }
 }

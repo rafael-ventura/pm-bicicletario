@@ -1,9 +1,6 @@
 package com.example.bicicletario;
 
-import com.example.bicicletario.bicicletario.domain.HelloWorld;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class HelloWorldTest {
 
