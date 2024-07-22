@@ -7,6 +7,8 @@ public class Constantes {
     public static final String STATUS_DE_ACAO_REPARADOR_INVALIDO = "Status de ação do reparador inválido";
     public static final String TRANCA_NAO_ENCONTRADA = "Tranca não encontrada";
     public static final String EMAIL_ENVIADO_PARA_O_REPARADOR = "Email enviado para o reparador";
+    public static final String ASSUNTO_EMAIL_REPARADOR = "Bicicletario";
+    public static final String ERROR_ENVIAR_EMAIL = "Erro ao enviar email";
     public static final String FUNCIONARIO_INVALIDO = "Funcionário inválido para esta operação";
     public static final String BICICLETA_NAO_ENCONTRADA = "Bicicleta não encontrada";
     public static final String STATUS_DA_BICICLETA_INVALIDO = "Status da bicicleta inválido";
@@ -40,4 +42,9 @@ public class Constantes {
     public static final String ERRO_DESTRANCAR_TRANCA = "Erro ao destrancar tranca";
     public static final String ERRO_ALTERAR_STATUS_TRANCA = "Erro ao alterar status da tranca";
     public static final String TRANCA_REMOVIDA = "Tranca removida";
+    public static final String TRANCA_NAO_OCUPADA = "Tranca não está ocupada";
+    public static final String BICICLETA_NAO_APOSENTADA = "Bicicleta não está aposentada";
+    public static final String BICICLETA_EM_TRANCA = "Bicicleta está em uma tranca";
+    public static final String TOTEM_COM_TRANCA = "Totem não pode ser removido, pois possui trancas associadas";
 }
+

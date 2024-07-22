@@ -16,8 +16,22 @@ public class Bicicleta {
 
     public StatusBicicleta statusBicicleta;
 
+    public String dataInsercaoTranca;
+
+    private String dataRemocaoTranca;
+
+    private Tranca tranca;
+
     public Bicicleta() {
 
+    }
+
+    public Bicicleta(String marca, String modelo, String ano, int numero, StatusBicicleta statusBicicleta) {
+        this.marca = marca;
+        this.modelo = modelo;
+        this.ano = ano;
+        this.numero = numero;
+        this.statusBicicleta = statusBicicleta;
     }
 
     public String getDataInsercaoTranca() {
@@ -84,16 +98,11 @@ public class Bicicleta {
         this.id = id;
     }
 
-    public String dataInsercaoTranca;
-
-    private Tranca tranca;
-
-    public Bicicleta(String marca, String modelo, String ano, int numero, StatusBicicleta statusBicicleta) {
-        this.marca = marca;
-        this.modelo = modelo;
-        this.ano = ano;
-        this.numero = numero;
-        this.statusBicicleta = statusBicicleta;
+    public String getDataRemocaoTranca() {
+        return dataRemocaoTranca;
     }
 
+    public void setDataRemocaoTranca(String string) {
+        this.dataRemocaoTranca = string;
+    }
 }

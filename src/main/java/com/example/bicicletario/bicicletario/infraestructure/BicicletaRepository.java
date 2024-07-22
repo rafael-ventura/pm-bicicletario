@@ -24,6 +24,7 @@ public class BicicletaRepository {
     public Bicicleta save(Bicicleta bicicleta) {
         if (bicicleta.getId() == null) {
             bicicleta.setId(counter.incrementAndGet());
+            bicicleta.setNumero((int) counter.incrementAndGet());
         } else {
             bicicletas.removeIf(b -> b.getId().equals(bicicleta.getId()));
         }
@@ -37,5 +38,9 @@ public class BicicletaRepository {
 
     public List<Bicicleta> findByTrancaId(Long idTranca) {
         return bicicletas.stream().filter(b -> b.getTranca().getId().equals(idTranca)).toList();
+    }
+
+    public List<Bicicleta> findByTotemId(Long idTotem) {
+        return bicicletas.stream().filter(b -> b.getTranca().getTotem().getId().equals(idTotem)).toList();
     }
 }
