@@ -35,19 +35,19 @@ public class FuncionarioController {
     }
 
     @GetMapping("/{idFuncionario}")
-    public ResponseEntity<NovoFuncionarioDTO> obterFuncionario(@PathVariable Long idFuncionario) {
+    public ResponseEntity<NovoFuncionarioDTO> obterFuncionario(@PathVariable Integer idFuncionario) {
         NovoFuncionarioDTO funcionarioDTO = funcionarioService.obterFuncionario(idFuncionario);
         return ResponseEntity.ok(funcionarioDTO);
     }
 
     @PutMapping("/{idFuncionario}")
-    public ResponseEntity<NovoFuncionarioDTO> alterarFuncionario(@PathVariable Long idFuncionario, @RequestBody NovoFuncionarioDTO novoFuncionarioDTO) {
+    public ResponseEntity<NovoFuncionarioDTO> alterarFuncionario(@PathVariable Integer idFuncionario, @RequestBody NovoFuncionarioDTO novoFuncionarioDTO) {
         NovoFuncionarioDTO funcionarioDTO = funcionarioService.alterarFuncionario(idFuncionario, novoFuncionarioDTO);
         return ResponseEntity.ok(funcionarioDTO);
     }
 
     @DeleteMapping("/{idFuncionario}")
-    public ResponseEntity<?> excluirFuncionario(@PathVariable Long idFuncionario) {
+    public ResponseEntity<?> excluirFuncionario(@PathVariable Integer idFuncionario) {
         funcionarioService.excluirFuncionario(idFuncionario);
         return ResponseEntity.ok("Funcionário excluído com sucesso");
     }

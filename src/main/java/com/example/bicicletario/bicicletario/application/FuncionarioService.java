@@ -2,7 +2,6 @@ package com.example.bicicletario.bicicletario.application;
 
 import com.example.bicicletario.bicicletario.domain.Funcionario;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
-import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.FuncionarioRepository;
@@ -61,7 +60,7 @@ public class FuncionarioService {
         return funcionarioMapper.toDtoList(funcionarios);
     }
 
-    public NovoFuncionarioDTO obterFuncionario(Long idFuncionario) {
+    public NovoFuncionarioDTO obterFuncionario(Integer idFuncionario) {
         Optional<NovoFuncionarioDTO> novoFuncionarioOpt = funcionarioRepository.findById(idFuncionario).map(funcionarioMapper::toDto);
         if (novoFuncionarioOpt.isEmpty()) {
             throw new ResourceNotFoundException("Funcionário não encontrado com o ID: " + idFuncionario);
@@ -69,7 +68,7 @@ public class FuncionarioService {
         return novoFuncionarioOpt.get();
     }
 
-    public NovoFuncionarioDTO alterarFuncionario(Long idFuncionario, NovoFuncionarioDTO novoFuncionarioDTO) {
+    public NovoFuncionarioDTO alterarFuncionario(Integer idFuncionario, NovoFuncionarioDTO novoFuncionarioDTO) {
         Funcionario funcionario = funcionarioRepository.findById(idFuncionario)
                 .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado com o ID: " + idFuncionario));
 
@@ -107,7 +106,7 @@ public class FuncionarioService {
         }
     }
 
-    public void excluirFuncionario(Long idFuncionario) {
+    public void excluirFuncionario(Integer idFuncionario) {
         Funcionario funcionario = funcionarioRepository.findById(idFuncionario)
                 .orElseThrow(() -> new InvalidDataException("Funcionário não encontrado com o ID: " + idFuncionario));
         funcionarioRepository.delete(funcionario);

@@ -4,14 +4,14 @@ import com.example.bicicletario.bicicletario.domain.Funcionario;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class FuncionarioRepository {
-    private final Map<Long, Funcionario> funcionarios = new HashMap<>();
-    private final AtomicLong idGenerator = new AtomicLong(); // Gerador de ID
+    private final Map<Integer, Funcionario> funcionarios = new HashMap<>();
+    private final AtomicInteger idGenerator = new AtomicInteger(); // Gerador de ID
 
-    public Optional<Funcionario> findById(Long idFuncionario) {
+    public Optional<Funcionario> findById(Integer idFuncionario) {
         return Optional.ofNullable(funcionarios.get(idFuncionario));
     }
 

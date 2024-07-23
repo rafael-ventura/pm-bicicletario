@@ -4,6 +4,8 @@ public class CartaoDeCredito {
 
     public int id;
 
+    public int idCiclista;
+
     public String nomeTitular;
 
     public String numero;
@@ -12,7 +14,6 @@ public class CartaoDeCredito {
 
     public String cvv;
 
-    public int idCiclista;
 
     public int getId() {
         return id;
@@ -20,6 +21,14 @@ public class CartaoDeCredito {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getIdCiclista() {
+        return idCiclista;
+    }
+
+    public void setIdCiclista(int idCiclista) {
+        this.idCiclista = idCiclista;
     }
 
     public String getNomeTitular() {
@@ -52,13 +61,5 @@ public class CartaoDeCredito {
 
     public void setCvv(String cvv) {
         this.cvv = cvv;
-    }
-
-    public int getIdCiclista() {
-        return idCiclista;
-    }
-
-    public void setIdCiclista(int idCiclista) {
-        this.idCiclista = idCiclista;
     }
 }
