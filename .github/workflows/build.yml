@@ -3,9 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - dev-rafael-equipamento
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    branches:
+      - dev-rafael-equipamento
 
 jobs:
   build-and-deploy:
@@ -39,10 +40,10 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build and run tests
-        run: mvn clean verify
+        run: mvn clean verify -Pequipamento
 
       - name: Generate JaCoCo report
-        run: mvn jacoco:report
+        run: mvn jacoco:report -Pequipamento
 
       - name: Debug Secrets
         run: |
@@ -58,6 +59,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn sonar:sonar \
+            -Pequipamento \
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
             -Dsonar.host.url=https://sonarcloud.io \
@@ -73,15 +75,15 @@ jobs:
 
       - name: Create application zip
         run: |
-          mvn package
-          zip -r my-app.zip target/bicicletario-0.0.1-SNAPSHOT.jar scripts/ appspec.yml
+          mvn package -Pequipamento
+          zip -r my-app-equipamento.zip target/bicicletario-equipamento.jar scripts/ appspec.yml
 
       - name: Upload to S3
-        run: aws s3 cp my-app.zip s3://bicicletario-bucket/my-app.zip
+        run: aws s3 cp my-app-equipamento.zip s3://bicicletario-bucket/my-app-equipamento.zip
 
       - name: Deploy to CodeDeploy
         run: |
           aws deploy create-deployment \
-            --application-name bicicletario \
+            --application-name bicicletario-equipamento \
             --deployment-group-name bicicletario_deploy \
-            --s3-location bucket=bicicletario-bucket,key=my-app.zip,bundleType=zip
+            --s3-location bucket=bicicletario-bucket,key=my-app-equipamento.zip,bundleType=zip
