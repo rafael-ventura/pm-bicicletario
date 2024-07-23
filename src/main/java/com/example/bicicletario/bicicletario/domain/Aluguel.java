@@ -8,7 +8,7 @@ public class Aluguel {
     private Integer trancaFim;
     private String horaFim;
     private Integer cobranca;
-    private Ciclista ciclista;
+    private int ciclista;
     private Integer trancaInicio;
 
     // Getters and Setters
@@ -60,11 +60,11 @@ public class Aluguel {
         this.cobranca = cobranca;
     }
 
-    public Ciclista getCiclista() {
+    public int getCiclista() {
         return ciclista;
     }
 
-    public void setCiclista(Ciclista ciclista) {
+    public void setCiclista(int ciclista) {
         this.ciclista = ciclista;
     }
 

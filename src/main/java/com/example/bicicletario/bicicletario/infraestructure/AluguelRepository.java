@@ -9,22 +9,27 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Repository
 public class AluguelRepository {
     private final Map<Integer, Aluguel> alugueis = new HashMap<>();
-    //private final AtomicInteger idGenerator = new AtomicInteger(); // Gerador de ID
+    private final AtomicInteger idGenerator = new AtomicInteger(); // Gerador de ID
 
     public Optional<Aluguel> findByCiclistaAndHoraFimIsNull(int idCiclista) {
         return alugueis.values().stream()
-                .filter(aluguel -> aluguel.getCiclista().getId() == idCiclista &&
+                .filter(aluguel -> aluguel.getCiclista() == idCiclista &&
                         aluguel.getHoraFim() == null)
                 .findFirst();
     }
 
+    //findById
+    public Optional<Aluguel> findById(int id) {
+        return Optional.ofNullable(alugueis.get(id));
+    }
+
     public boolean existsByCiclistaAndHoraFimIsNull(int ciclistaId) {
         return alugueis.values().stream()
-                .anyMatch(aluguel -> aluguel.getCiclista().getId() == ciclistaId &&
+                .anyMatch(aluguel -> aluguel.getCiclista() == ciclistaId &&
                         aluguel.getHoraFim() == null);
     }
 
-    /*public Aluguel save(Aluguel aluguel) {
+    public Aluguel save(Aluguel aluguel) {
         if (aluguel.getId() == 0) {
             aluguel.setId(idGenerator.incrementAndGet()); // Atribui novo ID se não existir
         }
@@ -34,5 +39,5 @@ public class AluguelRepository {
 
     public void delete(Aluguel aluguel) {
         alugueis.remove(aluguel.getId());
-    }*/
+    }
 }
