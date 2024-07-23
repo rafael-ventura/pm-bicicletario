@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class TotemServiceTest {
+class TotemServiceTest {
 
     @InjectMocks
     private TotemService totemService;
@@ -49,12 +49,12 @@ public class TotemServiceTest {
     private TrancaMapper trancaMapper;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void listarTotens() {
+    void listarTotens() {
         Totem totem = new Totem();
         totem.setId(1L);
         totem.setLocalizacao("Localizacao");
@@ -67,7 +67,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void cadastrarTotem() {
+    void cadastrarTotem() {
         NovoTotemDTO novoTotem = new NovoTotemDTO();
         novoTotem.setLocalizacao("Localizacao");
         novoTotem.setDescricao("Descricao");

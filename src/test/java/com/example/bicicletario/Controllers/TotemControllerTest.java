@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class TotemControllerTest {
+class TotemControllerTest {
 
     @InjectMocks
     private TotemController totemController;
@@ -39,14 +39,14 @@ public class TotemControllerTest {
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.openMocks(this);
         this.mockMvc = MockMvcBuilders.standaloneSetup(totemController).build();
         this.objectMapper = new ObjectMapper();
     }
 
     @Test
-    public void listarTotens() throws Exception {
+    void listarTotens() throws Exception {
         Totem totem = new Totem();
         totem.setId(1L);
         totem.setLocalizacao("Localizacao");
@@ -61,7 +61,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void listarTotens_ThrowsException() throws Exception {
+    void listarTotens_ThrowsException() throws Exception {
         when(totemService.listarTotens()).thenThrow(new RuntimeException("Error"));
 
         mockMvc.perform(get("/api/totem"))
@@ -70,7 +70,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void cadastrarTotem() throws Exception {
+    void cadastrarTotem() throws Exception {
         NovoTotemDTO novoTotem = new NovoTotemDTO();
         novoTotem.setLocalizacao("Localizacao");
         novoTotem.setDescricao("Descricao");
@@ -91,7 +91,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void cadastrarTotem_ThrowsIllegalArgumentException() throws Exception {
+    void cadastrarTotem_ThrowsIllegalArgumentException() throws Exception {
         when(totemService.cadastrarTotem(any(NovoTotemDTO.class))).thenThrow(new IllegalArgumentException("Error"));
 
         mockMvc.perform(post("/api/totem")
@@ -102,7 +102,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void cadastrarTotem_ThrowsException() throws Exception {
+    void cadastrarTotem_ThrowsException() throws Exception {
         when(totemService.cadastrarTotem(any(NovoTotemDTO.class))).thenThrow(new RuntimeException("Error"));
 
         mockMvc.perform(post("/api/totem")
@@ -113,7 +113,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void editarTotem() throws Exception {
+    void editarTotem() throws Exception {
         NovoTotemDTO totem = new NovoTotemDTO();
         totem.setLocalizacao("Nova Localizacao");
         totem.setDescricao("Nova Descricao");
@@ -128,7 +128,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void editarTotem_ThrowsIllegalArgumentException() throws Exception {
+    void editarTotem_ThrowsIllegalArgumentException() throws Exception {
         when(totemService.editarTotem(any(Long.class), any(NovoTotemDTO.class))).thenThrow(new IllegalArgumentException("Error"));
 
         mockMvc.perform(put("/api/totem/1")
@@ -139,7 +139,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void editarTotem_ThrowsNoSuchElementException() throws Exception {
+    void editarTotem_ThrowsNoSuchElementException() throws Exception {
         when(totemService.editarTotem(any(Long.class), any(NovoTotemDTO.class))).thenThrow(new NoSuchElementException("Error"));
 
         mockMvc.perform(put("/api/totem/1")
@@ -150,7 +150,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void editarTotem_ThrowsException() throws Exception {
+    void editarTotem_ThrowsException() throws Exception {
         when(totemService.editarTotem(any(Long.class), any(NovoTotemDTO.class))).thenThrow(new RuntimeException("Error"));
 
         mockMvc.perform(put("/api/totem/1")
@@ -161,14 +161,14 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void removerTotem() throws Exception {
+    void removerTotem() throws Exception {
         mockMvc.perform(delete("/api/totem/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Totem removido"));
     }
 
     @Test
-    public void removerTotem_ThrowsNoSuchElementException() throws Exception {
+    void removerTotem_ThrowsNoSuchElementException() throws Exception {
         Mockito.doThrow(new NoSuchElementException("Error")).when(totemService).removerTotem(any(Long.class));
 
         mockMvc.perform(delete("/api/totem/1"))
@@ -177,7 +177,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void removerTotem_ThrowsException() throws Exception {
+    void removerTotem_ThrowsException() throws Exception {
         Mockito.doThrow(new RuntimeException("Error")).when(totemService).removerTotem(any(Long.class));
 
         mockMvc.perform(delete("/api/totem/1"))
@@ -186,7 +186,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void listarTrancas() throws Exception {
+    void listarTrancas() throws Exception {
         Tranca tranca = new Tranca();
         tranca.setId(1L);
 
@@ -199,7 +199,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void listarTrancas_ThrowsException() throws Exception {
+    void listarTrancas_ThrowsException() throws Exception {
         when(totemService.listarTrancas(any(Long.class))).thenThrow(new RuntimeException("Error"));
 
         mockMvc.perform(get("/api/totem/1/trancas"))
@@ -208,7 +208,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void listarBicicletas() throws Exception {
+    void listarBicicletas() throws Exception {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1L);
         bicicleta.setNumero(1);
@@ -225,7 +225,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void listarBicicletas_ThrowsException() throws Exception {
+    void listarBicicletas_ThrowsException() throws Exception {
         when(totemService.listarBicicletas(any(Long.class))).thenThrow(new RuntimeException("Error"));
 
         mockMvc.perform(get("/api/totem/1/bicicletas"))
