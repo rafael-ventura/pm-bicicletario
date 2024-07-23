@@ -2,7 +2,9 @@ package com.example.bicicletario.bicicletario.application;
 
 import com.example.bicicletario.bicicletario.domain.Funcionario;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
+import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
+import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.FuncionarioRepository;
 import com.example.bicicletario.bicicletario.mapper.FuncionarioMapper;
 import org.springframework.stereotype.Service;
@@ -35,7 +37,22 @@ public class FuncionarioService {
                 dto.getFuncao() == null ||
                 dto.getIdade() == null ||
                 dto.getNome() == null) {
-            throw new InvalidDataException("Missing required fields");
+            throw new InvalidDataException("Campos obrigatórios não preenchidos.");
+        }
+        validarSenha(dto.getSenha(), dto.getConfirmacaoSenha());
+        validarCPF(dto.getCpf());
+    }
+
+    private void validarSenha(String senha, String confirmacaoSenha) {
+        if (senha == null || !senha.equals(confirmacaoSenha)) {
+            throw new InvalidDataException("As senhas não coincidem.");
+        }
+    }
+
+    private void validarCPF(String cpf) {
+        String cpfRegex = "\\d{11}";
+        if (cpf == null || !cpf.matches(cpfRegex)) {
+            throw new InvalidDataException("CPF inválido. O CPF deve conter 11 dígitos e apenas números.");
         }
     }
 
@@ -47,14 +64,14 @@ public class FuncionarioService {
     public NovoFuncionarioDTO obterFuncionario(Long idFuncionario) {
         Optional<NovoFuncionarioDTO> novoFuncionarioOpt = funcionarioRepository.findById(idFuncionario).map(funcionarioMapper::toDto);
         if (novoFuncionarioOpt.isEmpty()) {
-            throw new InvalidDataException("Funcionário não encontrado com o ID: " + idFuncionario);
+            throw new ResourceNotFoundException("Funcionário não encontrado com o ID: " + idFuncionario);
         }
         return novoFuncionarioOpt.get();
     }
 
     public NovoFuncionarioDTO alterarFuncionario(Long idFuncionario, NovoFuncionarioDTO novoFuncionarioDTO) {
         Funcionario funcionario = funcionarioRepository.findById(idFuncionario)
-                .orElseThrow(() -> new InvalidDataException("Funcionário não encontrado com o ID: " + idFuncionario));
+                .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado com o ID: " + idFuncionario));
 
         // Atualiza somente os campos que foram fornecidos no DTO
         updateEntityWithDto(funcionario, novoFuncionarioDTO);

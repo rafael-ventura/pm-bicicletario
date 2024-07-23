@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/funcionario")
+@RequestMapping("api/funcionario")
 public class FuncionarioController {
 
     private final FuncionarioService funcionarioService;
@@ -29,7 +29,7 @@ public class FuncionarioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrarFuncionario(@RequestBody NovoFuncionarioDTO novoFuncionarioDTO) {
+    public ResponseEntity<NovoFuncionarioDTO> cadastrarFuncionario(@RequestBody NovoFuncionarioDTO novoFuncionarioDTO) {
         NovoFuncionarioDTO funcionarioDTO = funcionarioService.cadastrarFuncionario(novoFuncionarioDTO);
         return ResponseEntity.ok(funcionarioDTO);
     }

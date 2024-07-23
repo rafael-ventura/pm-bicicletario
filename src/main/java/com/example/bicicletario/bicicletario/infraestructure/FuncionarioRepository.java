@@ -2,15 +2,14 @@ package com.example.bicicletario.bicicletario.infraestructure;
 
 import com.example.bicicletario.bicicletario.domain.Funcionario;
 import org.springframework.stereotype.Repository;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class FuncionarioRepository {
     private final Map<Long, Funcionario> funcionarios = new HashMap<>();
+    private final AtomicLong idGenerator = new AtomicLong(); // Gerador de ID
 
     public Optional<Funcionario> findById(Long idFuncionario) {
         return Optional.ofNullable(funcionarios.get(idFuncionario));
@@ -21,6 +20,9 @@ public class FuncionarioRepository {
     }
 
     public Funcionario save(Funcionario funcionario) {
+        if (funcionario.getId() == null) {
+            funcionario.setId(idGenerator.incrementAndGet()); // Atribui novo ID se não existir
+        }
         funcionarios.put(funcionario.getId(), funcionario);
         return funcionario;
     }

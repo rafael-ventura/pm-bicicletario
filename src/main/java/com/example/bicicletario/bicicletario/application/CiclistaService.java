@@ -36,7 +36,7 @@ public class CiclistaService {
     private BicicletaService bicicletaService; // Serviço para validação do cartão de crédito
     @Autowired
     private CartaoDeCreditoService cartaoDeCreditoService;
-    
+
     public Ciclista cadastrarCiclista(NovoCiclistaRequestDTO request) throws BadRequestException {
         NovoCiclistaDTO novoCiclistaDTO = request.getCiclista();
         NovoCartaoDeCreditoDTO meioDePagamentoDTO = request.getMeioDePagamento();
@@ -59,6 +59,12 @@ public class CiclistaService {
         validarCartaoDeCredito(novoCiclistaRequest.getMeioDePagamento());
     }
 
+    private void validarCiclista(NovoCiclistaDTO novoCiclistaDTO) {
+        validarCamposObrigatorios(novoCiclistaDTO);
+        validarSenha(novoCiclistaDTO.getSenha(), novoCiclistaDTO.getConfirmacaoSenha());
+        validarEmail(novoCiclistaDTO.getEmail());
+    }
+
     private void validarCartaoDeCredito(NovoCartaoDeCreditoDTO cartaoDeCredito) {
         cartaoDeCreditoService.validarCartaoDeCredito(cartaoDeCredito);
     }
@@ -68,12 +74,10 @@ public class CiclistaService {
     }
 
     public Ciclista alterarCiclista(int idCiclista, NovoCiclistaDTO novoCiclistaDTO) throws BadRequestException {
-        validarCamposObrigatorios(novoCiclistaDTO);
-        validarSenha(novoCiclistaDTO.getSenha(), novoCiclistaDTO.getConfirmacaoSenha());
-        validarEmail(novoCiclistaDTO.getEmail());
         if (!ciclistaRepository.existsById(idCiclista)) {
-            throw new InvalidDataException("Ciclista não encontrado com o ID: " + idCiclista);
+            throw new BadRequestException("Ciclista não encontrado com o ID: " + idCiclista);
         }
+        validarCiclista(novoCiclistaDTO);
         Ciclista ciclista = ciclistaMapper.toEntity(novoCiclistaDTO);
         ciclista.setId(idCiclista);
 
