@@ -71,14 +71,155 @@ class BicicletaControllerTest {
     }
 
     @Test
-    void criarBicicleta_ThrowsException() throws Exception {
-        when(bicicletaService.criarBicicleta(any(NovaBicicletaDTO.class))).thenThrow(new RuntimeException("Error"));
+    void criarBicicleta() throws Exception {
+        NovaBicicletaDTO dto = new NovaBicicletaDTO();
+        dto.setMarca("marca");
+        dto.setModelo("modelo");
+        dto.setAno("2021");
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1L);
+        bicicleta.setMarca("marca");
+        bicicleta.setModelo("modelo");
+        bicicleta.setAno("2021");
+        bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
+
+        when(bicicletaService.criarBicicleta(any(NovaBicicletaDTO.class))).thenReturn(bicicleta);
 
         mockMvc.perform(post("/api/bicicleta")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"status\":\"NOVA\",\"modelo\":\"modelo\",\"localizacao\":\"localizacao\",\"numero\":1,\"modelo\":\"modelo\",\"anoDeFabricacao\":\"2021\"}"))
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(bicicleta)));
+    }
+
+    @Test
+    void criarBicicleta_ThrowsIllegalArgumentException() throws Exception {
+        doThrow(new IllegalArgumentException("Dados inválidos")).when(bicicletaService).criarBicicleta(any(NovaBicicletaDTO.class));
+
+        mockMvc.perform(post("/api/bicicleta")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().json("{'codigo':'422','mensagem':'Dados inválidos'}"));
+    }
+
+    @Test
+    void criarBicicleta_ThrowsException() throws Exception {
+        doThrow(new RuntimeException("Erro ao criar bicicleta")).when(bicicletaService).criarBicicleta(any(NovaBicicletaDTO.class));
+
+        mockMvc.perform(post("/api/bicicleta")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao criar bicicleta'}"));
+    }
+
+    @Test
+    void obterBicicleta() throws Exception {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1L);
+        bicicleta.setMarca("marca");
+        bicicleta.setModelo("modelo");
+
+        when(bicicletaService.obterBicicleta(1L)).thenReturn(bicicleta);
+
+        mockMvc.perform(get("/api/bicicleta/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{'id':1,'marca':'marca','modelo':'modelo'}"));
+    }
+
+    @Test
+    void obterBicicleta_ThrowsNoSuchElementException() throws Exception {
+        when(bicicletaService.obterBicicleta(1L)).thenThrow(new NoSuchElementException("Bicicleta não encontrada"));
+
+        mockMvc.perform(get("/api/bicicleta/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().json("{'codigo':'404','mensagem':'Bicicleta não encontrada'}"));
+    }
+
+    @Test
+    void obterBicicleta_ThrowsException() throws Exception {
+        when(bicicletaService.obterBicicleta(1L)).thenThrow(new RuntimeException("Erro ao obter bicicleta"));
+
+        mockMvc.perform(get("/api/bicicleta/1"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao obter bicicleta'}"));
+    }
+
+    @Test
+    void editarBicicleta() throws Exception {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1L);
+        bicicleta.setMarca("marca");
+        bicicleta.setModelo("modelo");
+
+        when(bicicletaService.editarBicicleta(any(Long.class), any(NovaBicicletaDTO.class))).thenReturn(bicicleta);
+
+        mockMvc.perform(put("/api/bicicleta/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{'id':1,'marca':'marca','modelo':'modelo'}"));
+    }
+
+    @Test
+    void editarBicicleta_ThrowsIllegalArgumentException() throws Exception {
+        doThrow(new IllegalArgumentException("Dados inválidos")).when(bicicletaService).editarBicicleta(any(Long.class), any(NovaBicicletaDTO.class));
+
+        mockMvc.perform(put("/api/bicicleta/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().json("{'codigo':'422','mensagem':'Dados inválidos'}"));
+    }
+
+    @Test
+    void editarBicicleta_ThrowsNoSuchElementException() throws Exception {
+        doThrow(new NoSuchElementException("Bicicleta não encontrada")).when(bicicletaService).editarBicicleta(any(Long.class), any(NovaBicicletaDTO.class));
+
+        mockMvc.perform(put("/api/bicicleta/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
+                .andExpect(status().isNotFound())
+                .andExpect(content().json("{'codigo':'404','mensagem':'Bicicleta não encontrada'}"));
+    }
+
+    @Test
+    void editarBicicleta_ThrowsException() throws Exception {
+        doThrow(new RuntimeException("Erro ao editar bicicleta")).when(bicicletaService).editarBicicleta(any(Long.class), any(NovaBicicletaDTO.class));
+
+        mockMvc.perform(put("/api/bicicleta/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao editar bicicleta'}"));
+    }
+
+    @Test
+    void removerBicicleta() throws Exception {
+        mockMvc.perform(delete("/api/bicicleta/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Bicicleta removida"));
+    }
+
+    @Test
+    void removerBicicleta_ThrowsNoSuchElementException() throws Exception {
+        doThrow(new NoSuchElementException("Bicicleta não encontrada")).when(bicicletaService).removerBicicleta(any(Long.class));
+
+        mockMvc.perform(delete("/api/bicicleta/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().json("{'codigo':'404','mensagem':'Bicicleta não encontrada'}"));
+    }
+
+    @Test
+    void removerBicicleta_ThrowsException() throws Exception {
+        doThrow(new RuntimeException("Erro ao remover bicicleta")).when(bicicletaService).removerBicicleta(any(Long.class));
+
+        mockMvc.perform(delete("/api/bicicleta/1"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao remover bicicleta'}"));
     }
 
     @Test
@@ -151,111 +292,5 @@ class BicicletaControllerTest {
                         .content(objectMapper.writeValueAsString(new RetirarBicicletaDaRedeDTO())))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao retirar bicicleta da rede'}"));
-    }
-
-    @Test
-    void obterBicicleta() throws Exception {
-        Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
-        bicicleta.setMarca("marca");
-        bicicleta.setModelo("modelo");
-
-        when(bicicletaService.obterBicicleta(1L)).thenReturn(bicicleta);
-
-        mockMvc.perform(get("/api/bicicleta/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().json("{'id':1,'marca':'marca','modelo':'modelo'}"));
-    }
-
-    @Test
-    void obterBicicleta_ThrowsNoSuchElementException() throws Exception {
-        when(bicicletaService.obterBicicleta(1L)).thenThrow(new NoSuchElementException("Error"));
-
-        mockMvc.perform(get("/api/bicicleta/1"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().json("{'codigo':'404','mensagem':'Bicicleta não encontrada'}"));
-    }
-
-    @Test
-    void obterBicicleta_ThrowsException() throws Exception {
-        when(bicicletaService.obterBicicleta(1L)).thenThrow(new RuntimeException("Error"));
-
-        mockMvc.perform(get("/api/bicicleta/1"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao obter bicicleta'}"));
-    }
-
-    @Test
-    void editarBicicleta() throws Exception {
-        Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
-        bicicleta.setMarca("marca");
-        bicicleta.setModelo("modelo");
-
-        when(bicicletaService.editarBicicleta(any(Long.class), any(NovaBicicletaDTO.class))).thenReturn(bicicleta);
-
-        mockMvc.perform(put("/api/bicicleta/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
-                .andExpect(status().isOk())
-                .andExpect(content().json("{'id':1,'marca':'marca','modelo':'modelo'}"));
-    }
-
-    @Test
-    void editarBicicleta_ThrowsIllegalArgumentException() throws Exception {
-        doThrow(new IllegalArgumentException("Error")).when(bicicletaService).editarBicicleta(any(Long.class), any(NovaBicicletaDTO.class));
-
-        mockMvc.perform(put("/api/bicicleta/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().json("{'codigo':'422','mensagem':'Dados inválidos'}"));
-    }
-
-    @Test
-    void editarBicicleta_ThrowsNoSuchElementException() throws Exception {
-        doThrow(new NoSuchElementException("Error")).when(bicicletaService).editarBicicleta(any(Long.class), any(NovaBicicletaDTO.class));
-
-        mockMvc.perform(put("/api/bicicleta/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
-                .andExpect(status().isNotFound())
-                .andExpect(content().json("{'codigo':'404','mensagem':'Bicicleta não encontrada'}"));
-    }
-
-    @Test
-    void editarBicicleta_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Error")).when(bicicletaService).editarBicicleta(any(Long.class), any(NovaBicicletaDTO.class));
-
-        mockMvc.perform(put("/api/bicicleta/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new NovaBicicletaDTO())))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao editar bicicleta'}"));
-    }
-
-    @Test
-    void removerBicicleta() throws Exception {
-        mockMvc.perform(delete("/api/bicicleta/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Bicicleta removida"));
-    }
-
-    @Test
-    void removerBicicleta_ThrowsNoSuchElementException() throws Exception {
-        doThrow(new NoSuchElementException("Error")).when(bicicletaService).removerBicicleta(any(Long.class));
-
-        mockMvc.perform(delete("/api/bicicleta/1"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().json("{'codigo':'404','mensagem':'Bicicleta não encontrada'}"));
-    }
-
-    @Test
-    void removerBicicleta_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Error")).when(bicicletaService).removerBicicleta(any(Long.class));
-
-        mockMvc.perform(delete("/api/bicicleta/1"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao remover bicicleta'}"));
     }
 }

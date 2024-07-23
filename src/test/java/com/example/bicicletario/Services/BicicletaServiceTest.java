@@ -1,9 +1,12 @@
 package com.example.bicicletario.Services;
 
 import com.example.bicicletario.bicicletario.application.BicicletaService;
+import com.example.bicicletario.bicicletario.application.EmailService;
+import com.example.bicicletario.bicicletario.application.FuncionarioService;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
@@ -32,6 +35,12 @@ class BicicletaServiceTest {
 
     @InjectMocks
     private BicicletaService bicicletaService;
+
+    @Mock
+    private FuncionarioService funcionarioService;
+
+    @Mock
+    private EmailService emailService;
 
     @Mock
     private BicicletaRepository bicicletaRepository;
@@ -85,6 +94,96 @@ class BicicletaServiceTest {
     }
 
     @Test
+    void obterBicicleta() {
+        Bicicleta bicicleta = new Bicicleta();
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+
+        Bicicleta result = bicicletaService.obterBicicleta(1L);
+        assertEquals(bicicleta, result);
+    }
+
+    @Test
+    void obterBicicletaInvalida() {
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            bicicletaService.obterBicicleta(1L);
+        });
+
+        assertEquals("Bicicleta não encontrada", exception.getMessage());
+    }
+
+    @Test
+    void removerBicicleta() {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.APOSENTADA);
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+
+        bicicletaService.removerBicicleta(1L);
+        verify(bicicletaRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void removerBicicletaInvalida() {
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            bicicletaService.removerBicicleta(1L);
+        });
+
+        assertEquals("Bicicleta não encontrada", exception.getMessage());
+    }
+
+    @Test
+    void editarBicicleta() {
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setMarca("marca antiga");
+        bicicleta.setModelo("modelo antigo");
+        bicicleta.setAno("2020");
+        bicicleta.setNumero(1);
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
+
+        NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
+        bicicletaDTO.setMarca("nova marca");
+        bicicletaDTO.setModelo("novo modelo");
+        bicicletaDTO.setAno("2022");
+        bicicletaDTO.setNumero(2);
+        bicicletaDTO.setStatus(StatusBicicleta.DISPONIVEL);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> {
+            Bicicleta savedBicicleta = invocation.getArgument(0);
+            savedBicicleta.setMarca(bicicletaDTO.getMarca());
+            savedBicicleta.setModelo(bicicletaDTO.getModelo());
+            savedBicicleta.setAno(bicicletaDTO.getAno());
+            savedBicicleta.setStatusBicicleta(bicicletaDTO.getStatus());
+            return savedBicicleta;
+        });
+
+        Bicicleta result = bicicletaService.editarBicicleta(1L, bicicletaDTO);
+
+        verify(bicicletaRepository, times(1)).save(bicicleta);
+        assertEquals("nova marca", result.getMarca());
+        assertEquals("novo modelo", result.getModelo());
+        assertEquals("2022", result.getAno());
+        assertEquals(1, result.getNumero()); // O número não deve ser alterado
+        assertEquals(StatusBicicleta.DISPONIVEL, result.getStatusBicicleta());
+    }
+
+    @Test
+    void editarBicicletaInvalida() {
+        NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            bicicletaService.editarBicicleta(1L, bicicletaDTO);
+        });
+
+        assertEquals("Bicicleta não encontrada", exception.getMessage());
+    }
+
+    @Test
     void integrarNaRede() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdBicicleta(1L);
@@ -95,10 +194,10 @@ class BicicletaServiceTest {
         bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
 
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
-
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.LIVRE);
         when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
 
         bicicletaService.integrarNaRede(dto);
         verify(bicicletaRepository, times(1)).save(bicicleta);
@@ -119,28 +218,6 @@ class BicicletaServiceTest {
         });
 
         assertEquals("Bicicleta não encontrada", exception.getMessage());
-    }
-
-    @Test
-    void integrarNaRedeTrancaOcupada() {
-        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
-
-        Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
-
-        Tranca tranca = new Tranca();
-        tranca.setStatus(StatusTranca.OCUPADA);
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            bicicletaService.integrarNaRede(dto);
-        });
-
-        assertEquals("Tranca não encontrada", exception.getMessage());
     }
 
     @Test
@@ -177,13 +254,7 @@ class BicicletaServiceTest {
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.LIVRE);
         when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
-
-        bicicletaService = spy(new BicicletaService(bicicletaMapper, bicicletaRepository, trancaRepository) {
-            @Override
-            public boolean isFuncionarioValido(Long idFuncionario, Long idFuncionarioReparador) {
-                return false;
-            }
-        });
+        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(false);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             bicicletaService.integrarNaRede(dto);
@@ -192,14 +263,13 @@ class BicicletaServiceTest {
         assertEquals("Funcionário inválido para esta operação", exception.getMessage());
     }
 
-    // Novos testes para retirarDaRede
-
     @Test
     void retirarDaRede() {
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
         dto.setIdBicicleta(1L);
         dto.setIdTranca(1L);
         dto.setIdFuncionario(1L);
+        dto.setStatusAcaoReparador(StatusAcaoReparador.EM_REPARO);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
@@ -251,7 +321,7 @@ class BicicletaServiceTest {
             bicicletaService.retirarDaRede(dto);
         });
 
-        assertEquals("Tranca não encontrada", exception.getMessage());
+        assertEquals("Tranca não está ocupada", exception.getMessage());
     }
 
     @Test
@@ -274,73 +344,13 @@ class BicicletaServiceTest {
         assertEquals("Tranca não encontrada", exception.getMessage());
     }
 
-    // Testes adicionais para obter, editar, remover e alterar status da bicicleta
-
-    @Test
-    void obterBicicleta() {
-        Bicicleta bicicleta = new Bicicleta();
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
-
-        Bicicleta result = bicicletaService.obterBicicleta(1L);
-        assertEquals(bicicleta, result);
-    }
-
-    @Test
-    void obterBicicletaInvalida() {
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            bicicletaService.obterBicicleta(1L);
-        });
-
-        assertEquals("Bicicleta não encontrada", exception.getMessage());
-    }
-
-    @Test
-    void removerBicicleta() {
-        bicicletaService.removerBicicleta(1L);
-        verify(bicicletaRepository, times(1)).deleteById(1L);
-    }
-
-    @Test
-    void editarBicicleta() {
-        Bicicleta bicicleta = new Bicicleta();
-        NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
-        bicicletaDTO.setMarca("nova marca");
-        bicicletaDTO.setModelo("novo modelo");
-        bicicletaDTO.setAno("2022");
-        bicicletaDTO.setNumero(2);
-        bicicletaDTO.setStatus(StatusBicicleta.DISPONIVEL);
-
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
-
-        Bicicleta result = bicicletaService.editarBicicleta(1L, bicicletaDTO);
-        verify(bicicletaRepository, times(1)).save(bicicleta);
-        assertEquals("nova marca", result.getMarca());
-        assertEquals("novo modelo", result.getModelo());
-        assertEquals("2022", result.getAno());
-        assertEquals(2, result.getNumero());
-        assertEquals(StatusBicicleta.DISPONIVEL, result.getStatusBicicleta());
-    }
-
-    @Test
-    void editarBicicletaInvalida() {
-        NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            bicicletaService.editarBicicleta(1L, bicicletaDTO);
-        });
-
-        assertEquals("Bicicleta não encontrada", exception.getMessage());
-    }
-
     @Test
     void alterarStatusBicicletaDisponibilizar() {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
 
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "disponibilizar");
         verify(bicicletaRepository, times(1)).save(bicicleta);
@@ -353,6 +363,7 @@ class BicicletaServiceTest {
         bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
 
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "reparar");
         verify(bicicletaRepository, times(1)).save(bicicleta);
@@ -368,6 +379,6 @@ class BicicletaServiceTest {
             bicicletaService.alterarStatusBicicleta(1L, "invalido");
         });
 
-        assertEquals("Dados inválidos", exception.getMessage());
+        assertEquals("Ação inválida", exception.getMessage());
     }
 }

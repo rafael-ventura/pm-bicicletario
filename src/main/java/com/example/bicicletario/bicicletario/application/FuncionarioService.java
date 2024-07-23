@@ -4,12 +4,8 @@ package com.example.bicicletario.bicicletario.application;
 import com.example.bicicletario.bicicletario.domain.models.Funcionario;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
-
 @Service
 public class FuncionarioService {
-
-    Random random;
 
     public Funcionario get(long idFuncionario) {
         Funcionario funcionario = new Funcionario();
@@ -26,6 +22,6 @@ public class FuncionarioService {
 
     public boolean isFuncionarioValido(long idFuncionario) {
         Funcionario funcionario = get(idFuncionario);
-        return funcionario.getId() == idFuncionario;
+        return funcionario.getId() != idFuncionario;
     }
 }

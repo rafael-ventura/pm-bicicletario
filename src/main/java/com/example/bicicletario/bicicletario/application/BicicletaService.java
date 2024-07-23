@@ -12,27 +12,26 @@ import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
 import com.example.bicicletario.bicicletario.mapper.BicicletaMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BicicletaService {
 
-    private final BicicletaRepository bicicletaRepository;
-    private final TrancaRepository trancaRepository;
-    private final BicicletaMapper bicicletaMapper;
-    private final EmailService emailService;
-    private final FuncionarioService funcionarioService;
-
-    public BicicletaService(BicicletaMapper bicicletaMapper, BicicletaRepository bicicletaRepository, TrancaRepository trancaRepository, EmailService emailService, FuncionarioService funcionarioService) {
-        this.bicicletaMapper = bicicletaMapper;
-        this.bicicletaRepository = bicicletaRepository;
-        this.trancaRepository = trancaRepository;
-        this.emailService = emailService;
-        this.funcionarioService = funcionarioService;
-    }
+    @Autowired
+    private BicicletaRepository bicicletaRepository;
+    @Autowired
+    private TrancaRepository trancaRepository;
+    @Autowired
+    private BicicletaMapper bicicletaMapper;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private FuncionarioService funcionarioService;
 
     public List<Bicicleta> listarBicicletas() {
         return bicicletaRepository.findAll();
@@ -73,11 +72,9 @@ public class BicicletaService {
         // [R4] Verificar se a bicicleta pode ser excluída
         if (bicicleta.getStatusBicicleta() != StatusBicicleta.APOSENTADA) {
             throw new IllegalArgumentException(Constantes.BICICLETA_NAO_APOSENTADA);
-        } else if (bicicleta.getDataInsercaoTranca() != null) {
-            throw new IllegalArgumentException(Constantes.BICICLETA_EM_TRANCA);
-        } else {
-            bicicletaRepository.deleteById(idBicicleta);
         }
+
+        bicicletaRepository.deleteById(idBicicleta);
     }
 
     public void integrarNaRede(IntegrarBicicletaNaRedeDTO dto) {
@@ -96,7 +93,7 @@ public class BicicletaService {
 
         // Verificar se a tranca está disponível
         if (tranca.getStatus() != StatusTranca.LIVRE) {
-            throw new IllegalArgumentException(Constantes.TRANCA_PRENCHIDA);
+            throw new IllegalArgumentException(Constantes.TRANCA_NAO_DISPONIVEL);
         }
 
         // [R3] Verificar se o funcionário é válido (em caso de reparo)
@@ -147,7 +144,7 @@ public class BicicletaService {
         } else if (dto.getStatusAcaoReparador().equals(StatusAcaoReparador.APOSENTADA)) {
             bicicleta.setStatusBicicleta(StatusBicicleta.APOSENTADA);
         } else {
-            throw new IllegalArgumentException(Constantes.DADOS_INVALIDOS);
+            throw new IllegalArgumentException(Constantes.ACAO_INVALIDA);
         }
 
         // [R1] Atualizar a data de remoção da tranca e registrar a operação
@@ -168,19 +165,24 @@ public class BicicletaService {
         }
     }
 
-
-    public Bicicleta alterarStatusBicicleta(Long idBicicleta, String acao) {
-        Bicicleta bicicleta = bicicletaRepository.findById(idBicicleta)
-                .orElseThrow(() -> new IllegalArgumentException(Constantes.BICICLETA_NAO_ENCONTRADA));
-
-        if (acao.equals("disponibilizar")) {
-            bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
-        } else if (acao.equals("reparar")) {
-            bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
+    public Bicicleta alterarStatusBicicleta(Long id, String acao) {
+        Optional<Bicicleta> optionalBicicleta = bicicletaRepository.findById(id);
+        if (optionalBicicleta.isPresent()) {
+            Bicicleta bicicleta = optionalBicicleta.get();
+            switch (acao) {
+                case "disponibilizar":
+                    bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
+                    break;
+                case "reparar":
+                    bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Ação inválida");
+            }
+            return bicicletaRepository.save(bicicleta);
         } else {
-            throw new IllegalArgumentException(Constantes.DADOS_INVALIDOS);
+            throw new IllegalArgumentException("Bicicleta não encontrada");
         }
-
-        return bicicletaRepository.save(bicicleta);
     }
+
 }

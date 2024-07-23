@@ -1,9 +1,11 @@
 package com.example.bicicletario.Controllers;
 
+import com.example.bicicletario.bicicletario.application.BicicletaService;
 import com.example.bicicletario.bicicletario.application.TrancaService;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.web.TrancaController;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +32,9 @@ class TrancaControllerTest {
 
     @Mock
     private TrancaService trancaService;
+
+    @Mock
+    private BicicletaService bicicletaService;
 
     @InjectMocks
     private TrancaController trancaController;
@@ -60,31 +65,31 @@ class TrancaControllerTest {
 
     @Test
     void integrarNaRede_ThrowsIllegalArgumentException() throws Exception {
-        doThrow(new IllegalArgumentException("Error")).when(trancaService).integrarNaRede(any(IntegrarBicicletaNaRedeDTO.class));
+        doThrow(new IllegalArgumentException("Número da bicicleta inválido")).when(trancaService).integrarNaRede(any(IntegrarBicicletaNaRedeDTO.class));
 
         mockMvc.perform(post("/api/tranca/integrarNaRede")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new IntegrarBicicletaNaRedeDTO())))
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().json("{'codigo':'422','mensagem':'Dados inválidos'}"));
+                .andExpect(content().json("{\"codigo\":\"422\",\"mensagem\":\"Dados inválidos\"}"));
     }
 
     @Test
-    void integrarNaRede_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Error")).when(trancaService).integrarNaRede(any(IntegrarBicicletaNaRedeDTO.class));
+    void integrarNaRede_ThrowsRuntimeException() throws Exception {
+        doThrow(new RuntimeException("Erro no envio do email")).when(trancaService).integrarNaRede(any(IntegrarBicicletaNaRedeDTO.class));
 
         mockMvc.perform(post("/api/tranca/integrarNaRede")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new IntegrarBicicletaNaRedeDTO())))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao integrar tranca na rede'}"));
+                .andExpect(content().json("{\"codigo\":\"500\",\"mensagem\":\"Erro ao integrar tranca na rede\"}"));
     }
 
     @Test
     void retirarDaRede() throws Exception {
         RetirarTrancaDaRedeDTO dto = new RetirarTrancaDaRedeDTO();
         dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setStatusAcaoReparador(StatusAcaoReparador.EM_REPARO);
 
         mockMvc.perform(post("/api/tranca/retirarDaRede")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -95,24 +100,24 @@ class TrancaControllerTest {
 
     @Test
     void retirarDaRede_ThrowsIllegalArgumentException() throws Exception {
-        doThrow(new IllegalArgumentException("Error")).when(trancaService).retirarDaRede(any(RetirarTrancaDaRedeDTO.class));
+        doThrow(new IllegalArgumentException("Número da tranca inválido")).when(trancaService).retirarDaRede(any(RetirarTrancaDaRedeDTO.class));
 
         mockMvc.perform(post("/api/tranca/retirarDaRede")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new RetirarTrancaDaRedeDTO())))
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().json("{'codigo':'422','mensagem':'Dados inválidos'}"));
+                .andExpect(content().json("{\"codigo\":\"422\",\"mensagem\":\"Dados inválidos\"}"));
     }
 
     @Test
-    void retirarDaRede_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Error")).when(trancaService).retirarDaRede(any(RetirarTrancaDaRedeDTO.class));
+    void retirarDaRede_ThrowsRuntimeException() throws Exception {
+        doThrow(new RuntimeException("Erro no envio do email")).when(trancaService).retirarDaRede(any(RetirarTrancaDaRedeDTO.class));
 
         mockMvc.perform(post("/api/tranca/retirarDaRede")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new RetirarTrancaDaRedeDTO())))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao retirar tranca da rede'}"));
+                .andExpect(content().json("{\"codigo\":\"500\",\"mensagem\":\"Erro ao retirar tranca da rede\"}"));
     }
 
     @Test

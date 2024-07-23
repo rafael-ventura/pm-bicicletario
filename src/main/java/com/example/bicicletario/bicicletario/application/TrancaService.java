@@ -44,7 +44,7 @@ public class TrancaService {
         }
 
         // [R3] Verificar se o funcionário que está devolvendo a tranca é o mesmo que retirou para reparo
-        if (tranca.getStatus() == StatusTranca.EM_REPARO && !funcionarioService.isFuncionarioValido(dto.getIdFuncionario())) {
+        if (tranca.getStatus() == StatusTranca.EM_REPARO && funcionarioService.isFuncionarioValido(dto.getIdFuncionario())) {
             throw new IllegalArgumentException(Constantes.FUNCIONARIO_INVALIDO);
         }
 

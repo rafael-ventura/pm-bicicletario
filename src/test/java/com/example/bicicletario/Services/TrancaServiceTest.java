@@ -1,13 +1,15 @@
 package com.example.bicicletario.Services;
 
+import com.example.bicicletario.bicicletario.application.EmailService;
+import com.example.bicicletario.bicicletario.application.FuncionarioService;
 import com.example.bicicletario.bicicletario.application.TrancaService;
-import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
-import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
+import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
 import com.example.bicicletario.bicicletario.mapper.TrancaMapper;
@@ -34,6 +36,12 @@ class TrancaServiceTest {
     @Mock
     private TrancaMapper trancaMapper;
 
+    @Mock
+    private EmailService emailService;
+
+    @Mock
+    private FuncionarioService funcionarioService;
+
     @InjectMocks
     private TrancaService trancaService;
 
@@ -56,7 +64,7 @@ class TrancaServiceTest {
             trancaService.integrarNaRede(dto);
         });
 
-        assertEquals("Tranca não está disponível", exception.getMessage());
+        assertEquals("Status da tranca inválido", exception.getMessage());
     }
 
     @Test
@@ -65,9 +73,10 @@ class TrancaServiceTest {
         dto.setIdTranca(1L);
 
         Tranca tranca = new Tranca();
-        tranca.setStatus(StatusTranca.LIVRE);
+        tranca.setStatus(StatusTranca.NOVA);
 
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
+        doNothing().when(emailService).enviarEmailParaReparador(anyLong());
 
         trancaService.integrarNaRede(dto);
 
@@ -115,6 +124,7 @@ class TrancaServiceTest {
         tranca.setStatus(StatusTranca.LIVRE);
 
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
+        doNothing().when(emailService).enviarEmailParaReparador(anyLong());
 
         trancaService.retirarDaRede(dto);
 
