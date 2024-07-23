@@ -84,35 +84,24 @@ class TrancaServiceTest {
     }
 
     @Test
-    void retirarDaRedeTrancaInvalida() {
-        RetirarTrancaDaRedeDTO dto = new RetirarTrancaDaRedeDTO();
+    void integrarNaRedeFuncionarioInvalido() {
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdTranca(1L);
-
-        when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.empty());
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            trancaService.retirarDaRede(dto);
-        });
-
-        assertEquals("Tranca não encontrada", exception.getMessage());
-    }
-
-    @Test
-    void retirarDaRedeTrancaComBicicleta() {
-        RetirarTrancaDaRedeDTO dto = new RetirarTrancaDaRedeDTO();
-        dto.setIdTranca(1L);
+        dto.setIdFuncionario(1L);
 
         Tranca tranca = new Tranca();
-        tranca.setStatus(StatusTranca.OCUPADA);
+        tranca.setStatus(StatusTranca.EM_REPARO);
 
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
+        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(false);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            trancaService.retirarDaRede(dto);
+            trancaService.integrarNaRede(dto);
         });
 
-        assertEquals("Tranca está com bicicleta presa", exception.getMessage());
+        assertEquals("Funcionário inválido", exception.getMessage());
     }
+
 
     @Test
     void retirarDaRedeTrancaValida() {
@@ -130,6 +119,23 @@ class TrancaServiceTest {
 
         assertEquals(StatusTranca.EM_REPARO, tranca.getStatus());
         verify(trancaRepository, times(1)).save(tranca);
+    }
+
+    @Test
+    void retirarDaRedeTrancaComBicicleta() {
+        RetirarTrancaDaRedeDTO dto = new RetirarTrancaDaRedeDTO();
+        dto.setIdTranca(1L);
+
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.OCUPADA);
+
+        when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            trancaService.retirarDaRede(dto);
+        });
+
+        assertEquals("Tranca está com bicicleta presa", exception.getMessage());
     }
 
     @Test

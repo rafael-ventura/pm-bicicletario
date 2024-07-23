@@ -135,6 +135,19 @@ class BicicletaServiceTest {
     }
 
     @Test
+    void removerBicicletaNaoAposentada() {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            bicicletaService.removerBicicleta(1L);
+        });
+
+        assertEquals("Bicicleta não está aposentada", exception.getMessage());
+    }
+
+    @Test
     void editarBicicleta() {
 
         Bicicleta bicicleta = new Bicicleta();
