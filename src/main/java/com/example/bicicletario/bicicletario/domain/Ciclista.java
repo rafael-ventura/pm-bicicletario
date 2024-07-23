@@ -2,49 +2,25 @@ package com.example.bicicletario.bicicletario.domain;
 
 import com.example.bicicletario.bicicletario.domain.enums.Nacionalidade;
 import com.example.bicicletario.bicicletario.domain.enums.StatusCiclista;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 
 public class Ciclista {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "nome")
     private String nome;
 
-    @Column(name = "email")
     private String email;
 
-    @Column(name = "cpf")
     private String cpf;
 
-    @Column(name = "nascimento")
     private String nascimento;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "nacionalidade")
     private Nacionalidade nacionalidade;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "passaporte_id", referencedColumnName = "id")
     private Passaporte passaporte;
 
-    @Column(name = "url_foto_documento")
     private String urlFotoDocumento;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
     private StatusCiclista statusCiclista;
 
     // Getters and Setters

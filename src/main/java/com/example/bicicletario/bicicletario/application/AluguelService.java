@@ -1,5 +1,7 @@
+/*
 package com.example.bicicletario.bicicletario.application;
 
+import com.example.bicicletario.bicicletario.application.external.EquipamentoService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
@@ -7,7 +9,6 @@ import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
@@ -18,7 +19,7 @@ public class AluguelService {
     private final CiclistaRepository ciclistaRepository;
 
     @Autowired
-    private EquipamentoClientService equipamentoClient;
+    private EquipamentoService equipamentoClient;
 
     public AluguelService(AluguelRepository aluguelRepository, CiclistaService ciclistaService, CiclistaRepository ciclistaRepository) {
         this.aluguelRepository = aluguelRepository;
@@ -38,11 +39,11 @@ public class AluguelService {
         // Bicicleta bicicleta = bicicletaService.obterBicicleta(idBicicleta);
 
         // Simulação de validação da bicicleta
-        /*
         if (bicicleta.getStatus() != StatusBicicleta.DISPONIVEL) {
             throw new IllegalArgumentException("Bicicleta não está disponível para aluguel.");
         }
-        */
+
+
 
         Aluguel aluguel = new Aluguel();
         aluguel.setCiclista(ciclista.getId());
@@ -68,3 +69,4 @@ public class AluguelService {
         System.out.println("Email de confirmação de devolução enviado com sucesso!");
     }
 }
+*/

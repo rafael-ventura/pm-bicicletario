@@ -1,3 +1,4 @@
+/*
 package com.example.bicicletario.bicicletario.web;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AluguelController {
     //TODO: implementar
 
-    /*private final AluguelService aluguelService;
+private final AluguelService aluguelService;
 
     public AluguelController(AluguelService aluguelService) {
         this.aluguelService = aluguelService;
@@ -24,5 +25,6 @@ public class AluguelController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao realizar aluguel");
         }
-    }*/
-}
+    }
+
+}*/

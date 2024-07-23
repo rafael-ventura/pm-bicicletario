@@ -3,17 +3,12 @@ package com.example.bicicletario.bicicletario.mapper;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface CiclistaMapper {
-
-    Ciclista toDto(NovoCiclistaDTO dto);
-
-    CiclistaDTO toDto (Ciclista dto);
-
-    Ciclista toEntity(NovoCiclistaDTO novoDto);
-
-    Ciclista toEntity(CiclistaDTO dto);
+    @Mapping(target = "id", ignore = true)
+    Ciclista toEntity(NovoCiclistaDTO dto);
 }
 
 

@@ -30,40 +30,25 @@ public class FuncionarioController {
 
     @PostMapping
     public ResponseEntity<?> cadastrarFuncionario(@RequestBody NovoFuncionarioDTO novoFuncionarioDTO) {
-        try {
-            NovoFuncionarioDTO funcionarioDTO = funcionarioService.cadastrarFuncionario(novoFuncionarioDTO);
-            return ResponseEntity.ok(funcionarioDTO);
-        } catch (InvalidDataException e) {
-            ErroDTO erroDTO = new ErroDTO("422", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(erroDTO);
-        }
+        NovoFuncionarioDTO funcionarioDTO = funcionarioService.cadastrarFuncionario(novoFuncionarioDTO);
+        return ResponseEntity.ok(funcionarioDTO);
     }
 
     @GetMapping("/{idFuncionario}")
-    public ResponseEntity<Object> obterFuncionario(@PathVariable Long idFuncionario) {
-        Optional<NovoFuncionarioDTO> funcionarioDTO = funcionarioService.obterFuncionario(idFuncionario);
-        return funcionarioDTO.<ResponseEntity<Object>>map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(404).body("Funcionário não encontrado"));
+    public ResponseEntity<NovoFuncionarioDTO> obterFuncionario(@PathVariable Long idFuncionario) {
+        NovoFuncionarioDTO funcionarioDTO = funcionarioService.obterFuncionario(idFuncionario);
+        return ResponseEntity.ok(funcionarioDTO);
     }
 
     @PutMapping("/{idFuncionario}")
-    public ResponseEntity<?> alterarFuncionario(@PathVariable Long idFuncionario, @RequestBody NovoFuncionarioDTO novoFuncionarioDTO) {
-        try {
-            NovoFuncionarioDTO funcionarioDTO = funcionarioService.alterarFuncionario(idFuncionario, novoFuncionarioDTO);
-            return ResponseEntity.ok(funcionarioDTO);
-        } catch (InvalidDataException e) {
-            ErroDTO erroDTO = new ErroDTO("422", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(erroDTO);
-        }
+    public ResponseEntity<NovoFuncionarioDTO> alterarFuncionario(@PathVariable Long idFuncionario, @RequestBody NovoFuncionarioDTO novoFuncionarioDTO) {
+        NovoFuncionarioDTO funcionarioDTO = funcionarioService.alterarFuncionario(idFuncionario, novoFuncionarioDTO);
+        return ResponseEntity.ok(funcionarioDTO);
     }
 
     @DeleteMapping("/{idFuncionario}")
     public ResponseEntity<?> excluirFuncionario(@PathVariable Long idFuncionario) {
-        try {
-            funcionarioService.excluirFuncionario(idFuncionario);
-            return ResponseEntity.ok("Funcionário excluído com sucesso");
-        } catch (InvalidDataException e) {
-            ErroDTO erroDTO = new ErroDTO("422", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(erroDTO);
-        }
+        funcionarioService.excluirFuncionario(idFuncionario);
+        return ResponseEntity.ok("Funcionário excluído com sucesso");
     }
 }

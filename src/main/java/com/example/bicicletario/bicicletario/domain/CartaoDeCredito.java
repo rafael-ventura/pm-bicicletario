@@ -1,31 +1,18 @@
 package com.example.bicicletario.bicicletario.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-@Entity
-@Table(name = "cartao_de_credito")
 public class CartaoDeCredito {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int id;
 
-    @Column(name = "nome_titular")
     public String nomeTitular;
 
-    @Column(name = "numero")
     public String numero;
 
-    @Column(name = "validade")
     public String validade;
 
-    @Column(name = "cvv")
     public String cvv;
+
+    public int idCiclista;
 
     public int getId() {
         return id;
@@ -65,5 +52,13 @@ public class CartaoDeCredito {
 
     public void setCvv(String cvv) {
         this.cvv = cvv;
+    }
+
+    public int getIdCiclista() {
+        return idCiclista;
+    }
+
+    public void setIdCiclista(int idCiclista) {
+        this.idCiclista = idCiclista;
     }
 }

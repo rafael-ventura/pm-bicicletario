@@ -1,12 +1,8 @@
 package com.example.bicicletario.bicicletario.domain.dto;
 
-import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
-
 public class NovoCiclistaRequestDTO {
     private NovoCiclistaDTO ciclista;
-    private CartaoDeCredito meioDePagamento;
-
-    // Getters e Setters
+    private NovoCartaoDeCreditoDTO meioDePagamento;
 
     public NovoCiclistaDTO getCiclista() {
         return ciclista;
@@ -16,11 +12,11 @@ public class NovoCiclistaRequestDTO {
         this.ciclista = ciclista;
     }
 
-    public CartaoDeCredito getMeioDePagamento() {
+    public NovoCartaoDeCreditoDTO getMeioDePagamento() {
         return meioDePagamento;
     }
 
-    public void setMeioDePagamento(CartaoDeCredito meioDePagamento) {
+    public void setMeioDePagamento(NovoCartaoDeCreditoDTO meioDePagamento) {
         this.meioDePagamento = meioDePagamento;
     }
 }

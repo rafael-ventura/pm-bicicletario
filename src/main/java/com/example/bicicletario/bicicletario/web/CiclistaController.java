@@ -1,14 +1,12 @@
 package com.example.bicicletario.bicicletario.web;
 
 import com.example.bicicletario.bicicletario.application.CiclistaService;
+import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.ErroDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
-import com.example.bicicletario.bicicletario.exception.EmailAlreadyExistsException;
-import com.example.bicicletario.bicicletario.exception.InvalidDataException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,20 +24,12 @@ public class CiclistaController {
 
     @PostMapping
     public ResponseEntity<?> cadastrarCiclista(@RequestBody NovoCiclistaRequestDTO request) {
-        try {
-            Ciclista ciclista = ciclistaService.cadastrarCiclista(request);
-            return ResponseEntity.status(201).body(ciclista);
-        } catch (InvalidDataException e) {
-            return ResponseEntity.status(422).body(new ErroDTO("422", e.getMessage()));
-        } catch (EmailAlreadyExistsException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErroDTO("400", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(404).body(new ErroDTO("404", e.getMessage()));
-        }
+        Ciclista ciclista = ciclistaService.cadastrarCiclista(request);
+        return ResponseEntity.status(201).body(ciclista);
     }
 
     @GetMapping("/{idCiclista}")
-    public ResponseEntity<Ciclista> obterCiclista(@PathVariable Long idCiclista) {
+    public ResponseEntity<Ciclista> obterCiclista(@PathVariable int idCiclista) {
         Optional<Ciclista> ciclista = ciclistaService.obterCiclista(idCiclista);
         return ciclista.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(404).build());
     }
@@ -51,7 +41,7 @@ public class CiclistaController {
     }
 
     @PostMapping("/{idCiclista}/ativar")
-    public ResponseEntity<Ciclista> ativarCiclista(@PathVariable Long idCiclista) {
+    public ResponseEntity<Ciclista> ativarCiclista(@PathVariable int idCiclista) {
         Ciclista ciclista = ciclistaService.ativarCiclista(idCiclista);
         return ResponseEntity.ok(ciclista);
     }
@@ -63,10 +53,9 @@ public class CiclistaController {
     }
 
     @GetMapping("/{idCiclista}/bicicletaAlugada")
-    public ResponseEntity<Ciclista> obterBicicletaAlugada(@PathVariable Long idCiclista) {
-        Optional<Ciclista> bicicleta = ciclistaService.obterBicicletaAlugada(idCiclista);
-        return bicicleta.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(404).build());
+    public ResponseEntity<?> obterBicicletaAlugada(@PathVariable int idCiclista) {
+        Optional<Bicicleta> bicicleta = ciclistaService.obterBicicletaAlugada(idCiclista);
+        return ResponseEntity.ok(bicicleta);
     }
 
     @GetMapping("/existeEmail/{email}")

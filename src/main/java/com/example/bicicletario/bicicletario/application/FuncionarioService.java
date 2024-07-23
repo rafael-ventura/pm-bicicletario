@@ -5,14 +5,11 @@ import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.infraestructure.FuncionarioRepository;
 import com.example.bicicletario.bicicletario.mapper.FuncionarioMapper;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class FuncionarioService {
 
     private final FuncionarioRepository funcionarioRepository;
@@ -47,9 +44,12 @@ public class FuncionarioService {
         return funcionarioMapper.toDtoList(funcionarios);
     }
 
-    public Optional<NovoFuncionarioDTO> obterFuncionario(Long idFuncionario) {
-        return funcionarioRepository.findById(idFuncionario)
-                .map(funcionarioMapper::toDto);
+    public NovoFuncionarioDTO obterFuncionario(Long idFuncionario) {
+        Optional<NovoFuncionarioDTO> novoFuncionarioOpt = funcionarioRepository.findById(idFuncionario).map(funcionarioMapper::toDto);
+        if (novoFuncionarioOpt.isEmpty()) {
+            throw new InvalidDataException("Funcionário não encontrado com o ID: " + idFuncionario);
+        }
+        return novoFuncionarioOpt.get();
     }
 
     public NovoFuncionarioDTO alterarFuncionario(Long idFuncionario, NovoFuncionarioDTO novoFuncionarioDTO) {

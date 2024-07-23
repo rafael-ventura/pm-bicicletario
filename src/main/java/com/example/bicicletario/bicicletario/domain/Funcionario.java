@@ -1,37 +1,23 @@
 package com.example.bicicletario.bicicletario.domain;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "funcionario")
 public class Funcionario {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "matricula")
     private String matricula;
 
-    @Column(name = "senha")
     private String senha;
 
-    @Column(name = "confirmacao_senha")
     private String confirmacaoSenha;
 
-    @Column(name = "email")
     private String email;
 
-    @Column(name = "nome")
     private String nome;
 
-    @Column(name = "idade")
     private int idade;
 
-    @Column(name = "funcao")
     private String funcao;
 
-    @Column(name = "cpf")
     private String cpf;
 
     // Getters e Setters

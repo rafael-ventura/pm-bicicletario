@@ -1,4 +1,4 @@
-package com.example.bicicletario.bicicletario.web;
+/*package com.example.bicicletario.bicicletario.web;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Aluguel", description = "Endpoints para gestão de aluguel e devolução de bicicletas")
 public class DevolucaoController {
 
-   /* private final CiclistaService ciclistaService;
+   private final CiclistaService ciclistaService;
 
     public DevolucaoAluguelController(CiclistaService ciclistaService) {
         this.ciclistaService = ciclistaService;
@@ -18,6 +18,6 @@ public class DevolucaoController {
     public ResponseEntity<DevolucaoDTO> realizarDevolucao(@RequestBody NovoDevolucaoDTO novoDevolucaoDTO) {
         DevolucaoDTO devolucao = ciclistaService.realizarDevolucao(novoDevolucaoDTO);
         return ResponseEntity.ok(devolucao);
-    }*/
+    }
 
-}
+}*/

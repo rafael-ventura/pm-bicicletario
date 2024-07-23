@@ -1,13 +1,12 @@
+/*
 package com.example.bicicletario.bicicletario.infraestructure;
 
 import com.example.bicicletario.bicicletario.domain.Aluguel;
-import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Repository
 public class AluguelRepository {
     private final Map<Integer, Aluguel> alugueis = new HashMap<>();
 
@@ -24,4 +23,4 @@ public class AluguelRepository {
                         aluguel.getHoraFim() == null);
     }
 
-}
+}*/
