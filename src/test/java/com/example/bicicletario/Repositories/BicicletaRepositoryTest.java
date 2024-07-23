@@ -2,6 +2,7 @@ package com.example.bicicletario.Repositories;
 
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
+import com.example.bicicletario.bicicletario.domain.models.Totem;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,9 +65,12 @@ class BicicletaRepositoryTest {
 
     @Test
     void testFindByTotemId() {
+        Totem totem = new Totem();
+        totem.setId(1L);
+
         Tranca tranca = new Tranca();
         tranca.setId(1L);
-        tranca.getTotem().setId(1L);
+        tranca.setTotem(totem);
 
         Bicicleta bicicleta1 = new Bicicleta();
         bicicleta1.setTranca(tranca);

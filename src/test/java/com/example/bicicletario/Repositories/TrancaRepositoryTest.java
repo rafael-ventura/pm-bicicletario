@@ -51,10 +51,12 @@ class TrancaRepositoryTest {
         totem.setId(1L);
 
         Tranca tranca1 = new Tranca();
+        tranca1.setId(1L);
         tranca1.setTotem(totem);
         trancaRepository.save(tranca1);
 
         Tranca tranca2 = new Tranca();
+        tranca2.setId(2L);
         tranca2.setTotem(totem);
         trancaRepository.save(tranca2);
 
@@ -68,6 +70,7 @@ class TrancaRepositoryTest {
         totem.setId(1L);
 
         Tranca tranca = new Tranca();
+        tranca.setId(1L);
         tranca.setTotem(totem);
         trancaRepository.save(tranca);
 
