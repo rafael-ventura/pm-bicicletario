@@ -46,11 +46,11 @@ class FuncionarioControllerTest {
 
     @Test
     void listarFuncionarios() throws Exception {
-        FuncionarioDTO funcionario = new FuncionarioDTO();
-        funcionario.setId(1L);
+        Funcionario funcionario = new Funcionario();
+        funcionario.setId(1);
         funcionario.setNome("João Silva");
 
-        when(funcionarioService.listarFuncionarios()).thenReturn(List.of(funcionario));
+        when(funcionarioMapper.toEntityList(funcionarioService.listarFuncionarios())).thenReturn(List.of(funcionario));
 
         mockMvc.perform(get("/api/funcionario"))
                 .andExpect(status().isOk())
@@ -76,11 +76,11 @@ class FuncionarioControllerTest {
         dto.setIdade(30);
         dto.setFuncao("Administrador");
 
-        FuncionarioDTO funcionario = new FuncionarioDTO();
-        funcionario.setId(1L);
+        Funcionario funcionario = new Funcionario();
+        funcionario.setId(1);
         funcionario.setNome("João Silva");
 
-        when(funcionarioService.cadastrarFuncionario(any(NovoFuncionarioDTO.class))).thenReturn(funcionario);
+        when(funcionarioMapper.toEntity(funcionarioService.cadastrarFuncionario(any(NovoFuncionarioDTO.class)))).thenReturn(funcionario);
 
         mockMvc.perform(post("/api/funcionario")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -92,7 +92,7 @@ class FuncionarioControllerTest {
 
     @Test
     void criarFuncionario_ThrowsIllegalArgumentException() throws Exception {
-        doThrow(new IllegalArgumentException("Dados inválidos")).when(funcionarioService).criarFuncionario(any(NovoFuncionarioDTO.class));
+        doThrow(new IllegalArgumentException("Dados inválidos")).when(funcionarioService).cadastrarFuncionario(any(NovoFuncionarioDTO.class));
 
         mockMvc.perform(post("/api/funcionario")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +103,7 @@ class FuncionarioControllerTest {
 
     @Test
     void criarFuncionario_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Erro ao criar funcionário")).when(funcionarioService).criarFuncionario(any(NovoFuncionarioDTO.class));
+        doThrow(new RuntimeException("Erro ao criar funcionário")).when(funcionarioService).cadastrarFuncionario(any(NovoFuncionarioDTO.class));
 
         mockMvc.perform(post("/api/funcionario")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -118,7 +118,7 @@ class FuncionarioControllerTest {
         funcionario.setId(1);
         funcionario.setNome("João Silva");
 
-        when(funcionarioMapper.toEntity(funcionarioService.obterFuncionario(1L))).thenReturn(funcionario);
+        when(funcionarioMapper.toEntity(funcionarioService.obterFuncionario(1))).thenReturn(funcionario);
 
         mockMvc.perform(get("/api/funcionario/1"))
                 .andExpect(status().isOk())
@@ -127,7 +127,7 @@ class FuncionarioControllerTest {
 
     @Test
     void obterFuncionario_ThrowsNoSuchElementException() throws Exception {
-        when(funcionarioService.obterFuncionario(1L)).thenThrow(new NoSuchElementException("Funcionário não encontrado"));
+        when(funcionarioService.obterFuncionario(1)).thenThrow(new NoSuchElementException("Funcionário não encontrado"));
 
         mockMvc.perform(get("/api/funcionario/1"))
                 .andExpect(status().isNotFound())
@@ -136,7 +136,7 @@ class FuncionarioControllerTest {
 
     @Test
     void obterFuncionario_ThrowsException() throws Exception {
-        when(funcionarioService.obterFuncionario(1L)).thenThrow(new RuntimeException("Erro ao obter funcionário"));
+        when(funcionarioService.obterFuncionario(1)).thenThrow(new RuntimeException("Erro ao obter funcionário"));
 
         mockMvc.perform(get("/api/funcionario/1"))
                 .andExpect(status().isInternalServerError())

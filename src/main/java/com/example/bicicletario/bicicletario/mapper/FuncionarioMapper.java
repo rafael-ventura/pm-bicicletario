@@ -13,6 +13,8 @@ public interface FuncionarioMapper {
     @Mapping(target = "matricula", ignore = true)
     Funcionario toEntity(NovoFuncionarioDTO novoFuncionarioDTO);
 
+    List<Funcionario> toEntityList(List<NovoFuncionarioDTO> novoFuncionarioDTO);
+
     NovoFuncionarioDTO toDto(Funcionario funcionario);
 
     List<NovoFuncionarioDTO> toDtoList(List<Funcionario> funcionarios);
