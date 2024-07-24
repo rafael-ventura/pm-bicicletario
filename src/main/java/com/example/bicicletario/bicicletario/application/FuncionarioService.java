@@ -23,7 +23,10 @@ public class FuncionarioService {
 
     public Funcionario cadastrarFuncionario(NovoFuncionarioDTO novoFuncionarioDTO) {
         validateFuncionarioDTO(novoFuncionarioDTO); // Validar campos obrigatórios
-        Funcionario funcionario = funcionarioMapper.toEntity(novoFuncionarioDTO);
+
+        Funcionario funcionario = new Funcionario();
+        updateEntityWithDto(funcionario, novoFuncionarioDTO);
+
         funcionario.setMatricula(generateMatricula()); // Gera a matrícula automaticamente
         funcionario = funcionarioRepository.save(funcionario);
         return funcionario;
@@ -79,10 +82,10 @@ public class FuncionarioService {
         funcionario = funcionarioRepository.save(funcionario);
 
         // Converte o funcionário atualizado para DTO e retorna
-        return funcionarioMapper.toDto(funcionario);
+        return novoFuncionarioDTO;
     }
 
-    private void updateEntityWithDto(Funcionario funcionario, NovoFuncionarioDTO novoFuncionarioDTO) {
+    private Funcionario updateEntityWithDto(Funcionario funcionario, NovoFuncionarioDTO novoFuncionarioDTO) {
         if (novoFuncionarioDTO.getNome() != null) {
             funcionario.setNome(novoFuncionarioDTO.getNome());
         }
@@ -104,6 +107,7 @@ public class FuncionarioService {
         if (novoFuncionarioDTO.getFuncao() != null) {
             funcionario.setFuncao(novoFuncionarioDTO.getFuncao());
         }
+        return funcionario;
     }
 
     public void excluirFuncionario(Integer idFuncionario) {

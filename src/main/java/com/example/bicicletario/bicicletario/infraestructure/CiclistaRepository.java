@@ -25,7 +25,7 @@ public class CiclistaRepository {
     }
 
     public Ciclista save(Ciclista ciclista) {
-        if (ciclista.getId() == 0) {
+        if (ciclista.getId() == null || ciclista.getId() == 0) {
             ciclista.setId(idGenerator.incrementAndGet()); // Atribui novo ID se não existir
         }
         ciclistas.put(ciclista.getId(), ciclista);

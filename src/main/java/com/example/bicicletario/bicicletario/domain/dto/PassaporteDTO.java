@@ -3,20 +3,9 @@ package com.example.bicicletario.bicicletario.domain.dto;
 import java.time.LocalDate;
 
 public class PassaporteDTO {
-    private Long id;
     private String numero;
-    private LocalDate validade;
+    private String validade;
     private String pais;
-
-    // Getters and Setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getNumero() {
         return numero;
@@ -26,11 +15,11 @@ public class PassaporteDTO {
         this.numero = numero;
     }
 
-    public LocalDate getValidade() {
+    public String getValidade() {
         return validade;
     }
 
-    public void setValidade(LocalDate validade) {
+    public void setValidade(String validade) {
         this.validade = validade;
     }
 

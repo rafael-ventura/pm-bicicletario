@@ -1,11 +1,9 @@
 package com.example.bicicletario.bicicletario.application;
 
-import com.example.bicicletario.bicicletario.application.external.AdministradoraCCService;
 import com.example.bicicletario.bicicletario.application.external.BicicletaService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
-import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
 import com.example.bicicletario.bicicletario.domain.enums.Nacionalidade;
@@ -16,7 +14,6 @@ import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
 import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
 import com.example.bicicletario.bicicletario.mapper.CiclistaMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,29 +22,28 @@ import java.util.logging.Logger;
 @Service
 public class CiclistaService {
 
-    @Autowired
-    private CiclistaRepository ciclistaRepository;
-    @Autowired
-    private CiclistaMapper ciclistaMapper;
-    @Autowired
-    private AluguelRepository aluguelRepository;
-    @Autowired
-    private AdministradoraCCService administradoraCCService; // Serviço para validação do cartão de crédito
-    @Autowired
-    private BicicletaService bicicletaService; // Serviço para validação do cartão de crédito
-    @Autowired
-    private CartaoDeCreditoService cartaoDeCreditoService;
+    private final CiclistaRepository ciclistaRepository;
+    private final CiclistaMapper ciclistaMapper;
+    private final AluguelRepository aluguelRepository;
+    private final BicicletaService bicicletaService;
+    private final CartaoDeCreditoService cartaoDeCreditoService;
+
+    public CiclistaService(CiclistaRepository ciclistaRepository, CiclistaMapper ciclistaMapper, AluguelRepository aluguelRepository, BicicletaService bicicletaService, CartaoDeCreditoService cartaoDeCreditoService) {
+        this.ciclistaRepository = ciclistaRepository;
+        this.ciclistaMapper = ciclistaMapper;
+        this.aluguelRepository = aluguelRepository;
+        this.bicicletaService = bicicletaService;
+        this.cartaoDeCreditoService = cartaoDeCreditoService;
+    }
 
     public Ciclista cadastrarCiclista(NovoCiclistaRequestDTO request) throws BadRequestException {
-        NovoCiclistaDTO novoCiclistaDTO = request.getCiclista();
-        NovoCartaoDeCreditoDTO meioDePagamentoDTO = request.getMeioDePagamento();
-
         validarCiclista(request);
 
-        // Validação do cartão de crédito junto à Administradora CC
-        administradoraCCService.validarCartao(meioDePagamentoDTO, true);
-
+        NovoCiclistaDTO novoCiclistaDTO = request.getCiclista();
         Ciclista ciclista = ciclistaMapper.toEntity(novoCiclistaDTO);
+
+        cartaoDeCreditoService.save(request.getMeioDePagamento(), ciclista.getId());
+
         ciclistaRepository.save(ciclista);
         enviarEmailConfirmacao(ciclista.getEmail());
         return ciclista;
@@ -55,19 +51,13 @@ public class CiclistaService {
 
     private void validarCiclista(NovoCiclistaRequestDTO novoCiclistaRequest) {
         validarCamposObrigatorios(novoCiclistaRequest.getCiclista());
-        validarSenha(novoCiclistaRequest.getCiclista().getSenha(), novoCiclistaRequest.getCiclista().getConfirmacaoSenha());
         validarEmail(novoCiclistaRequest.getCiclista().getEmail());
-        validarCartaoDeCredito(novoCiclistaRequest.getMeioDePagamento());
+        cartaoDeCreditoService.validarCartaoDeCredito(novoCiclistaRequest.getMeioDePagamento());
     }
 
     private void validarCiclista(NovoCiclistaDTO novoCiclistaDTO) {
         validarCamposObrigatorios(novoCiclistaDTO);
-        validarSenha(novoCiclistaDTO.getSenha(), novoCiclistaDTO.getConfirmacaoSenha());
         validarEmail(novoCiclistaDTO.getEmail());
-    }
-
-    private void validarCartaoDeCredito(NovoCartaoDeCreditoDTO cartaoDeCredito) {
-        cartaoDeCreditoService.validarCartaoDeCredito(cartaoDeCredito);
     }
 
     public Optional<Ciclista> obterCiclista(int idCiclista) {
@@ -77,7 +67,7 @@ public class CiclistaService {
 
     public Ciclista alterarCiclista(int idCiclista, NovoCiclistaDTO novoCiclistaDTO) throws BadRequestException {
         if (!ciclistaRepository.existsById(idCiclista)) {
-            throw new BadRequestException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista);
+            throw new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista);
         }
         validarCiclista(novoCiclistaDTO);
         Ciclista ciclista = ciclistaMapper.toEntity(novoCiclistaDTO);
@@ -102,7 +92,7 @@ public class CiclistaService {
         Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(() -> new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista));
         Integer bicicletaId = aluguelRepository.findByCiclistaAndHoraFimIsNull(ciclista.getId()).map(Aluguel::getBicicleta).orElse(null);
         if (bicicletaId != null) {
-            return Optional.of(bicicletaService.getBicicleta(bicicletaId));
+            return Optional.of(bicicletaService.getBicicleta());
         }
         return Optional.empty();
     }
@@ -128,12 +118,6 @@ public class CiclistaService {
             if (novoCiclistaDTO.getPassaporte() == null) {
                 throw new BadRequestException("Passaporte e País são obrigatórios para estrangeiros.");
             }
-        }
-    }
-
-    private void validarSenha(String senha, String confirmacaoSenha) {
-        if (senha == null || !senha.equals(confirmacaoSenha)) {
-            throw new InvalidDataException("As senhas não coincidem.");
         }
     }
 

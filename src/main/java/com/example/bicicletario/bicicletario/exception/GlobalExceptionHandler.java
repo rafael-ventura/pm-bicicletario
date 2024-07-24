@@ -25,12 +25,6 @@ public class GlobalExceptionHandler {
         return createErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseBody
-    public ResponseEntity<ErroDTO> handleIllegalArgumentException(IllegalArgumentException ex) {
-        return createErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-    }
-
     @ExceptionHandler(RuntimeException.class)
     @ResponseBody
     public ResponseEntity<ErroDTO> handleRuntimeException(RuntimeException ex) {

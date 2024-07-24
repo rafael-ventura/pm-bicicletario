@@ -29,7 +29,7 @@ class FuncionarioRepositoryTest {
     @Test
     void testSaveAndFindById() {
         Funcionario funcionario = new Funcionario();
-        funcionario.setNome("João Silva");
+        funcionario.setNome("Joao Silva");
         funcionario.setId(1);
 
         when(funcionarioRepository.save(any(Funcionario.class))).thenReturn(funcionario);
@@ -39,13 +39,13 @@ class FuncionarioRepositoryTest {
         Optional<Funcionario> foundFuncionario = funcionarioRepository.findById(1);
 
         assertTrue(foundFuncionario.isPresent());
-        assertEquals("João Silva", foundFuncionario.get().getNome());
+        assertEquals("Joao Silva", foundFuncionario.get().getNome());
     }
 
     @Test
     void testFindAll() {
         Funcionario funcionario1 = new Funcionario();
-        funcionario1.setNome("João Silva");
+        funcionario1.setNome("Joao Silva");
         Funcionario funcionario2 = new Funcionario();
         funcionario2.setNome("Maria Oliveira");
 
@@ -59,7 +59,7 @@ class FuncionarioRepositoryTest {
     @Test
     void testDeleteById() {
         Funcionario funcionario = new Funcionario();
-        funcionario.setNome("João Silva");
+        funcionario.setNome("Joao Silva");
         funcionario.setId(1);
 
         doNothing().when(funcionarioRepository).deleteById(1);

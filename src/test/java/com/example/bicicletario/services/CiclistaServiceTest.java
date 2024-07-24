@@ -3,13 +3,16 @@ package com.example.bicicletario.services;
 import com.example.bicicletario.bicicletario.application.CartaoDeCreditoService;
 import com.example.bicicletario.bicicletario.application.CiclistaService;
 import com.example.bicicletario.bicicletario.application.external.AdministradoraCCService;
+import com.example.bicicletario.bicicletario.application.external.BicicletaService;
+import com.example.bicicletario.bicicletario.domain.Aluguel;
+import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;
+import com.example.bicicletario.bicicletario.domain.dto.PassaporteDTO;
 import com.example.bicicletario.bicicletario.domain.enums.Nacionalidade;
 import com.example.bicicletario.bicicletario.domain.enums.StatusCiclista;
-import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
 import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
@@ -27,23 +30,23 @@ import static org.mockito.Mockito.*;
 
 class CiclistaServiceTest {
 
-    @Mock
-    private CiclistaRepository ciclistaRepository;
+    @InjectMocks
+    private CiclistaService ciclistaService;
 
     @Mock
     private CiclistaMapper ciclistaMapper;
 
     @Mock
+    private CiclistaRepository ciclistaRepository;
+
+    @Mock
+    private BicicletaService bicicletaService;
+
+    @Mock
     private AluguelRepository aluguelRepository;
 
     @Mock
-    private AdministradoraCCService administradoraCCService;
-
-    @Mock
     private CartaoDeCreditoService cartaoDeCreditoService;
-
-    @InjectMocks
-    private CiclistaService ciclistaService;
 
     @BeforeEach
     void setUp() {
@@ -51,43 +54,57 @@ class CiclistaServiceTest {
     }
 
     @Test
-    void testCadastrarCiclista_Success() throws BadRequestException {
-        NovoCiclistaDTO novoCiclistaDTO = new NovoCiclistaDTO();
-        novoCiclistaDTO.setNome("Ciclista");
-        novoCiclistaDTO.setEmail("ciclista@gmail.com");
-        novoCiclistaDTO.setCpf("12345678901");
-        novoCiclistaDTO.setNacionalidade(Nacionalidade.BRASILEIRO);
-        novoCiclistaDTO.setNascimento("01/01/2000");
-        novoCiclistaDTO.setUrlFotoDocumento("http://example.com/foto.jpg");
-        novoCiclistaDTO.setSenha("123456");
-        novoCiclistaDTO.setConfirmacaoSenha("123456");
+    void criarCiclista() {
+        // Criando os DTOs
+        PassaporteDTO passaporte = new PassaporteDTO();
+        passaporte.setNumero("123456");
+        passaporte.setValidade("2025-01-01");
+        passaporte.setPais("Brasil");
 
-        NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
-        novoCartaoDeCreditoDTO.setNumero("1234567890123456");
-        novoCartaoDeCreditoDTO.setNomeTitular("Ciclista");
-        novoCartaoDeCreditoDTO.setValidade("01/25");
-        novoCartaoDeCreditoDTO.setCvv("123");
+        NovoCartaoDeCreditoDTO cartao = new NovoCartaoDeCreditoDTO();
+        cartao.setNomeTitular("Joao Silva");
+        cartao.setNumero("1234567890123456");
+        cartao.setValidade("2025-01-01");
+        cartao.setCvv("123");
 
-        NovoCiclistaRequestDTO requestDTO = new NovoCiclistaRequestDTO();
-        requestDTO.setCiclista(novoCiclistaDTO);
-        requestDTO.setMeioDePagamento(novoCartaoDeCreditoDTO);
+        NovoCiclistaDTO novoCiclista = new NovoCiclistaDTO();
+        novoCiclista.setNome("Joao Silva");
+        novoCiclista.setCpf("12345678900");
+        novoCiclista.setEmail("joao.silva@example.com");
+        novoCiclista.setNascimento("2000-01-01");
+        novoCiclista.setNacionalidade(Nacionalidade.BRASILEIRO);
+        novoCiclista.setUrlFotoDocumento("http://example.com/foto.jpg");
+        novoCiclista.setPassaporte(passaporte);
 
+        NovoCiclistaRequestDTO dto = new NovoCiclistaRequestDTO();
+        dto.setMeioDePagamento(cartao);
+        dto.setCiclista(novoCiclista);
+
+        // Criando o objeto Ciclista que será retornado pelo serviço
         Ciclista ciclista = new Ciclista();
         ciclista.setId(1);
-        ciclista.setNome("Ciclista");
-        ciclista.setEmail("ciclista@gmail.com");
-        ciclista.setCpf("12345678901");
-        ciclista.setNacionalidade(Nacionalidade.BRASILEIRO);
-        ciclista.setStatusCiclista(StatusCiclista.ATIVO);
-        ciclista.setNascimento("01/01/2000");
-        ciclista.setUrlFotoDocumento("http://example.com/foto.jpg");
+        ciclista.setNome("Joao Silva");
 
-        when(ciclistaMapper.toEntity(novoCiclistaDTO)).thenReturn(ciclista);
-        when(ciclistaRepository.save(ciclista)).thenReturn(ciclista);
+        // Mock do mapper
+        when(ciclistaMapper.toEntity(any())).thenReturn(ciclista);
 
-        ciclistaService.cadastrarCiclista(requestDTO);
+        // Mock do método save que não retorna nada
+        doNothing().when(cartaoDeCreditoService).save(any(), anyInt());
 
-        verify(administradoraCCService).validarCartao(novoCartaoDeCreditoDTO, true);
+        // Mock do repositório
+        when(ciclistaRepository.save(any())).thenReturn(ciclista);
+
+        // Chamando o método do serviço
+        Ciclista resultado = ciclistaService.cadastrarCiclista(dto);
+
+        // Verificando o resultado
+        assertNotNull(resultado);
+        assertEquals(1, resultado.getId());
+        assertEquals("Joao Silva", resultado.getNome());
+
+        // Verificações adicionais
+        verify(ciclistaMapper).toEntity(novoCiclista);
+        verify(cartaoDeCreditoService).save(cartao, ciclista.getId());
         verify(ciclistaRepository).save(ciclista);
     }
 
@@ -109,6 +126,127 @@ class CiclistaServiceTest {
         when(ciclistaRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> ciclistaService.obterCiclista(1));
+    }
+
+    @Test
+    void testAlterarCiclista_Success() {
+        NovoCiclistaDTO novoCiclistaDTO = new NovoCiclistaDTO();
+        novoCiclistaDTO.setNome("Updated Name");
+        novoCiclistaDTO.setEmail("updated.email@example.com");
+        novoCiclistaDTO.setNascimento("2000-01-01");
+        novoCiclistaDTO.setNacionalidade(Nacionalidade.BRASILEIRO);
+        novoCiclistaDTO.setCpf("12345678900");
+
+        Ciclista ciclista = new Ciclista();
+        ciclista.setId(1);
+        ciclista.setNome("Updated Name");
+
+        when(ciclistaRepository.existsById(1)).thenReturn(true);
+        when(ciclistaMapper.toEntity(any())).thenReturn(ciclista);
+        when(ciclistaRepository.save(any())).thenReturn(ciclista);
+
+        Ciclista updatedCiclista = ciclistaService.alterarCiclista(1, novoCiclistaDTO);
+
+        assertNotNull(updatedCiclista);
+        assertEquals(1, updatedCiclista.getId());
+        assertEquals("Updated Name", updatedCiclista.getNome());
+    }
+
+    @Test
+    void testAlterarCiclista_NotFound() {
+        NovoCiclistaDTO novoCiclistaDTO = new NovoCiclistaDTO();
+
+        when(ciclistaRepository.existsById(anyInt())).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> ciclistaService.alterarCiclista(1, novoCiclistaDTO));
+    }
+
+    @Test
+    void testAtivarCiclista_Success() {
+        Ciclista ciclista = new Ciclista();
+        ciclista.setId(1);
+        ciclista.setStatusCiclista(StatusCiclista.INATIVO);
+
+        when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
+        when(ciclistaRepository.save(any())).thenReturn(ciclista);
+
+        Ciclista ativado = ciclistaService.ativarCiclista(1);
+
+        assertNotNull(ativado);
+        assertEquals(StatusCiclista.ATIVO, ativado.getStatusCiclista());
+    }
+
+    @Test
+    void testPermiteAluguel_Success() {
+        Ciclista ciclista = new Ciclista();
+        ciclista.setId(1);
+        ciclista.setStatusCiclista(StatusCiclista.ATIVO);
+
+        when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
+        when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(1)).thenReturn(false);
+
+        boolean result = ciclistaService.permiteAluguel(1);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void testPermiteAluguel_Fail() {
+        Ciclista ciclista = new Ciclista();
+        ciclista.setId(1);
+        ciclista.setStatusCiclista(StatusCiclista.INATIVO);
+
+        when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
+
+        boolean result = ciclistaService.permiteAluguel(1);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void testObterBicicletaAlugada() {
+        // Mock Ciclista
+        Ciclista ciclista = new Ciclista();
+        ciclista.setId(1);
+        ciclista.setStatusCiclista(StatusCiclista.ATIVO);
+        ciclista.setNome("Joao Silva");
+
+        // Mock Aluguel and Bicicleta
+        Aluguel aluguel = new Aluguel();
+        aluguel.setId(1);
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
+        aluguel.setBicicleta(bicicleta.getId());
+
+        // Mock repository methods
+        when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
+        when(aluguelRepository.findByCiclistaAndHoraFimIsNull(1)).thenReturn(Optional.of(aluguel));
+        when(bicicletaService.getBicicleta()).thenReturn(bicicleta);
+
+        // Call service method
+        Optional<Bicicleta> bicicletaAlugada = ciclistaService.obterBicicletaAlugada(1);
+
+        // Assertions
+        assertTrue(bicicletaAlugada.isPresent());
+        assertEquals(1, bicicletaAlugada.get().getId());
+    }
+
+    @Test
+    void testExisteEmail_Success() {
+        when(ciclistaRepository.existsByEmail("joao.silva@example.com")).thenReturn(true);
+
+        boolean result = ciclistaService.existeEmail("joao.silva@example.com");
+
+        assertTrue(result);
+    }
+
+    @Test
+    void testExisteEmail_Fail() {
+        when(ciclistaRepository.existsByEmail("joao.silva@example.com")).thenReturn(false);
+
+        boolean result = ciclistaService.existeEmail("joao.silva@example.com");
+
+        assertFalse(result);
     }
 
 }

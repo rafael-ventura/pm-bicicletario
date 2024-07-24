@@ -10,10 +10,11 @@ import java.util.logging.Logger;
 public class AdministradoraCCService {
     // será uma api externa, um outro microserviço, que será, mas nesse momento pode ser apenas um MOCK, com o metodo validarCartao que retorna true ou false
 
-    public void validarCartao(NovoCartaoDeCreditoDTO cartaoDeCredito, boolean value) throws BadRequestException {
+    public boolean validarCartao(NovoCartaoDeCreditoDTO cartaoDeCredito, boolean value) throws BadRequestException {
         if (value) {
             // change sysout to logger
             Logger.getLogger("AdministradoraCCService").info("Cartão válido");
+            return true;
         } else {
             Logger.getLogger("AdministradoraCCService").severe("Cartão inválido");
             throw new BadRequestException("Cartão inválido");

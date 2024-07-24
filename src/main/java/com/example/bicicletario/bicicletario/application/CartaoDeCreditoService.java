@@ -6,10 +6,15 @@ import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;
+import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
+import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
+import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.CartaoDeCreditoRepository;
 import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
+import com.example.bicicletario.bicicletario.mapper.CartaoDeCreditoMapper;
+import com.example.bicicletario.bicicletario.mapper.CiclistaMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -28,6 +33,9 @@ public class CartaoDeCreditoService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private CartaoDeCreditoMapper cartaoDeCreditoMapper;
 
     @Autowired
     private AdministradoraCCService administradoraCCService; // Serviço para validação do cartão de crédito
@@ -77,7 +85,10 @@ public class CartaoDeCreditoService {
 
     private void validarCartaoJuntoACC(NovoCartaoDeCreditoDTO cartaoDeCredito) {
         try {
-            administradoraCCService.validarCartao(cartaoDeCredito, true);
+            boolean valid = administradoraCCService.validarCartao(cartaoDeCredito, true);
+            if (!valid) {
+                throw new BadRequestException("Cartão de crédito inválido.");
+            }
         } catch (Exception e) {
             throw new InvalidDataException("Cartão de crédito inválido.");
         }
@@ -92,5 +103,11 @@ public class CartaoDeCreditoService {
         email.setAssunto("Alteração de dados");
         email.setMensagem("Seus dados foram alterados com sucesso.");
         emailService.enviarEmail(email);
+    }
+
+    public void save(NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO, int idCiclista) {
+        CartaoDeCredito cartaoDeCredito = cartaoDeCreditoMapper.toEntity(novoCartaoDeCreditoDTO);
+        cartaoDeCredito.setIdCiclista(idCiclista);
+        cartaoDeCreditoRepository.save(cartaoDeCredito);
     }
 }

@@ -3,13 +3,12 @@ package com.example.bicicletario.bicicletario.web;
 import com.example.bicicletario.bicicletario.application.CiclistaService;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
-import com.example.bicicletario.bicicletario.domain.dto.ErroDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Optional;
 
 @RestController
@@ -23,9 +22,9 @@ public class CiclistaController {
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrarCiclista(@RequestBody NovoCiclistaRequestDTO request) {
+    public ResponseEntity<Ciclista> cadastrarCiclista(@RequestBody NovoCiclistaRequestDTO request) {
         Ciclista ciclista = ciclistaService.cadastrarCiclista(request);
-        return ResponseEntity.status(201).body(ciclista);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ciclista); // Status 201 Created
     }
 
     @GetMapping("/{idCiclista}")
@@ -56,12 +55,16 @@ public class CiclistaController {
     @GetMapping("/{idCiclista}/bicicletaAlugada")
     public ResponseEntity<?> obterBicicletaAlugada(@PathVariable int idCiclista) {
         Optional<Bicicleta> bicicleta = ciclistaService.obterBicicletaAlugada(idCiclista);
-        return ResponseEntity.ok(bicicleta);
+        if (bicicleta.isPresent()) {
+            return ResponseEntity.ok(bicicleta.get());
+        } else {
+            return ResponseEntity.noContent().build();
+        }
     }
 
     @GetMapping("/existeEmail/{email}")
     public ResponseEntity<Boolean> existeEmail(@PathVariable String email) {
-        boolean existe = ciclistaService.existeEmail(email);
-        return ResponseEntity.ok(existe);
+        boolean exists = ciclistaService.existeEmail(email);
+        return ResponseEntity.ok(exists);
     }
 }

@@ -3,9 +3,11 @@ package com.example.bicicletario.controllers;
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
 import com.example.bicicletario.bicicletario.domain.Funcionario;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
+import com.example.bicicletario.bicicletario.exception.GlobalExceptionHandler;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.mapper.FuncionarioMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +15,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,28 +33,36 @@ class FuncionarioControllerTest {
     @Mock
     private FuncionarioMapper funcionarioMapper;
 
+    private MockMvc mockMvc;
+
+    private ObjectMapper objectMapper;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        this.mockMvc = MockMvcBuilders.standaloneSetup(funcionarioService, funcionarioMapper)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
+        this.objectMapper = new ObjectMapper();
     }
 
     @Test
     void listarFuncionarios() {
         Funcionario funcionario = new Funcionario();
         funcionario.setId(1);
-        funcionario.setNome("João Silva");
+        funcionario.setNome("Joao Silva");
 
         when(funcionarioMapper.toEntityList(funcionarioService.listarFuncionarios())).thenReturn(List.of(funcionario));
 
         List<Funcionario> funcionarios = funcionarioMapper.toEntityList(funcionarioService.listarFuncionarios());
         assertEquals(1, funcionarios.size());
-        assertEquals("João Silva", funcionarios.get(0).getNome());
+        assertEquals("Joao Silva", funcionarios.get(0).getNome());
     }
 
     @Test
     void criarFuncionario() {
         NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
-        dto.setNome("João Silva");
+        dto.setNome("Joao Silva");
         dto.setSenha("senha123");
         dto.setConfirmacaoSenha("senha123");
         dto.setIdade(30);
@@ -59,7 +72,7 @@ class FuncionarioControllerTest {
 
         Funcionario funcionario = new Funcionario();
         funcionario.setId(1);
-        funcionario.setNome("João Silva");
+        funcionario.setNome("Joao Silva");
 
         when(funcionarioService.cadastrarFuncionario(dto)).thenReturn(funcionario);
 
@@ -72,7 +85,7 @@ class FuncionarioControllerTest {
     void obterFuncionario() {
         Funcionario funcionario = new Funcionario();
         funcionario.setId(1);
-        funcionario.setNome("João Silva");
+        funcionario.setNome("Joao Silva");
 
         when(funcionarioMapper.toEntity(funcionarioService.obterFuncionario(1))).thenReturn(funcionario);
 
@@ -96,25 +109,12 @@ class FuncionarioControllerTest {
         NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
         Funcionario funcionario = new Funcionario();
         funcionario.setId(1);
-        funcionario.setNome("João Silva");
+        funcionario.setNome("Joao Silva");
 
         when(funcionarioMapper.toEntity(funcionarioService.alterarFuncionario(1, dto))).thenReturn(funcionario);
 
         Funcionario funcionarioEditado = funcionarioMapper.toEntity(funcionarioService.alterarFuncionario(1, dto));
         assertEquals(funcionario, funcionarioEditado);
-    }
-
-    @Test
-    void editarFuncionario_ThrowsIllegalArgumentException() {
-        NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
-
-        doThrow(new IllegalArgumentException("Dados inválidos")).when(funcionarioService).alterarFuncionario(any(Integer.class), any(NovoFuncionarioDTO.class));
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            funcionarioService.alterarFuncionario(1, dto);
-        });
-
-        assertEquals("Dados inválidos", exception.getMessage());
     }
 
     @Test

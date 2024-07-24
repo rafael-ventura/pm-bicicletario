@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BicicletaService {
-    public Bicicleta getBicicleta(int id) {
+    public Bicicleta getBicicleta() {
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(id);
+        bicicleta.setId(1);
         bicicleta.setMarca("Caloi");
         bicicleta.setModelo("Elite");
         bicicleta.setAno("2021");

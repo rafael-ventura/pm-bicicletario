@@ -19,6 +19,8 @@
         <sonar.projectKey>rafael-ventura_pm-bicicletario</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <dependencies>
         <dependency>
@@ -59,8 +61,6 @@
             <version>1.4.2.Final</version>
             <scope>provided</scope>
         </dependency>
-
-
     </dependencies>
     <build>
         <plugins>
