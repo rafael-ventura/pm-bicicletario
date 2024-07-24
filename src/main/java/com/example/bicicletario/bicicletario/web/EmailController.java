@@ -8,24 +8,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/enviarEmail")
+@RequestMapping("/api")
 public class EmailController {
 
     @Autowired
     private EmailService emailService;
 
-    @PostMapping
+    @PostMapping("/enviarEmail")
     public ResponseEntity<?> enviarEmail(@RequestBody NovoEmailDTO novoEmailDTO) {
         try {
             System.out.println("Envio de email");
             Email email = emailService.enviarEmail(novoEmailDTO);
-            return ResponseEntity.ok(email);
+            return ResponseEntity.status(200).body("Externo solicitada");
         } catch (Exception e) {
             if (e.getMessage().contains("E-mail com formato inválido")) {
                 Erro erro = new Erro("422", "E-mail com formato inválido");
                 return ResponseEntity.status(422).body(erro);
             }
-            return ResponseEntity.status(404).body(e.getMessage());
+            Erro erro = new Erro("404", "E-mail não existe");
+            return ResponseEntity.status(404).body(erro);
         }
     }
 }

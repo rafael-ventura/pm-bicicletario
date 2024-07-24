@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/filaCobranca")
+@RequestMapping("/api")
 public class FilaCobrancaController {
 
     @Autowired
     private FilaCobrancaService filaCobrancaService;
 
-    @PostMapping
+    @PostMapping("/filaCobranca")
     public ResponseEntity<?> adicionarNaFila(@RequestBody NovoCobrancaDTO novaCobranca) {
         try {
             System.out.println("Adicionando cobranca na fila");

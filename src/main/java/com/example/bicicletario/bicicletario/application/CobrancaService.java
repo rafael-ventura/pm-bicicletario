@@ -26,6 +26,11 @@ public class CobrancaService {
     @Autowired
     private AdministradoraCCService administradoraCCService;
 
+    public Cobranca obterCobrancaPorId(int idCobranca) {
+        return cobrancaRepository.findById(idCobranca);
+    }
+
+
     public Cobranca realizarCobranca(NovoCobrancaDTO novaCobranca) throws Exception {
         // Validação do valor
         if (novaCobranca.getValor() == null || novaCobranca.getValor().compareTo(BigDecimal.ZERO) <= 0) {
@@ -84,7 +89,7 @@ public class CobrancaService {
         return cartaoDeCredito;
     }
 
-    // Método para enviar email (comentar se não for necessário)
+    // Método para enviar email
     /*
     private void enviarEmailCobranca(CartaoDeCredito cartaoDeCredito, Cobranca cobranca) {
         emailService.enviarEmail(cartaoDeCredito.getEmail(), "Detalhes da sua cobrança", "Detalhes da cobrança...");

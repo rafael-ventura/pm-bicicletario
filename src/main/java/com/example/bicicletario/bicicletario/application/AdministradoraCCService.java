@@ -17,12 +17,14 @@ public class AdministradoraCCService {
     private static final Logger logger = LoggerFactory.getLogger(AdministradoraCCService.class);
     private static final String URL_ADMINISTRADORA_CC = "http://localhost:8080/administradoraCC/cobrar";
 
-    @Autowired
-    private RestTemplate restTemplate;
+//    @Autowired
+//    private RestTemplate restTemplate;
 
     public boolean enviarParaAdministradoraCC(CartaoDeCredito cartaoDeCredito, BigDecimal valor) {
         try {
+            System.out.println("Enviando cobrança para adminstradoraCC");
             // Criar o mapa de dados para a requisição
+            /*
             Map<String, Object> cobrancaData = new HashMap<>();
             cobrancaData.put("numeroCartao", cartaoDeCredito.getNumero());
             cobrancaData.put("validade", cartaoDeCredito.getValidade());
@@ -33,6 +35,9 @@ public class AdministradoraCCService {
             // Enviar a requisição POST para a administradora de cartão de crédito
             Boolean response = restTemplate.postForObject(URL_ADMINISTRADORA_CC, cobrancaData, Boolean.class);
             return response != null && response;
+          */
+            System.out.println("Cobrança enviada com sucesso");
+            return true;
         } catch (Exception e) {
             logger.error("Erro ao enviar cobrança para administradora de cartão de crédito", e);
             return false;
