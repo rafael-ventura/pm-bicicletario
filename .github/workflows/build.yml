@@ -84,6 +84,6 @@ jobs:
       - name: Deploy to CodeDeploy
         run: |
           aws deploy create-deployment \
-            --application-name bicicletario-aluguel \
+            --application-name pm-aluguel \
             --deployment-group-name aluguel_deploy \
             --s3-location bucket=bicicletario-bucket,key=my-app-aluguel.zip,bundleType=zip
