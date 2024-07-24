@@ -14,9 +14,10 @@ import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
 import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
 import com.example.bicicletario.bicicletario.mapper.CiclistaMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @Service
 public class CiclistaService {
@@ -27,6 +28,8 @@ public class CiclistaService {
     private final BicicletaService bicicletaService;
     private final CartaoDeCreditoService cartaoDeCreditoService;
 
+    private static final Logger logger = LoggerFactory.getLogger(CiclistaService.class);
+
     public CiclistaService(CiclistaRepository ciclistaRepository, CiclistaMapper ciclistaMapper, AluguelRepository aluguelRepository, BicicletaService bicicletaService, CartaoDeCreditoService cartaoDeCreditoService) {
         this.ciclistaRepository = ciclistaRepository;
         this.ciclistaMapper = ciclistaMapper;
@@ -36,6 +39,7 @@ public class CiclistaService {
     }
 
     public Ciclista cadastrarCiclista(NovoCiclistaRequestDTO request) throws BadRequestException {
+        logger.info("Cadastrando novo ciclista");
         validarCiclista(request);
 
         NovoCiclistaDTO novoCiclistaDTO = request.getCiclista();
@@ -135,7 +139,7 @@ public class CiclistaService {
     }
 
     private void enviarEmailConfirmacao(String email) {
-        Logger.getLogger("Email de confirmação enviado para: " + email);
+        logger.info("Email de confirmação enviado para: " + email);
         // Lógica para enviar email
     }
 }

@@ -12,14 +12,17 @@ import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException
 import com.example.bicicletario.bicicletario.infraestructure.CartaoDeCreditoRepository;
 import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
 import com.example.bicicletario.bicicletario.mapper.CartaoDeCreditoMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.logging.Logger;
 
 @Service
 public class CartaoDeCreditoService {
+
+    private final static Logger logger = LoggerFactory.getLogger(CartaoDeCreditoService.class);
 
     private final CartaoDeCreditoRepository cartaoDeCreditoRepository;
 
@@ -95,7 +98,7 @@ public class CartaoDeCreditoService {
 
     private void enviarEmailAlteracaoDeDados(int idCiclista) {
         Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(() -> new ResourceNotFoundException("Ciclista não encontrado."));
-        Logger.getLogger("E-mail de confirmação enviado para: " + ciclista.getEmail());
+        logger.info("E-mail de confirmação enviado para: " + ciclista.getEmail());
         // Simulação de envio de e-mail
         EmailDTO email = new EmailDTO();
         email.setEmail(ciclista.getEmail());
