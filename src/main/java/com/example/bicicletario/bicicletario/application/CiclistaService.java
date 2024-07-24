@@ -70,7 +70,8 @@ public class CiclistaService {
     }
 
     public Optional<Ciclista> obterCiclista(int idCiclista) {
-        return ciclistaRepository.findById(idCiclista);
+        return Optional.ofNullable(ciclistaRepository.findById(idCiclista)
+                .orElseThrow(() -> new ResourceNotFoundException("Ciclista não encontrado com o ID: " + idCiclista)));
     }
 
     public Ciclista alterarCiclista(int idCiclista, NovoCiclistaDTO novoCiclistaDTO) throws BadRequestException {

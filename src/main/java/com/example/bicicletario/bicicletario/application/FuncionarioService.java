@@ -21,12 +21,12 @@ public class FuncionarioService {
         this.funcionarioMapper = funcionarioMapper;
     }
 
-    public NovoFuncionarioDTO cadastrarFuncionario(NovoFuncionarioDTO novoFuncionarioDTO) {
+    public Funcionario cadastrarFuncionario(NovoFuncionarioDTO novoFuncionarioDTO) {
         validateFuncionarioDTO(novoFuncionarioDTO); // Validar campos obrigatórios
         Funcionario funcionario = funcionarioMapper.toEntity(novoFuncionarioDTO);
         funcionario.setMatricula(generateMatricula()); // Gera a matrícula automaticamente
         funcionario = funcionarioRepository.save(funcionario);
-        return funcionarioMapper.toDto(funcionario);
+        return funcionario;
     }
 
     private void validateFuncionarioDTO(NovoFuncionarioDTO dto) {

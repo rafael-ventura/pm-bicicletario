@@ -30,4 +30,12 @@ public class FuncionarioRepository {
     public void delete(Funcionario funcionario) {
         funcionarios.remove(funcionario.getId());
     }
+
+    public boolean existsById(int l) {
+        return funcionarios.containsKey(l);
+    }
+
+    public void deleteById(int i) {
+        funcionarios.remove(i);
+    }
 }

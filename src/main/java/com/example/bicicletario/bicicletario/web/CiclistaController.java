@@ -31,7 +31,8 @@ public class CiclistaController {
     @GetMapping("/{idCiclista}")
     public ResponseEntity<Ciclista> obterCiclista(@PathVariable int idCiclista) {
         Optional<Ciclista> ciclista = ciclistaService.obterCiclista(idCiclista);
-        return ciclista.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(404).build());
+        ciclista.orElseThrow(() -> new ResourceNotFoundException("Ciclista não encontrado"));
+        return ResponseEntity.ok().body(ciclista.get());
     }
 
     @PutMapping("/{idCiclista}")

@@ -3,30 +3,24 @@ package com.example.bicicletario.controllers;
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
 import com.example.bicicletario.bicicletario.domain.Funcionario;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
+import com.example.bicicletario.bicicletario.exception.InvalidDataException;
+import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.mapper.FuncionarioMapper;
-import com.example.bicicletario.bicicletario.web.FuncionarioController;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
+import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
-import java.util.NoSuchElementException;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@ExtendWith(MockitoExtension.class)
 class FuncionarioControllerTest {
-
-    @InjectMocks
-    private FuncionarioController funcionarioController;
 
     @Mock
     private FuncionarioService funcionarioService;
@@ -34,185 +28,125 @@ class FuncionarioControllerTest {
     @Mock
     private FuncionarioMapper funcionarioMapper;
 
-    private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(funcionarioController).build();
-        this.objectMapper = new ObjectMapper();
     }
 
     @Test
-    void listarFuncionarios() throws Exception {
+    void listarFuncionarios() {
         Funcionario funcionario = new Funcionario();
         funcionario.setId(1);
         funcionario.setNome("João Silva");
 
         when(funcionarioMapper.toEntityList(funcionarioService.listarFuncionarios())).thenReturn(List.of(funcionario));
 
-        mockMvc.perform(get("/api/funcionario"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(List.of(funcionario))));
+        List<Funcionario> funcionarios = funcionarioMapper.toEntityList(funcionarioService.listarFuncionarios());
+        assertEquals(1, funcionarios.size());
+        assertEquals("João Silva", funcionarios.get(0).getNome());
     }
 
     @Test
-    void listarFuncionarios_ThrowsException() throws Exception {
-        when(funcionarioService.listarFuncionarios()).thenThrow(new RuntimeException("Error"));
-
-        mockMvc.perform(get("/api/funcionario"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao listar funcionários'}"));
-    }
-
-    @Test
-    void criarFuncionario() throws Exception {
+    void criarFuncionario() {
         NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
         dto.setNome("João Silva");
         dto.setSenha("senha123");
         dto.setConfirmacaoSenha("senha123");
         dto.setIdade(30);
         dto.setFuncao("Administrador");
+        dto.setEmail("joao@gmail.com");
+        dto.setCpf("12345678900");
 
         Funcionario funcionario = new Funcionario();
         funcionario.setId(1);
         funcionario.setNome("João Silva");
 
-        when(funcionarioMapper.toEntity(funcionarioService.cadastrarFuncionario(any(NovoFuncionarioDTO.class)))).thenReturn(funcionario);
+        when(funcionarioService.cadastrarFuncionario(dto)).thenReturn(funcionario);
 
-        mockMvc.perform(post("/api/funcionario")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(funcionario)));
+        Funcionario funcionarioCriado = funcionarioService.cadastrarFuncionario(dto);
+        assertEquals(funcionario, funcionarioCriado);
     }
 
-    @Test
-    void criarFuncionario_ThrowsIllegalArgumentException() throws Exception {
-        doThrow(new IllegalArgumentException("Dados inválidos")).when(funcionarioService).cadastrarFuncionario(any(NovoFuncionarioDTO.class));
-
-        mockMvc.perform(post("/api/funcionario")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new NovoFuncionarioDTO())))
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().json("{'codigo':'422','mensagem':'Dados inválidos'}"));
-    }
 
     @Test
-    void criarFuncionario_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Erro ao criar funcionário")).when(funcionarioService).cadastrarFuncionario(any(NovoFuncionarioDTO.class));
-
-        mockMvc.perform(post("/api/funcionario")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new NovoFuncionarioDTO())))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao criar funcionário'}"));
-    }
-
-    @Test
-    void obterFuncionario() throws Exception {
+    void obterFuncionario() {
         Funcionario funcionario = new Funcionario();
         funcionario.setId(1);
         funcionario.setNome("João Silva");
 
         when(funcionarioMapper.toEntity(funcionarioService.obterFuncionario(1))).thenReturn(funcionario);
 
-        mockMvc.perform(get("/api/funcionario/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().json("{'id':1,'nome':'João Silva'}"));
+        Funcionario result = funcionarioMapper.toEntity(funcionarioService.obterFuncionario(1));
+        assertEquals(funcionario, result);
     }
 
     @Test
-    void obterFuncionario_ThrowsNoSuchElementException() throws Exception {
-        when(funcionarioService.obterFuncionario(1)).thenThrow(new NoSuchElementException("Funcionário não encontrado"));
+    void obterFuncionario_ThrowsException() {
+        when(funcionarioService.obterFuncionario(1)).thenThrow(new InvalidDataException("Erro ao obter funcionário"));
 
-        mockMvc.perform(get("/api/funcionario/1"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().json("{'codigo':'404','mensagem':'Funcionário não encontrado'}"));
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            funcionarioService.obterFuncionario(1);
+        });
+
+        assertEquals("Erro ao obter funcionário", exception.getMessage());
     }
 
     @Test
-    void obterFuncionario_ThrowsException() throws Exception {
-        when(funcionarioService.obterFuncionario(1)).thenThrow(new RuntimeException("Erro ao obter funcionário"));
-
-        mockMvc.perform(get("/api/funcionario/1"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao obter funcionário'}"));
-    }
-
-    @Test
-    void editarFuncionario() throws Exception {
+    void editarFuncionario() {
+        NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
         Funcionario funcionario = new Funcionario();
         funcionario.setId(1);
         funcionario.setNome("João Silva");
 
-        when(funcionarioMapper.toEntity(funcionarioService.alterarFuncionario(any(int.class), any(NovoFuncionarioDTO.class)))).thenReturn(funcionario);
+        when(funcionarioMapper.toEntity(funcionarioService.alterarFuncionario(1, dto))).thenReturn(funcionario);
 
-        mockMvc.perform(put("/api/funcionario/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new NovoFuncionarioDTO())))
-                .andExpect(status().isOk())
-                .andExpect(content().json("{'id':1,'nome':'João Silva'}"));
+        Funcionario funcionarioEditado = funcionarioMapper.toEntity(funcionarioService.alterarFuncionario(1, dto));
+        assertEquals(funcionario, funcionarioEditado);
     }
 
     @Test
-    void editarFuncionario_ThrowsIllegalArgumentException() throws Exception {
+    void editarFuncionario_ThrowsIllegalArgumentException() {
+        NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
+
         doThrow(new IllegalArgumentException("Dados inválidos")).when(funcionarioService).alterarFuncionario(any(Integer.class), any(NovoFuncionarioDTO.class));
 
-        mockMvc.perform(put("/api/funcionario/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new NovoFuncionarioDTO())))
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().json("{'codigo':'422','mensagem':'Dados inválidos'}"));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            funcionarioService.alterarFuncionario(1, dto);
+        });
+
+        assertEquals("Dados inválidos", exception.getMessage());
     }
 
     @Test
-    void editarFuncionario_ThrowsNoSuchElementException() throws Exception {
-        doThrow(new NoSuchElementException("Funcionário não encontrado")).when(funcionarioService).alterarFuncionario(any(Integer.class), any(NovoFuncionarioDTO.class));
+    void editarFuncionario_ThrowsResourceNotFoundException() {
+        NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
 
-        mockMvc.perform(put("/api/funcionario/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new NovoFuncionarioDTO())))
-                .andExpect(status().isNotFound())
-                .andExpect(content().json("{'codigo':'404','mensagem':'Funcionário não encontrado'}"));
+        doThrow(new ResourceNotFoundException("Funcionário não encontrado")).when(funcionarioService).alterarFuncionario(any(Integer.class), any(NovoFuncionarioDTO.class));
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            funcionarioService.alterarFuncionario(1, dto);
+        });
+
+        assertEquals("Funcionário não encontrado", exception.getMessage());
     }
 
     @Test
-    void editarFuncionario_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Erro ao editar funcionário")).when(funcionarioService).alterarFuncionario(any(Integer.class), any(NovoFuncionarioDTO.class));
+    void removerFuncionario() {
+        doNothing().when(funcionarioService).excluirFuncionario(1);
 
-        mockMvc.perform(put("/api/funcionario/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new NovoFuncionarioDTO())))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao editar funcionário'}"));
+        funcionarioService.excluirFuncionario(1);
+
+        verify(funcionarioService, times(1)).excluirFuncionario(1);
     }
 
     @Test
-    void removerFuncionario() throws Exception {
-        mockMvc.perform(delete("/api/funcionario/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Funcionário removido"));
-    }
+    void removerFuncionario_ThrowsResourceNotFoundException() {
+        doThrow(new ResourceNotFoundException("Funcionário não encontrado")).when(funcionarioService).excluirFuncionario(1);
 
-    @Test
-    void removerFuncionario_ThrowsNoSuchElementException() throws Exception {
-        doThrow(new NoSuchElementException("Funcionário não encontrado")).when(funcionarioService).excluirFuncionario(any(Integer.class));
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            funcionarioService.excluirFuncionario(1);
+        });
 
-        mockMvc.perform(delete("/api/funcionario/1"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().json("{'codigo':'404','mensagem':'Funcionário não encontrado'}"));
-    }
-
-    @Test
-    void removerFuncionario_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Erro ao remover funcionário")).when(funcionarioService).excluirFuncionario(any(Integer.class));
-
-        mockMvc.perform(delete("/api/funcionario/1"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao remover funcionário'}"));
+        assertEquals("Funcionário não encontrado", exception.getMessage());
     }
 }

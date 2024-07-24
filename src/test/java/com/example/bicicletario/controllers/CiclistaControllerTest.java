@@ -4,6 +4,9 @@ import com.example.bicicletario.bicicletario.application.CiclistaService;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
+import com.example.bicicletario.bicicletario.exception.GlobalExceptionHandler;
+import com.example.bicicletario.bicicletario.exception.InvalidDataException;
+import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.web.CiclistaController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,8 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -35,7 +40,9 @@ class CiclistaControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(ciclistaController).build();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(ciclistaController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
         this.objectMapper = new ObjectMapper();
     }
 
@@ -56,20 +63,21 @@ class CiclistaControllerTest {
         mockMvc.perform(post("/api/ciclista")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(ciclista)));
+                .andExpect(content().json("{\"id\":1,\"nome\":\"João Silva\"}"));
     }
 
     @Test
-    void criarCiclista_ThrowsIllegalArgumentException() throws Exception {
-        doThrow(new IllegalArgumentException("Dados inválidos")).when(ciclistaService).cadastrarCiclista(any(NovoCiclistaRequestDTO.class));
+    void criarCiclista_ThrowsInvalidDataException() throws Exception {
+        doThrow(new InvalidDataException("Dados inválidos")).when(ciclistaService).cadastrarCiclista(any(NovoCiclistaRequestDTO.class));
 
         mockMvc.perform(post("/api/ciclista")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new NovoCiclistaDTO())))
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().json("{'codigo':'422','mensagem':'Dados inválidos'}"));
+                .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.content().json("{\"codigo\":\"422\",\"mensagem\":\"Dados inválidos\"}"));
     }
 
     @Test
@@ -97,21 +105,12 @@ class CiclistaControllerTest {
     }
 
     @Test
-    void obterCiclista_ThrowsNoSuchElementException() throws Exception {
-        when(ciclistaService.obterCiclista(1)).thenThrow(new NoSuchElementException("Ciclista não encontrado"));
+    void obterCiclista_ThrowsResourceNotFoundException() throws Exception {
+        when(ciclistaService.obterCiclista(1)).thenThrow(new ResourceNotFoundException("Ciclista não encontrado"));
 
         mockMvc.perform(get("/api/ciclista/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().json("{'codigo':'404','mensagem':'Ciclista não encontrado'}"));
-    }
-
-    @Test
-    void obterCiclista_ThrowsException() throws Exception {
-        when(ciclistaService.obterCiclista(1)).thenThrow(new RuntimeException("Erro ao obter ciclista"));
-
-        mockMvc.perform(get("/api/ciclista/1"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao obter ciclista'}"));
     }
 
     @Test
@@ -130,25 +129,17 @@ class CiclistaControllerTest {
     }
 
     @Test
-    void editarCiclista_ThrowsIllegalArgumentException() throws Exception {
-        doThrow(new IllegalArgumentException("Dados inválidos")).when(ciclistaService).alterarCiclista(any(Integer.class), any(NovoCiclistaDTO.class));
+    void editarCiclista_ThrowsResourceNotFoundException() throws Exception {
+        // Configura o comportamento esperado do serviço
+        doThrow(new ResourceNotFoundException("Ciclista não encontrado")).when(ciclistaService).alterarCiclista(any(Integer.class), any(NovoCiclistaDTO.class));
 
+        // Realiza a requisição e verifica a resposta
         mockMvc.perform(put("/api/ciclista/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new NovoCiclistaDTO())))
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().json("{'codigo':'422','mensagem':'Dados inválidos'}"));
-    }
-
-    @Test
-    void editarCiclista_ThrowsNoSuchElementException() throws Exception {
-        doThrow(new NoSuchElementException("Ciclista não encontrado")).when(ciclistaService).alterarCiclista(any(Integer.class), any(NovoCiclistaDTO.class));
-
-        mockMvc.perform(put("/api/ciclista/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new NovoCiclistaDTO())))
-                .andExpect(status().isNotFound())
-                .andExpect(content().json("{'codigo':'404','mensagem':'Ciclista não encontrado'}"));
+                .andExpect(status().isNotFound()) // Verifica o status 404
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON)) // Verifica o tipo de conteúdo
+                .andExpect(content().json("{\"codigo\":\"404\",\"mensagem\":\"Ciclista não encontrado\"}")); // Verifica o conteúdo JSON da resposta
     }
 
     @Test

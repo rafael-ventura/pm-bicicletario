@@ -5,6 +5,8 @@ import com.example.bicicletario.bicicletario.domain.dto.ErroDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
+import com.example.bicicletario.bicicletario.mapper.FuncionarioMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +18,10 @@ import java.util.Optional;
 @RequestMapping("api/funcionario")
 public class FuncionarioController {
 
-    private final FuncionarioService funcionarioService;
-
-    public FuncionarioController(FuncionarioService funcionarioService) {
-        this.funcionarioService = funcionarioService;
-    }
+    @Autowired
+    private FuncionarioService funcionarioService;
+    @Autowired
+    private FuncionarioMapper funcionarioMapper;
 
     @GetMapping
     public ResponseEntity<List<NovoFuncionarioDTO>> listarFuncionarios() {
@@ -30,7 +31,7 @@ public class FuncionarioController {
 
     @PostMapping
     public ResponseEntity<NovoFuncionarioDTO> cadastrarFuncionario(@RequestBody NovoFuncionarioDTO novoFuncionarioDTO) {
-        NovoFuncionarioDTO funcionarioDTO = funcionarioService.cadastrarFuncionario(novoFuncionarioDTO);
+        NovoFuncionarioDTO funcionarioDTO = funcionarioMapper.toDto(funcionarioService.cadastrarFuncionario(novoFuncionarioDTO));
         return ResponseEntity.ok(funcionarioDTO);
     }
 
