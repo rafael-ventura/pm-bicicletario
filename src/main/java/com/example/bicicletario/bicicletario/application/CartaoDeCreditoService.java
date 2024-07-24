@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.logging.Logger;
 
 @Service
 public class CartaoDeCreditoService {
@@ -84,7 +85,7 @@ public class CartaoDeCreditoService {
 
     private void enviarEmailAlteracaoDeDados(int idCiclista) {
         Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(() -> new ResourceNotFoundException("Ciclista não encontrado."));
-        System.out.println("E-mail de confirmação enviado para: " + ciclista.getEmail());
+        Logger.getLogger("E-mail de confirmação enviado para: " + ciclista.getEmail());
         // Simulação de envio de e-mail
         EmailDTO email = new EmailDTO();
         email.setEmail(ciclista.getEmail());

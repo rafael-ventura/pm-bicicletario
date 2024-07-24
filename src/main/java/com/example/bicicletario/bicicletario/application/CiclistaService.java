@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class CiclistaService {
@@ -71,12 +72,12 @@ public class CiclistaService {
 
     public Optional<Ciclista> obterCiclista(int idCiclista) {
         return Optional.ofNullable(ciclistaRepository.findById(idCiclista)
-                .orElseThrow(() -> new ResourceNotFoundException("Ciclista não encontrado com o ID: " + idCiclista)));
+                .orElseThrow(() -> new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista)));
     }
 
     public Ciclista alterarCiclista(int idCiclista, NovoCiclistaDTO novoCiclistaDTO) throws BadRequestException {
         if (!ciclistaRepository.existsById(idCiclista)) {
-            throw new BadRequestException("Ciclista não encontrado com o ID: " + idCiclista);
+            throw new BadRequestException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista);
         }
         validarCiclista(novoCiclistaDTO);
         Ciclista ciclista = ciclistaMapper.toEntity(novoCiclistaDTO);
@@ -98,7 +99,7 @@ public class CiclistaService {
     }
 
     public Optional<Bicicleta> obterBicicletaAlugada(int idCiclista) {
-        Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(() -> new ResourceNotFoundException("Ciclista não encontrado com o ID: " + idCiclista));
+        Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(() -> new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista));
         Integer bicicletaId = aluguelRepository.findByCiclistaAndHoraFimIsNull(ciclista.getId()).map(Aluguel::getBicicleta).orElse(null);
         if (bicicletaId != null) {
             return Optional.of(bicicletaService.getBicicleta(bicicletaId));
@@ -154,7 +155,7 @@ public class CiclistaService {
     }
 
     private void enviarEmailConfirmacao(String email) {
-        System.out.println("Email de confirmação enviado para: " + email);
+        Logger.getLogger("Email de confirmação enviado para: " + email);
         // Lógica para enviar email
     }
 }

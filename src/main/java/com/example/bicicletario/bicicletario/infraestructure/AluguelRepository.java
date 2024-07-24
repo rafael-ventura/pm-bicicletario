@@ -2,7 +2,6 @@ package com.example.bicicletario.bicicletario.infraestructure;
 
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import org.springframework.stereotype.Repository;
-
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,11 +15,6 @@ public class AluguelRepository {
                 .filter(aluguel -> aluguel.getCiclista() == idCiclista &&
                         aluguel.getHoraFim() == null)
                 .findFirst();
-    }
-
-    //findById
-    public Optional<Aluguel> findById(int id) {
-        return Optional.ofNullable(alugueis.get(id));
     }
 
     public boolean existsByCiclistaAndHoraFimIsNull(int ciclistaId) {

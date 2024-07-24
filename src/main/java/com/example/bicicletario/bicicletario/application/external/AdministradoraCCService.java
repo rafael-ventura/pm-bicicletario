@@ -4,15 +4,18 @@ import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;
 import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 
+import java.util.logging.Logger;
+
 @Service
 public class AdministradoraCCService {
     // será uma api externa, um outro microserviço, que será, mas nesse momento pode ser apenas um MOCK, com o metodo validarCartao que retorna true ou false
 
     public void validarCartao(NovoCartaoDeCreditoDTO cartaoDeCredito, boolean value) throws BadRequestException {
         if (value) {
-            System.out.println("Cartão válido");
+            // change sysout to logger
+            Logger.getLogger("AdministradoraCCService").info("Cartão válido");
         } else {
-            System.out.println("Cartão inválido");
+            Logger.getLogger("AdministradoraCCService").severe("Cartão inválido");
             throw new BadRequestException("Cartão inválido");
         }
     }
