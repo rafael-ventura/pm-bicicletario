@@ -19,7 +19,7 @@ public class EmailController {
         try {
             System.out.println("Envio de email");
             Email email = emailService.enviarEmail(novoEmailDTO);
-            return ResponseEntity.status(200).body("Externo solicitada");
+            return ResponseEntity.status(200).body(email);
         } catch (Exception e) {
             if (e.getMessage().contains("E-mail com formato inválido")) {
                 Erro erro = new Erro("422", "E-mail com formato inválido");
