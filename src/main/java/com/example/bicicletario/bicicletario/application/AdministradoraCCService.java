@@ -22,9 +22,7 @@ public class AdministradoraCCService {
 
     public boolean enviarParaAdministradoraCC(CartaoDeCredito cartaoDeCredito, BigDecimal valor) {
         try {
-            System.out.println("Enviando cobrança para adminstradoraCC");
             // Criar o mapa de dados para a requisição
-            /*
             Map<String, Object> cobrancaData = new HashMap<>();
             cobrancaData.put("numeroCartao", cartaoDeCredito.getNumero());
             cobrancaData.put("validade", cartaoDeCredito.getValidade());
@@ -33,10 +31,8 @@ public class AdministradoraCCService {
             cobrancaData.put("valor", valor);
 
             // Enviar a requisição POST para a administradora de cartão de crédito
-            Boolean response = restTemplate.postForObject(URL_ADMINISTRADORA_CC, cobrancaData, Boolean.class);
-            return response != null && response;
-          */
-            System.out.println("Cobrança enviada com sucesso");
+//            Boolean response = restTemplate.postForObject(URL_ADMINISTRADORA_CC, cobrancaData, Boolean.class);
+//            return response != null && response;
             return true;
         } catch (Exception e) {
             logger.error("Erro ao enviar cobrança para administradora de cartão de crédito", e);

@@ -14,8 +14,8 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class CobrancaService {
 
-    @Autowired
-    private RestTemplate restTemplate;
+//    @Autowired
+//    private RestTemplate restTemplate;
 
     @Autowired
     private CobrancaRepository cobrancaRepository;

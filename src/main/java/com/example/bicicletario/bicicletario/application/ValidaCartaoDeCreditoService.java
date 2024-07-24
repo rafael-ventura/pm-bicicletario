@@ -9,16 +9,13 @@ public class ValidaCartaoDeCreditoService {
     private static final String URL_VALIDACAO = "http://localhost:8080/administradoraCC/validar";
 
     public boolean validarCartao(NovoCartaoDeCreditoDTO cartaoDeCredito) {
-
-//        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
 
         try {
             // Enviar a requisição POST para a administradora de cartão de crédito
-            /*
-            Boolean response = restTemplate.postForObject(URL_VALIDACAO, cartaoDeCredito, Boolean.class);
-            return response != null && response;
-            */
-            return true;
+            //Boolean response = restTemplate.postForObject(URL_VALIDACAO, cartaoDeCredito, Boolean.class);
+            boolean response = true;
+            return response;
         } catch (Exception e) {
             return false;
         }

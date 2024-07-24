@@ -1,6 +1,6 @@
 package com.example.bicicletario.bicicletario.web;
-import com.example.bicicletario.bicicletario.domain.Erro;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;
+import com.example.bicicletario.bicicletario.domain.Erro;
 import com.example.bicicletario.bicicletario.application.ValidaCartaoDeCreditoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
