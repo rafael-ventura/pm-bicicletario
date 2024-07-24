@@ -40,10 +40,10 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build and run tests
-        run: mvn clean verify -Pequipamento
+        run: mvn clean verify -Paluguel
 
       - name: Generate JaCoCo report
-        run: mvn jacoco:report -Pequipamento
+        run: mvn jacoco:report -Paluguel
 
       - name: Debug Secrets
         run: |
@@ -59,7 +59,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn sonar:sonar \
-            -Pequipamento \
+            -Paluguel \
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
             -Dsonar.host.url=https://sonarcloud.io \
@@ -75,7 +75,7 @@ jobs:
 
       - name: Create application zip
         run: |
-          mvn package -Pequipamento
+          mvn package -Paluguel
           zip -r my-app-aluguel.zip target/bicicletario-aluguel.jar scripts/ appspec.yml
 
       - name: Upload to S3
@@ -84,6 +84,6 @@ jobs:
       - name: Deploy to CodeDeploy
         run: |
           aws deploy create-deployment \
-            --application-name bicicletario-aluguel \
-            --deployment-group-name equipamento_deploy \
+            --application-name pm-aluguel \
+            --deployment-group-name aluguel_deploy \
             --s3-location bucket=bicicletario-bucket,key=my-app-aluguel.zip,bundleType=zip
