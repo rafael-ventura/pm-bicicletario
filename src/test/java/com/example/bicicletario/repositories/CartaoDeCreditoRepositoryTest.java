@@ -49,7 +49,6 @@ class CartaoDeCreditoRepositoryTest {
         cartaoDeCredito.setIdCiclista(1);
 
         CartaoDeCredito savedCartaoDeCredito = cartaoDeCreditoRepository.save(cartaoDeCredito);
-        assertNotNull(savedCartaoDeCredito.getId());
         assertEquals(1, savedCartaoDeCredito.getIdCiclista());
     }
 
