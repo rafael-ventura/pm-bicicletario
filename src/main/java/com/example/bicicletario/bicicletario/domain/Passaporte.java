@@ -1,7 +1,5 @@
 package com.example.bicicletario.bicicletario.domain;
 
-import java.time.LocalDate;
-
 public class Passaporte {
 
     private String numero;

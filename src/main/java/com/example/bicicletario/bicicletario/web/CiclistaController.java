@@ -1,6 +1,7 @@
 package com.example.bicicletario.bicicletario.web;
 
 import com.example.bicicletario.bicicletario.application.CiclistaService;
+import com.example.bicicletario.bicicletario.application.Constants;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
@@ -29,9 +30,9 @@ public class CiclistaController {
 
     @GetMapping("/{idCiclista}")
     public ResponseEntity<Ciclista> obterCiclista(@PathVariable int idCiclista) {
-        Optional<Ciclista> ciclista = ciclistaService.obterCiclista(idCiclista);
-        ciclista.orElseThrow(() -> new ResourceNotFoundException("Ciclista não encontrado"));
-        return ResponseEntity.ok().body(ciclista.get());
+        Ciclista ciclista = ciclistaService.obterCiclista(idCiclista)
+                .orElseThrow(() -> new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO));
+        return ResponseEntity.ok().body(ciclista);
     }
 
     @PutMapping("/{idCiclista}")
@@ -53,13 +54,9 @@ public class CiclistaController {
     }
 
     @GetMapping("/{idCiclista}/bicicletaAlugada")
-    public ResponseEntity<?> obterBicicletaAlugada(@PathVariable int idCiclista) {
+    public ResponseEntity<Bicicleta> obterBicicletaAlugada(@PathVariable int idCiclista) {
         Optional<Bicicleta> bicicleta = ciclistaService.obterBicicletaAlugada(idCiclista);
-        if (bicicleta.isPresent()) {
-            return ResponseEntity.ok(bicicleta.get());
-        } else {
-            return ResponseEntity.noContent().build();
-        }
+        return bicicleta.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @GetMapping("/existeEmail/{email}")

@@ -2,7 +2,6 @@ package com.example.bicicletario.bicicletario.infraestructure;
 
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import org.springframework.stereotype.Repository;
-
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 

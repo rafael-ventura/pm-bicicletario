@@ -66,26 +66,26 @@ public class FuncionarioService {
     public NovoFuncionarioDTO obterFuncionario(Integer idFuncionario) {
         Optional<NovoFuncionarioDTO> novoFuncionarioOpt = funcionarioRepository.findById(idFuncionario).map(funcionarioMapper::toDto);
         if (novoFuncionarioOpt.isEmpty()) {
-            throw new ResourceNotFoundException("Funcionário não encontrado com o ID: " + idFuncionario);
+            throw new ResourceNotFoundException(Constants.FUNCIONARIO_NAO_ENCONTRADO + idFuncionario);
         }
         return novoFuncionarioOpt.get();
     }
 
     public NovoFuncionarioDTO alterarFuncionario(Integer idFuncionario, NovoFuncionarioDTO novoFuncionarioDTO) {
         Funcionario funcionario = funcionarioRepository.findById(idFuncionario)
-                .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado com o ID: " + idFuncionario));
+                .orElseThrow(() -> new ResourceNotFoundException(Constants.FUNCIONARIO_NAO_ENCONTRADO + idFuncionario));
 
         // Atualiza somente os campos que foram fornecidos no DTO
         updateEntityWithDto(funcionario, novoFuncionarioDTO);
 
         // Salva o funcionário atualizado no banco de dados
-        funcionario = funcionarioRepository.save(funcionario);
+        funcionarioRepository.save(funcionario);
 
         // Converte o funcionário atualizado para DTO e retorna
         return novoFuncionarioDTO;
     }
 
-    private Funcionario updateEntityWithDto(Funcionario funcionario, NovoFuncionarioDTO novoFuncionarioDTO) {
+    private void updateEntityWithDto(Funcionario funcionario, NovoFuncionarioDTO novoFuncionarioDTO) {
         if (novoFuncionarioDTO.getNome() != null) {
             funcionario.setNome(novoFuncionarioDTO.getNome());
         }
@@ -107,12 +107,11 @@ public class FuncionarioService {
         if (novoFuncionarioDTO.getFuncao() != null) {
             funcionario.setFuncao(novoFuncionarioDTO.getFuncao());
         }
-        return funcionario;
     }
 
     public void excluirFuncionario(Integer idFuncionario) {
         Funcionario funcionario = funcionarioRepository.findById(idFuncionario)
-                .orElseThrow(() -> new InvalidDataException("Funcionário não encontrado com o ID: " + idFuncionario));
+                .orElseThrow(() -> new InvalidDataException(Constants.FUNCIONARIO_NAO_ENCONTRADO + idFuncionario));
         funcionarioRepository.delete(funcionario);
     }
 

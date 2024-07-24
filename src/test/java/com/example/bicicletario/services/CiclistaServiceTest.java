@@ -2,7 +2,6 @@ package com.example.bicicletario.services;
 
 import com.example.bicicletario.bicicletario.application.CartaoDeCreditoService;
 import com.example.bicicletario.bicicletario.application.CiclistaService;
-import com.example.bicicletario.bicicletario.application.external.AdministradoraCCService;
 import com.example.bicicletario.bicicletario.application.external.BicicletaService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
@@ -22,9 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

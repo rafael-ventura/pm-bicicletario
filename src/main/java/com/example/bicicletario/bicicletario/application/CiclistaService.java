@@ -15,7 +15,6 @@ import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
 import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
 import com.example.bicicletario.bicicletario.mapper.CiclistaMapper;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -105,19 +104,16 @@ public class CiclistaService {
         if (novoCiclistaDTO.getNome() == null || novoCiclistaDTO.getNome().isEmpty() ||
                 novoCiclistaDTO.getEmail() == null || novoCiclistaDTO.getEmail().isEmpty() ||
                 novoCiclistaDTO.getNascimento() == null || novoCiclistaDTO.getNascimento().isEmpty() ||
-                novoCiclistaDTO.getNacionalidade() == null) {
+                novoCiclistaDTO.getNacionalidade() == null ||
+                (novoCiclistaDTO.getNacionalidade().equals(Nacionalidade.BRASILEIRO) &&
+                        (novoCiclistaDTO.getCpf() == null || novoCiclistaDTO.getCpf().isEmpty())) ||
+                (novoCiclistaDTO.getNacionalidade().equals(Nacionalidade.ESTRANGEIRO) &&
+                        novoCiclistaDTO.getPassaporte() == null)) {
             throw new BadRequestException("Todos os campos são obrigatórios.");
         }
 
         if (novoCiclistaDTO.getNacionalidade().equals(Nacionalidade.BRASILEIRO)) {
-            if (novoCiclistaDTO.getCpf() == null || novoCiclistaDTO.getCpf().isEmpty()) {
-                throw new BadRequestException("CPF é obrigatório para brasileiros.");
-            }
             validarCPF(novoCiclistaDTO.getCpf());
-        } else if (novoCiclistaDTO.getNacionalidade().equals(Nacionalidade.ESTRANGEIRO)) {
-            if (novoCiclistaDTO.getPassaporte() == null) {
-                throw new BadRequestException("Passaporte e País são obrigatórios para estrangeiros.");
-            }
         }
     }
 

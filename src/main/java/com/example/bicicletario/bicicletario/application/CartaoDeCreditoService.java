@@ -6,16 +6,12 @@ import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;
-import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
-import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
 import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.CartaoDeCreditoRepository;
 import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
 import com.example.bicicletario.bicicletario.mapper.CartaoDeCreditoMapper;
-import com.example.bicicletario.bicicletario.mapper.CiclistaMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,20 +21,23 @@ import java.util.logging.Logger;
 @Service
 public class CartaoDeCreditoService {
 
-    @Autowired
-    private CartaoDeCreditoRepository cartaoDeCreditoRepository;
+    private final CartaoDeCreditoRepository cartaoDeCreditoRepository;
 
-    @Autowired
-    private CiclistaRepository ciclistaRepository;
+    private final CiclistaRepository ciclistaRepository;
 
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
 
-    @Autowired
-    private CartaoDeCreditoMapper cartaoDeCreditoMapper;
+    private final CartaoDeCreditoMapper cartaoDeCreditoMapper;
 
-    @Autowired
-    private AdministradoraCCService administradoraCCService; // Serviço para validação do cartão de crédito
+    private final AdministradoraCCService administradoraCCService; // Serviço para validação do cartão de crédito
+
+    public CartaoDeCreditoService(CartaoDeCreditoRepository cartaoDeCreditoRepository, CiclistaRepository ciclistaRepository, EmailService emailService, CartaoDeCreditoMapper cartaoDeCreditoMapper, AdministradoraCCService administradoraCCService) {
+        this.cartaoDeCreditoRepository = cartaoDeCreditoRepository;
+        this.ciclistaRepository = ciclistaRepository;
+        this.emailService = emailService;
+        this.cartaoDeCreditoMapper = cartaoDeCreditoMapper;
+        this.administradoraCCService = administradoraCCService;
+    }
 
     public CartaoDeCredito obterCartaoDeCredito(int idCiclista) {
         return cartaoDeCreditoRepository.findByCiclistaId(idCiclista).orElseThrow(() -> new ResourceNotFoundException("Cartão de crédito não encontrado."));

@@ -1,6 +1,5 @@
 package com.example.bicicletario.exceptions;
 
-import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import org.junit.jupiter.api.Test;
 

@@ -1,0 +1,128 @@
+package com.example.bicicletario.services;
+
+import com.example.bicicletario.bicicletario.application.CartaoDeCreditoService;
+import com.example.bicicletario.bicicletario.application.external.AdministradoraCCService;
+import com.example.bicicletario.bicicletario.application.external.EmailService;
+import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
+import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
+import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;
+import com.example.bicicletario.bicicletario.exception.BadRequestException;
+import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
+import com.example.bicicletario.bicicletario.infraestructure.CartaoDeCreditoRepository;
+import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
+import com.example.bicicletario.bicicletario.mapper.CartaoDeCreditoMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+class CartaoDeCreditoServiceTest {
+
+    @Mock
+    private CartaoDeCreditoRepository cartaoDeCreditoRepository;
+
+    @Mock
+    private CiclistaRepository ciclistaRepository;
+
+    @Mock
+    private EmailService emailService;
+
+    @Mock
+    private CartaoDeCreditoMapper cartaoDeCreditoMapper;
+
+    @Mock
+    private AdministradoraCCService administradoraCCService;
+
+    @InjectMocks
+    private CartaoDeCreditoService cartaoDeCreditoService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void testObterCartaoDeCredito() {
+        CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
+        when(cartaoDeCreditoRepository.findByCiclistaId(anyInt())).thenReturn(Optional.of(cartaoDeCredito));
+
+        CartaoDeCredito result = cartaoDeCreditoService.obterCartaoDeCredito(1);
+
+        assertNotNull(result);
+        verify(cartaoDeCreditoRepository).findByCiclistaId(1);
+    }
+
+    @Test
+    void testObterCartaoDeCreditoNotFound() {
+        when(cartaoDeCreditoRepository.findByCiclistaId(anyInt())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> cartaoDeCreditoService.obterCartaoDeCredito(1));
+    }
+
+    @Test
+    void testAlterarCartaoDeCredito() {
+        NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
+        novoCartaoDeCreditoDTO.setNomeTitular("Nome");
+        novoCartaoDeCreditoDTO.setNumero("1234567890123456");
+        novoCartaoDeCreditoDTO.setValidade("2025-12-31");
+        novoCartaoDeCreditoDTO.setCvv("123");
+
+        CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
+        when(cartaoDeCreditoRepository.findByCiclistaId(anyInt())).thenReturn(Optional.of(cartaoDeCredito));
+
+        cartaoDeCreditoService.alterarCartaoDeCredito(1, novoCartaoDeCreditoDTO);
+
+        verify(cartaoDeCreditoRepository).save(cartaoDeCredito);
+        verify(emailService).enviarEmail(any(EmailDTO.class));
+    }
+
+    @Test
+    void testAlterarCartaoDeCreditoNotFound() {
+        NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
+        when(cartaoDeCreditoRepository.findByCiclistaId(anyInt())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> cartaoDeCreditoService.alterarCartaoDeCredito(1, novoCartaoDeCreditoDTO));
+    }
+
+    @Test
+    void testValidarCartaoDeCredito() {
+        NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
+        novoCartaoDeCreditoDTO.setNomeTitular("Nome");
+        novoCartaoDeCreditoDTO.setNumero("1234567890123456");
+        novoCartaoDeCreditoDTO.setValidade("2025-12-31");
+        novoCartaoDeCreditoDTO.setCvv("123");
+
+        when(administradoraCCService.validarCartao(any(NovoCartaoDeCreditoDTO.class), eq(true))).thenReturn(true);
+
+        assertDoesNotThrow(() -> cartaoDeCreditoService.validarCartaoDeCredito(novoCartaoDeCreditoDTO));
+    }
+
+    @Test
+    void testValidarCartaoDeCreditoInvalid() {
+        NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
+        novoCartaoDeCreditoDTO.setNomeTitular("Nome");
+        novoCartaoDeCreditoDTO.setNumero("1234567890123456");
+        novoCartaoDeCreditoDTO.setValidade("2025-12-31");
+        novoCartaoDeCreditoDTO.setCvv("123");
+
+        when(administradoraCCService.validarCartao(any(NovoCartaoDeCreditoDTO.class), eq(true))).thenReturn(false);
+
+        assertThrows(BadRequestException.class, () -> cartaoDeCreditoService.validarCartaoDeCredito(novoCartaoDeCreditoDTO));
+    }
+
+    @Test
+    void testSave() {
+        NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
+        CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
+        when(cartaoDeCreditoMapper.toEntity(any(NovoCartaoDeCreditoDTO.class))).thenReturn(cartaoDeCredito);
+
+        cartaoDeCreditoService.save(novoCartaoDeCreditoDTO, 1);
+
+        verify(cartaoDeCreditoRepository).save(cartaoDeCredito);
+    }
+}

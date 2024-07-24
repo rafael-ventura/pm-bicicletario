@@ -1,10 +1,7 @@
 package com.example.bicicletario.bicicletario.web;
 
-import com.example.bicicletario.bicicletario.domain.Funcionario;
-import com.example.bicicletario.bicicletario.domain.dto.ErroDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
-import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.mapper.FuncionarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
