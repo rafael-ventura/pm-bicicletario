@@ -1,13 +1,12 @@
-build:
-  yml:
 name: CI/CD Pipeline
 
 on:
   push:
     branches:
-      - main
+      - dev-matera-externo
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    branches:
+      - dev-matera-externo
 
 jobs:
   build-and-deploy:
@@ -41,10 +40,10 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build and run tests
-        run: mvn clean verify
+        run: mvn clean verify -Pexterno
 
       - name: Generate JaCoCo report
-        run: mvn jacoco:report
+        run: mvn jacoco:report -Pexterno
 
       - name: Debug Secrets
         run: |
@@ -60,6 +59,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn sonar:sonar \
+            -Pexterno \
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
             -Dsonar.host.url=https://sonarcloud.io \
@@ -75,15 +75,15 @@ jobs:
 
       - name: Create application zip
         run: |
-          mvn package
-          zip -r my-app.zip target/bicicletario-0.0.1-SNAPSHOT.jar scripts/ appspec.yml
+          mvn package -Pexterno
+          zip -r my-app-externo.zip target/bicicletario-externo.jar scripts/ appspec.yml
 
       - name: Upload to S3
-        run: aws s3 cp my-app.zip s3://bicicletario-bucket/my-app.zip
+        run: aws s3 cp my-app-externo.zip s3://bicicletario-bucket/my-app-externo.zip
 
       - name: Deploy to CodeDeploy
         run: |
           aws deploy create-deployment \
-            --application-name bicicletario \
-            --deployment-group-name bicicletario_deploy \
-            --s3-location bucket=bicicletario-bucket,key=my-app.zip,bundleType=zip
+            --application-name pm-externo \
+            --deployment-group-name externo_deploy \
+            --s3-location bucket=bicicletario-bucket,key=my-app-externo.zip,bundleType=zip
