@@ -4,19 +4,24 @@ import com.example.bicicletario.bicicletario.application.CartaoDeCreditoService;
 import com.example.bicicletario.bicicletario.application.external.AdministradoraCCService;
 import com.example.bicicletario.bicicletario.application.external.EmailService;
 import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
+import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;
 import com.example.bicicletario.bicicletario.exception.BadRequestException;
+import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.CartaoDeCreditoRepository;
 import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
 import com.example.bicicletario.bicicletario.mapper.CartaoDeCreditoMapper;
+import com.example.bicicletario.bicicletario.mapper.CiclistaMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -66,14 +71,22 @@ class CartaoDeCreditoServiceTest {
 
     @Test
     void testAlterarCartaoDeCredito() {
+        Ciclista ciclista = new Ciclista();
+        ciclista.setId(1);
+        ciclista.setNome("Joao Silva");
+        ciclista.setEmail("joao.silva@example.com");
+
         NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
-        novoCartaoDeCreditoDTO.setNomeTitular("Nome");
+        novoCartaoDeCreditoDTO.setNomeTitular("Joao Silva");
         novoCartaoDeCreditoDTO.setNumero("1234567890123456");
         novoCartaoDeCreditoDTO.setValidade("2025-12-31");
         novoCartaoDeCreditoDTO.setCvv("123");
 
         CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
+        cartaoDeCredito.setId(1);
         when(cartaoDeCreditoRepository.findByCiclistaId(anyInt())).thenReturn(Optional.of(cartaoDeCredito));
+        when(administradoraCCService.validarCartao(any(NovoCartaoDeCreditoDTO.class), eq(true))).thenReturn(true);
+        when(ciclistaRepository.findById(anyInt())).thenReturn(Optional.of(ciclista));
 
         cartaoDeCreditoService.alterarCartaoDeCredito(1, novoCartaoDeCreditoDTO);
 
@@ -86,7 +99,7 @@ class CartaoDeCreditoServiceTest {
         NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
         when(cartaoDeCreditoRepository.findByCiclistaId(anyInt())).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> cartaoDeCreditoService.alterarCartaoDeCredito(1, novoCartaoDeCreditoDTO));
+        assertThrows(InvalidDataException.class, () -> cartaoDeCreditoService.alterarCartaoDeCredito(1, novoCartaoDeCreditoDTO));
     }
 
     @Test
@@ -112,7 +125,7 @@ class CartaoDeCreditoServiceTest {
 
         when(administradoraCCService.validarCartao(any(NovoCartaoDeCreditoDTO.class), eq(true))).thenReturn(false);
 
-        assertThrows(BadRequestException.class, () -> cartaoDeCreditoService.validarCartaoDeCredito(novoCartaoDeCreditoDTO));
+        assertThrows(InvalidDataException.class, () -> cartaoDeCreditoService.validarCartaoDeCredito(novoCartaoDeCreditoDTO));
     }
 
     @Test
