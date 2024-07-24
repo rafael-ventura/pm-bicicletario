@@ -1,42 +1,35 @@
 package com.example.bicicletario.repositories;
 
-import com.example.bicicletario.bicicletario.application.FuncionarioService;
 import com.example.bicicletario.bicicletario.domain.Funcionario;
 import com.example.bicicletario.bicicletario.infraestructure.FuncionarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import java.util.*;
+
+import java.util.List;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 class FuncionarioRepositoryTest {
 
-    @Mock
     private FuncionarioRepository funcionarioRepository;
-
-    @InjectMocks
-    private FuncionarioService funcionarioService; // Supondo que você tenha um serviço que usa o repositório
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        funcionarioRepository = new FuncionarioRepository();
     }
 
     @Test
     void testSaveAndFindById() {
         Funcionario funcionario = new Funcionario();
         funcionario.setNome("Joao Silva");
-        funcionario.setId(1);
 
-        when(funcionarioRepository.save(any(Funcionario.class))).thenReturn(funcionario);
-        when(funcionarioRepository.findById(1)).thenReturn(Optional.of(funcionario));
+        Funcionario savedFuncionario = funcionarioRepository.save(funcionario);
 
-        funcionarioRepository.save(funcionario);
-        Optional<Funcionario> foundFuncionario = funcionarioRepository.findById(1);
+        assertNotNull(savedFuncionario.getId());
+        assertEquals("Joao Silva", savedFuncionario.getNome());
+
+        Optional<Funcionario> foundFuncionario = funcionarioRepository.findById(savedFuncionario.getId());
 
         assertTrue(foundFuncionario.isPresent());
         assertEquals("Joao Silva", foundFuncionario.get().getNome());
@@ -49,31 +42,37 @@ class FuncionarioRepositoryTest {
         Funcionario funcionario2 = new Funcionario();
         funcionario2.setNome("Maria Oliveira");
 
-        when(funcionarioRepository.findAll()).thenReturn(Arrays.asList(funcionario1, funcionario2));
+        funcionarioRepository.save(funcionario1);
+        funcionarioRepository.save(funcionario2);
 
         List<Funcionario> funcionarios = funcionarioRepository.findAll();
 
         assertEquals(2, funcionarios.size());
+        assertTrue(funcionarios.stream().anyMatch(f -> "Joao Silva".equals(f.getNome())));
+        assertTrue(funcionarios.stream().anyMatch(f -> "Maria Oliveira".equals(f.getNome())));
     }
 
     @Test
     void testDeleteById() {
         Funcionario funcionario = new Funcionario();
         funcionario.setNome("Joao Silva");
-        funcionario.setId(1);
 
-        doNothing().when(funcionarioRepository).deleteById(1);
+        Funcionario savedFuncionario = funcionarioRepository.save(funcionario);
 
-        funcionarioRepository.deleteById(1);
-        verify(funcionarioRepository, times(1)).deleteById(1);
+        funcionarioRepository.deleteById(savedFuncionario.getId());
+        Optional<Funcionario> foundFuncionario = funcionarioRepository.findById(savedFuncionario.getId());
+
+        assertFalse(foundFuncionario.isPresent());
     }
 
     @Test
     void testExistsById() {
-        when(funcionarioRepository.existsById(1)).thenReturn(true);
-        when(funcionarioRepository.existsById(2)).thenReturn(false);
+        Funcionario funcionario = new Funcionario();
+        funcionario.setNome("Joao Silva");
 
-        assertTrue(funcionarioRepository.existsById(1));
-        assertFalse(funcionarioRepository.existsById(2));
+        Funcionario savedFuncionario = funcionarioRepository.save(funcionario);
+
+        assertTrue(funcionarioRepository.existsById(savedFuncionario.getId()));
+        assertFalse(funcionarioRepository.existsById(999)); // ID not present
     }
 }
