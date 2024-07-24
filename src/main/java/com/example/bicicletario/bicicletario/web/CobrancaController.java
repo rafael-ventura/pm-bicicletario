@@ -10,18 +10,21 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/cobranca")
 public class CobrancaController {
 
     @Autowired
     private CobrancaService cobrancaService;
 
-    @PostMapping("/cobranca")
+    @PostMapping
     public ResponseEntity<?> realizarCobranca(@RequestBody NovoCobrancaDTO novaCobranca) {
         try {
+            System.out.println("Realizando cobranca");
             Cobranca cobranca = cobrancaService.realizarCobranca(novaCobranca);
-            return ResponseEntity.status(200).body("Cobrança solicitada");
+            System.out.println("cobranca realizada com sucesso");
+            return ResponseEntity.status(200).body(cobranca);
         } catch (Exception e) {
+            System.out.println("Erro na cobranca");
             Erro erro = new Erro("422", "Dados Inválidos");
             return ResponseEntity.status(422).body(erro);
         }
@@ -29,11 +32,14 @@ public class CobrancaController {
 
     @GetMapping("/{idCobranca}")
     public ResponseEntity<?> obterCobranca(@PathVariable int idCobranca) {
+        System.out.println("Pegando cobranca");
         Cobranca cobranca = cobrancaService.obterCobrancaPorId(idCobranca);
         if (cobranca != null) {
+            System.out.println("Cobranca realizada com sucesso");
             return ResponseEntity.ok(cobranca);
         } else {
             Erro erro = new Erro("404", "Cobrança não encontrada");
+            System.out.println(erro);
             return ResponseEntity.status(404).body(erro);
         }
     }

@@ -21,6 +21,7 @@ public class CobrancaRepository {
     }
 
     public Cobranca findById(int id) {
+        System.out.println("Retornando cobranca");
         return cobrancas.get(id);
     }
 
