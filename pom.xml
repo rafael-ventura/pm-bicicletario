@@ -10,7 +10,6 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>bicicletario-aluguel</artifactId>
-    <version>0.0.1</version>
     <name>bicicletario-aluguel</name>
     <description>Microserviço Aluguel</description>
     <properties>
