@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo systemctl restart spring-boot-app.service
+sudo systemctl restart spring-boot-app-externo.service
