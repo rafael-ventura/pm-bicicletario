@@ -44,6 +44,6 @@ public class FuncionarioController {
     @DeleteMapping("/{idFuncionario}")
     public ResponseEntity<String> excluirFuncionario(@PathVariable Integer idFuncionario) {
         funcionarioService.excluirFuncionario(idFuncionario);
-        return ResponseEntity.ok("Funcionário excluído com sucesso");
+        return ResponseEntity.ok("Funcionário excluído com sucesso!");
     }
 }

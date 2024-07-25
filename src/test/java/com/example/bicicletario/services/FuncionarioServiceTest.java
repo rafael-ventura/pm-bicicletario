@@ -135,7 +135,7 @@ public class FuncionarioServiceTest {
         Integer idFuncionario = 1;
         when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.empty());
 
-        assertThrows(InvalidDataException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             funcionarioService.excluirFuncionario(idFuncionario);
         });
     }

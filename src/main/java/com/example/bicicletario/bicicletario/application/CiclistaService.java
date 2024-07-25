@@ -44,11 +44,12 @@ public class CiclistaService {
 
         NovoCiclistaDTO novoCiclistaDTO = request.getCiclista();
         Ciclista ciclista = ciclistaMapper.toEntity(novoCiclistaDTO);
+        ciclistaRepository.save(ciclista);
 
         cartaoDeCreditoService.save(request.getMeioDePagamento(), ciclista.getId());
 
-        ciclistaRepository.save(ciclista);
         enviarEmailConfirmacao(ciclista.getEmail());
+        logger.info("Ciclista cadastrado com sucesso!");
         return ciclista;
     }
 
@@ -81,14 +82,16 @@ public class CiclistaService {
     }
 
     public Ciclista ativarCiclista(int idCiclista) {
-        Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow();
-        ciclista.setStatusCiclista(StatusCiclista.ATIVO);
+        Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(
+                () -> new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista)
+        );
+        ciclista.setStatus(StatusCiclista.ATIVO);
         return ciclistaRepository.save(ciclista);
     }
 
     public boolean permiteAluguel(int idCiclista) {
         Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow();
-        return ciclista.getStatusCiclista() == StatusCiclista.ATIVO && !aluguelRepository.existsByCiclistaAndHoraFimIsNull(ciclista.getId());
+        return ciclista.getStatus() == StatusCiclista.ATIVO && !aluguelRepository.existsByCiclistaAndHoraFimIsNull(ciclista.getId());
     }
 
     public Optional<Bicicleta> obterBicicletaAlugada(int idCiclista) {
@@ -101,6 +104,10 @@ public class CiclistaService {
     }
 
     public boolean existeEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+        if (email == null || !email.matches(emailRegex)) {
+            throw new InvalidDataException("Dados inválidos.");
+        }
         return ciclistaRepository.existsByEmail(email);
     }
 

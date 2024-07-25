@@ -6,6 +6,8 @@ import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.FuncionarioRepository;
 import com.example.bicicletario.bicicletario.mapper.FuncionarioMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +15,7 @@ import java.util.Optional;
 @Service
 public class FuncionarioService {
 
+    private static final Logger log = LoggerFactory.getLogger(FuncionarioService.class);
     private final FuncionarioRepository funcionarioRepository;
     private final FuncionarioMapper funcionarioMapper;
 
@@ -110,8 +113,9 @@ public class FuncionarioService {
     }
 
     public void excluirFuncionario(Integer idFuncionario) {
+        log.info("Excluindo funcionário com ID: {}", idFuncionario);
         Funcionario funcionario = funcionarioRepository.findById(idFuncionario)
-                .orElseThrow(() -> new InvalidDataException(Constants.FUNCIONARIO_NAO_ENCONTRADO + idFuncionario));
+                .orElseThrow(() -> new ResourceNotFoundException(Constants.FUNCIONARIO_NAO_ENCONTRADO + idFuncionario));
         funcionarioRepository.delete(funcionario);
     }
 

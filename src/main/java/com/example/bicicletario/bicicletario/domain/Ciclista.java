@@ -21,7 +21,7 @@ public class Ciclista {
 
     private String urlFotoDocumento;
 
-    private StatusCiclista statusCiclista;
+    private StatusCiclista status;
 
     // Getters and Setters
 
@@ -89,11 +89,11 @@ public class Ciclista {
         this.urlFotoDocumento = urlFotoDocumento;
     }
 
-    public StatusCiclista getStatusCiclista() {
-        return statusCiclista;
+    public StatusCiclista getStatus() {
+        return status;
     }
 
-    public void setStatusCiclista(StatusCiclista statusCiclista) {
-        this.statusCiclista = statusCiclista;
+    public void setStatus(StatusCiclista status) {
+        this.status = status;
     }
 }

@@ -143,7 +143,7 @@ class FuncionarioControllerTest {
 
         mockMvc.perform(delete("/api/funcionario/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Funcionário excluído com sucesso"));
+                .andExpect(content().string("Funcionário excluído com sucesso!"));
     }
 
     @Test

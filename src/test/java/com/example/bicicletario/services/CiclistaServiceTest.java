@@ -162,7 +162,7 @@ class CiclistaServiceTest {
     void testAtivarCiclista_Success() {
         Ciclista ciclista = new Ciclista();
         ciclista.setId(1);
-        ciclista.setStatusCiclista(StatusCiclista.INATIVO);
+        ciclista.setStatus(StatusCiclista.INATIVO);
 
         when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
         when(ciclistaRepository.save(any())).thenReturn(ciclista);
@@ -170,14 +170,22 @@ class CiclistaServiceTest {
         Ciclista ativado = ciclistaService.ativarCiclista(1);
 
         assertNotNull(ativado);
-        assertEquals(StatusCiclista.ATIVO, ativado.getStatusCiclista());
+        assertEquals(StatusCiclista.ATIVO, ativado.getStatus());
+    }
+
+    // testAtivarCiclista_NotFound
+    @Test
+    void testAtivarCiclista_NotFound() {
+        when(ciclistaRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> ciclistaService.ativarCiclista(1));
     }
 
     @Test
     void testPermiteAluguel_Success() {
         Ciclista ciclista = new Ciclista();
         ciclista.setId(1);
-        ciclista.setStatusCiclista(StatusCiclista.ATIVO);
+        ciclista.setStatus(StatusCiclista.ATIVO);
 
         when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(1)).thenReturn(false);
@@ -191,7 +199,7 @@ class CiclistaServiceTest {
     void testPermiteAluguel_Fail() {
         Ciclista ciclista = new Ciclista();
         ciclista.setId(1);
-        ciclista.setStatusCiclista(StatusCiclista.INATIVO);
+        ciclista.setStatus(StatusCiclista.INATIVO);
 
         when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
 
@@ -205,7 +213,7 @@ class CiclistaServiceTest {
         // Mock Ciclista
         Ciclista ciclista = new Ciclista();
         ciclista.setId(1);
-        ciclista.setStatusCiclista(StatusCiclista.ATIVO);
+        ciclista.setStatus(StatusCiclista.ATIVO);
         ciclista.setNome("Joao Silva");
 
         // Mock Aluguel and Bicicleta

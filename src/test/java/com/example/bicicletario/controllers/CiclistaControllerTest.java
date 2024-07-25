@@ -100,7 +100,7 @@ class CiclistaControllerTest {
         ciclista.setNacionalidade(Nacionalidade.BRASILEIRO);
         ciclista.setUrlFotoDocumento("http://example.com/foto.jpg");
         ciclista.setPassaporte(passaporte);
-        ciclista.setStatusCiclista(StatusCiclista.ATIVO);
+        ciclista.setStatus(StatusCiclista.ATIVO);
 
         when(ciclistaService.cadastrarCiclista(any(NovoCiclistaRequestDTO.class))).thenReturn(ciclista);
 
@@ -220,7 +220,7 @@ class CiclistaControllerTest {
         Ciclista ciclista = new Ciclista();
         ciclista.setId(1);
         ciclista.setNome("Joao Silva");
-        ciclista.setStatusCiclista(StatusCiclista.ATIVO);
+        ciclista.setStatus(StatusCiclista.ATIVO);
 
         when(ciclistaService.ativarCiclista(1)).thenReturn(ciclista);
 
