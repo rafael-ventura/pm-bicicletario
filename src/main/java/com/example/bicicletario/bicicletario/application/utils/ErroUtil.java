@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 public class ErroUtil {
 
-    private ErroUtil() {
+    public ErroUtil() {
         throw new IllegalStateException("Classe utilitária");
     }
 

@@ -29,4 +29,7 @@ public class TotemRepository {
         totems.removeIf(t -> t.getId().equals(id));
     }
 
+    public boolean existsById(Long idTotem) {
+        return totems.stream().anyMatch(t -> t.getId().equals(idTotem));
+    }
 }

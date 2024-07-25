@@ -1,7 +1,10 @@
 package com.example.bicicletario.bicicletario.application;
 
+import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
+import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.domain.models.Funcionario;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import static com.example.bicicletario.bicicletario.domain.constants.Constantes.ASSUNTO_EMAIL_REPARADOR;
@@ -9,7 +12,7 @@ import static com.example.bicicletario.bicicletario.domain.constants.Constantes.
 
 @Service
 public class EmailService {
-    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(EmailService.class);
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
     private final FuncionarioService funcionarioService;
 
     public EmailService(FuncionarioService funcionarioService) {
@@ -17,16 +20,24 @@ public class EmailService {
     }
 
     public void enviarEmail(String email, String assunto, String mensagem) {
-        if (email != null && !email.isEmpty()) {
+        if (email == null || email.isEmpty()) {
+            logger.warn("Endereço de e-mail inválido. O e-mail não foi enviado.");
+            throw new InvalidDataException("Endereço de e-mail inválido.");
+        }
+        try {
             logger.info(String.format("Email enviado para: %s com assunto: %s e mensagem: %s", email, assunto, mensagem));
             // Lógica de envio de e-mail aqui
-        } else {
-            logger.warn("Endereço de e-mail inválido. O e-mail não foi enviado.");
+        } catch (Exception e) {
+            logger.error("Erro ao enviar e-mail", e);
+            throw new InvalidDataException("Erro ao enviar e-mail", e);
         }
     }
 
     public void enviarEmailParaReparador(Long idFuncionario) {
         Funcionario funcionario = funcionarioService.get(idFuncionario);
+        if (funcionario == null) {
+            throw new ResourceNotFoundException("Funcionário não encontrado");
+        }
         enviarEmail(funcionario.getEmail(), ASSUNTO_EMAIL_REPARADOR, EMAIL_ENVIADO_PARA_O_REPARADOR);
     }
 }
