@@ -4,7 +4,6 @@ import com.example.bicicletario.bicicletario.application.BicicletaService;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.NoSuchElementException;
@@ -15,7 +14,6 @@ import static com.example.bicicletario.bicicletario.domain.constants.Constantes.
 @RequestMapping("/api/bicicleta")
 public class BicicletaController {
 
-    @Autowired
     private final BicicletaService bicicletaService;
 
     public BicicletaController(BicicletaService bicicletaService) {

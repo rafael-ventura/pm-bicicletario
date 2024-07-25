@@ -2,7 +2,6 @@ package com.example.bicicletario.bicicletario.application;
 
 import com.example.bicicletario.bicicletario.domain.models.Funcionario;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static com.example.bicicletario.bicicletario.domain.constants.Constantes.ASSUNTO_EMAIL_REPARADOR;
@@ -20,7 +19,7 @@ public class EmailService {
 
 
     public void enviarEmail(String email, String assunto, String mensagem) {
-        logger.info("Email enviado para: " + email + " com assunto: " + assunto + " e mensagem: " + mensagem);
+        logger.info(String.format("Email enviado para: %s com assunto: %s e mensagem: %s", email, assunto, mensagem));
     }
 
     public void enviarEmailParaReparador(Long idFuncionario) {
