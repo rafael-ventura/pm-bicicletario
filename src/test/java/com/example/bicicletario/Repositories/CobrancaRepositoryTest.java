@@ -23,11 +23,11 @@ class CobrancaRepositoryTest {
 
         Cobranca savedCobranca = cobrancaRepository.save(cobranca);
 
-        assertNotNull(savedCobranca.getId());
         Cobranca retrievedCobranca = cobrancaRepository.findById(savedCobranca.getId());
         assertNotNull(retrievedCobranca);
-        assertEquals(savedCobranca.getId(), retrievedCobranca.getId());
+        assertEquals((Integer) savedCobranca.getId(), retrievedCobranca.getId());
     }
+
 
     @Test
     void testDeleteById() {
