@@ -22,7 +22,7 @@ public class FilaCobrancaController {
     private FilaCobrancaService filaCobrancaService;
 
     @PostMapping("/filaCobranca")
-    public ResponseEntity<?> adicionarNaFila(@RequestBody NovoCobrancaDTO novaCobranca) {
+    public ResponseEntity adicionarNaFila(@RequestBody NovoCobrancaDTO novaCobranca) {
         try {
             logger.info("Adicionando cobranca na fila");
             Cobranca cobranca = filaCobrancaService.adicionarNaFila(novaCobranca);

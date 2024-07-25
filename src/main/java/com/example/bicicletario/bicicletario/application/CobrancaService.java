@@ -6,7 +6,6 @@ import com.example.bicicletario.bicicletario.domain.enums.StatusCobranca;
 import com.example.bicicletario.bicicletario.infraestructure.CobrancaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,8 +13,7 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class CobrancaService {
 
-//    @Autowired
-//    private RestTemplate restTemplate;
+
 
     @Autowired
     private CobrancaRepository cobrancaRepository;
@@ -31,7 +29,7 @@ public class CobrancaService {
     }
 
 
-    public Cobranca realizarCobranca(NovoCobrancaDTO novaCobranca) throws Exception {
+    public Cobranca realizarCobranca(NovoCobrancaDTO novaCobranca) {
         // Validação do valor
         if (novaCobranca.getValor() == null || novaCobranca.getValor().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("O valor deve ser maior que zero");
@@ -41,7 +39,7 @@ public class CobrancaService {
         CartaoDeCredito cartaoDeCredito = recuperarCartaoDeCredito(novaCobranca.getCiclista());
 
         if (cartaoDeCredito == null) {
-            throw new Exception("Cartão de crédito não encontrado");
+            throw new NullPointerException("Cartão de crédito não encontrado");
         }
 
         // Criar cobrança
@@ -73,13 +71,7 @@ public class CobrancaService {
     }
 
     // Método para recuperar dados do cartão de crédito
-    private CartaoDeCredito recuperarCartaoDeCredito(int idCiclista) throws Exception {
-        /*try {
-            String url = "http://localhost:8080/cartaoDeCredito/" + idCiclista;
-            return restTemplate.getForObject(url, CartaoDeCredito.class);
-        } catch (Exception e) {
-            throw new Exception("Erro ao recuperar dados do cartão de crédito", e);
-        }*/
+    private CartaoDeCredito recuperarCartaoDeCredito(int idCiclista) {
         CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
         cartaoDeCredito.setId(idCiclista);
         cartaoDeCredito.setCvv("707");
