@@ -20,7 +20,7 @@ public class EmailService {
     public Email enviarEmail(NovoEmailDTO novoEmailDTO) throws Exception {
         // Validação básica de e-mail
         if (!novoEmailDTO.getEmail().contains("@")) {
-            throw new Exception("E-mail com formato inválido");
+            throw new Exception("E-mail com formato invalido");
         }
 
         // Criação do objeto Email
