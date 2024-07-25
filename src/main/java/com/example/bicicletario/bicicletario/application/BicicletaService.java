@@ -22,16 +22,19 @@ import java.util.Optional;
 @Service
 public class BicicletaService {
 
-    @Autowired
-    private BicicletaRepository bicicletaRepository;
-    @Autowired
-    private TrancaRepository trancaRepository;
-    @Autowired
-    private BicicletaMapper bicicletaMapper;
-    @Autowired
-    private EmailService emailService;
-    @Autowired
-    private FuncionarioService funcionarioService;
+    private final BicicletaRepository bicicletaRepository;
+    private final TrancaRepository trancaRepository;
+    private final BicicletaMapper bicicletaMapper;
+    private final EmailService emailService;
+    private final FuncionarioService funcionarioService;
+
+    public BicicletaService(BicicletaRepository bicicletaRepository, TrancaRepository trancaRepository, BicicletaMapper bicicletaMapper, EmailService emailService, FuncionarioService funcionarioService) {
+        this.bicicletaRepository = bicicletaRepository;
+        this.trancaRepository = trancaRepository;
+        this.bicicletaMapper = bicicletaMapper;
+        this.emailService = emailService;
+        this.funcionarioService = funcionarioService;
+    }
 
     public List<Bicicleta> listarBicicletas() {
         return bicicletaRepository.findAll();

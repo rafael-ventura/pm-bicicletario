@@ -6,8 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface TotemMapper {
-    NovoTotemDTO toDto(Totem totem);
-    NovoTotemDTO toDtoNovo(Totem totem);
     Totem toEntity(NovoTotemDTO novoTotemDTO);
 }
 

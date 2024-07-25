@@ -9,10 +9,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface BicicletaMapper {
 
-
     Bicicleta toEntity(NovaBicicletaDTO dto);
-
-    NovaBicicletaDTO toDto(Bicicleta bicicleta);
-
     List<Bicicleta> toDtoList(List<Bicicleta> bicicletas);
 }

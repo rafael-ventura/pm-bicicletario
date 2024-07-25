@@ -1,6 +1,7 @@
 package com.example.bicicletario.bicicletario.application;
 
 import com.example.bicicletario.bicicletario.domain.models.Funcionario;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,12 +11,17 @@ import static com.example.bicicletario.bicicletario.domain.constants.Constantes.
 @Service
 public class EmailService {
 
-    @Autowired
-    private FuncionarioService funcionarioService;
+    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(EmailService.class);
+
+    private final FuncionarioService funcionarioService;
+
+    public EmailService(FuncionarioService funcionarioService) {
+        this.funcionarioService = funcionarioService;
+    }
 
 
     public void enviarEmail(String email, String assunto, String mensagem) {
-        System.out.println("Email enviado para: " + email + " com assunto: " + assunto + " e mensagem: " + mensagem);
+        logger.info("Email enviado para: " + email + " com assunto: " + assunto + " e mensagem: " + mensagem);
     }
 
     public void enviarEmailParaReparador(Long idFuncionario) {

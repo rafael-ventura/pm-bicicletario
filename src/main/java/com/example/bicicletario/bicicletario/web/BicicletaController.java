@@ -7,9 +7,7 @@ import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDT
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.NoSuchElementException;
-
 import static com.example.bicicletario.bicicletario.application.utils.ErroUtil.*;
 import static com.example.bicicletario.bicicletario.domain.constants.Constantes.*;
 

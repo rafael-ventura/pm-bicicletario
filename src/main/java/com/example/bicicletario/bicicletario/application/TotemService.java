@@ -58,7 +58,7 @@ public class TotemService {
 
 
     public void removerTotem(Long idTotem) {
-        Totem totem = totemRepository.findById(idTotem).orElseThrow(() -> new IllegalArgumentException("Totem não encontrado"));
+        totemRepository.findById(idTotem).orElseThrow(() -> new IllegalArgumentException("Totem não encontrado"));
         if (trancaRepository.existsByTotemId(idTotem)) {
             throw new IllegalArgumentException(Constantes.TOTEM_COM_TRANCA);
         }
