@@ -14,9 +14,10 @@ import java.util.List;
 public class FilaCobrancaService {
 
     private final FilaCobrancaRepository filaCobrancaRepository;
-
-    public FilaCobrancaService(FilaCobrancaRepository filaCobrancaRepository) {
+    private final CobrancaService cobrancaService;
+    public FilaCobrancaService(FilaCobrancaRepository filaCobrancaRepository, CobrancaService cobrancaService) {
         this.filaCobrancaRepository = filaCobrancaRepository;
+        this.cobrancaService = cobrancaService;
     }
 
     public Cobranca adicionarNaFila(NovoCobrancaDTO novaCobranca) {
@@ -43,25 +44,21 @@ public class FilaCobrancaService {
 
         while (!filaCobrancaRepository.isEmpty()) {
             Cobranca cobranca = filaCobrancaRepository.removerDaFila();
-            // Simular envio para administradora de cartão de crédito
-            boolean pagamentoConfirmado = enviarParaAdministradoraCC(cobranca);
+            NovoCobrancaDTO novoCobrancaDTO = new NovoCobrancaDTO();
+            novoCobrancaDTO.setCiclista(cobranca.getCiclista());
+            novoCobrancaDTO.setValor(cobranca.getValor());
+            Cobranca pagamentoConfirmado = cobrancaService.realizarCobranca(novoCobrancaDTO);
 
-            if (pagamentoConfirmado) {
-                cobranca.setStatusCobranca(StatusCobranca.PAGA);
-                cobranca.setHoraFinalizacao(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
-            } else {
+            if (!pagamentoConfirmado.getStatusCobranca().equals(StatusCobranca.PAGA)) {
                 cobranca.setStatusCobranca(StatusCobranca.FALHA);
+                cobranca.setHoraFinalizacao(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+                adicionarNaFila(novoCobrancaDTO);
             }
-
             cobrancasProcessadas.add(cobranca);
         }
 
         return cobrancasProcessadas;
     }
 
-    public boolean enviarParaAdministradoraCC(Cobranca cobranca) {
-        // Lógica de integração com administradora de cartão de crédito
 
-        return true; // Simulação de sucesso
-    }
 }

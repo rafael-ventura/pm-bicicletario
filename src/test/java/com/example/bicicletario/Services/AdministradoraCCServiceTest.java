@@ -1,3 +1,5 @@
+package com.example.bicicletario.Services;
+
 import com.example.bicicletario.bicicletario.application.AdministradoraCCService;
 import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
 import org.junit.jupiter.api.BeforeEach;
