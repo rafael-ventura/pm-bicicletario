@@ -1,5 +1,6 @@
 package com.example.bicicletario.bicicletario.application;
 
+import com.example.bicicletario.bicicletario.Exception.NotFoundException;
 import com.example.bicicletario.bicicletario.domain.Email;
 import com.example.bicicletario.bicicletario.domain.dto.NovoEmailDTO;
 import com.example.bicicletario.bicicletario.infraestructure.EmailRepository;
@@ -40,7 +41,7 @@ public class EmailService {
             // Salvar o e-mail no repositório
             email = emailRepository.save(email);
         } catch (Exception e) {
-            throw new Exception("Erro ao enviar o e-mail", e);
+            throw new NotFoundException(e.getMessage());
         }
 
         return email;

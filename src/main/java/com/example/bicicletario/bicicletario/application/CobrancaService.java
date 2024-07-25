@@ -1,4 +1,5 @@
 package com.example.bicicletario.bicicletario.application;
+import com.example.bicicletario.bicicletario.Exception.NotFoundException;
 import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
 import com.example.bicicletario.bicicletario.domain.Cobranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
@@ -39,7 +40,7 @@ public class CobrancaService {
         CartaoDeCredito cartaoDeCredito = recuperarCartaoDeCredito(novaCobranca.getCiclista());
 
         if (cartaoDeCredito == null) {
-            throw new NullPointerException("Cartão de crédito não encontrado");
+            throw new NotFoundException("Cartão de crédito não encontrado");
         }
 
         // Criar cobrança
