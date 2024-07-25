@@ -65,7 +65,7 @@ public class BicicletaController {
     }
 
     @GetMapping("/{idBicicleta}")
-    public ResponseEntity<?> obterBicicleta(@PathVariable Long idBicicleta) {
+    public ResponseEntity obterBicicleta(@PathVariable Long idBicicleta) {
         try {
             return ResponseEntity.ok(bicicletaService.obterBicicleta(idBicicleta));
         } catch (NoSuchElementException e) {

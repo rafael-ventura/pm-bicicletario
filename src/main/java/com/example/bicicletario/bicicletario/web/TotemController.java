@@ -25,7 +25,7 @@ public class TotemController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listarTotens() {
+    public ResponseEntity listarTotens() {
         try {
             List<Totem> totens = totemService.listarTotens();
             return ResponseEntity.ok(totens);
@@ -35,7 +35,7 @@ public class TotemController {
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrarTotem(@RequestBody NovoTotemDTO totemDTO) {
+    public ResponseEntity cadastrarTotem(@RequestBody NovoTotemDTO totemDTO) {
         try {
             Totem totemCadastrado = totemService.cadastrarTotem(totemDTO);
             return ResponseEntity.ok(totemCadastrado);
@@ -47,7 +47,7 @@ public class TotemController {
     }
 
     @PutMapping("/{idTotem}")
-    public ResponseEntity<?> editarTotem(@PathVariable Long idTotem, @RequestBody NovoTotemDTO totemDTO) {
+    public ResponseEntity editarTotem(@PathVariable Long idTotem, @RequestBody NovoTotemDTO totemDTO) {
         try {
             Totem totemEditado = totemService.editarTotem(idTotem, totemDTO);
             return ResponseEntity.ok(totemEditado);
@@ -61,7 +61,7 @@ public class TotemController {
     }
 
     @DeleteMapping("/{idTotem}")
-    public ResponseEntity<?> removerTotem(@PathVariable Long idTotem) {
+    public ResponseEntity removerTotem(@PathVariable Long idTotem) {
         try {
             totemService.removerTotem(idTotem);
             return ResponseEntity.ok(TOTEM_REMOVIDO);
@@ -73,7 +73,7 @@ public class TotemController {
     }
 
     @GetMapping("/{idTotem}/trancas")
-    public ResponseEntity<?> listarTrancas(@PathVariable Long idTotem) {
+    public ResponseEntity listarTrancas(@PathVariable Long idTotem) {
         try {
             List<Tranca> trancas = totemService.listarTrancas(idTotem);
             return ResponseEntity.ok(trancas);
@@ -87,7 +87,7 @@ public class TotemController {
     }
 
     @GetMapping("/{idTotem}/bicicletas")
-    public ResponseEntity<?> listarBicicletas(@PathVariable Long idTotem) {
+    public ResponseEntity listarBicicletas(@PathVariable Long idTotem) {
         try {
             List<Bicicleta> bicicletas = totemService.listarBicicletas(idTotem);
             return ResponseEntity.ok(bicicletas);
