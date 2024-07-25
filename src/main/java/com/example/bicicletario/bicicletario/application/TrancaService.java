@@ -1,5 +1,7 @@
 package com.example.bicicletario.bicicletario.application;
 
+import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
+import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.domain.constants.Constantes;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
@@ -16,62 +18,57 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Service
 public class TrancaService {
 
     private final TrancaRepository trancaRepository;
-    private final BicicletaRepository bicicletaRepository;
     private final TrancaMapper trancaMapper;
     private final EmailService emailService;
     private final FuncionarioService funcionarioService;
+    private final BicicletaRepository bicicletaRepository;
 
-    public TrancaService(TrancaRepository trancaRepository, BicicletaRepository bicicletaRepository, TrancaMapper trancaMapper, EmailService emailService, FuncionarioService funcionarioService) {
+    public TrancaService(TrancaRepository trancaRepository, TrancaMapper trancaMapper, EmailService emailService, FuncionarioService funcionarioService, BicicletaRepository bicicletaRepository) {
         this.trancaRepository = trancaRepository;
-        this.bicicletaRepository = bicicletaRepository;
         this.trancaMapper = trancaMapper;
         this.emailService = emailService;
         this.funcionarioService = funcionarioService;
+        this.bicicletaRepository = bicicletaRepository;
     }
 
     public void integrarNaRede(IntegrarBicicletaNaRedeDTO dto) {
-        // [E1] Verificar se a tranca existe
         Tranca tranca = trancaRepository.findById(dto.getIdTranca())
-                .orElseThrow(() -> new IllegalArgumentException(Constantes.TRANCA_NAO_ENCONTRADA));
+                .orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
 
-        // [R3] Verificar o status da tranca
         if (tranca.getStatus() != StatusTranca.NOVA && tranca.getStatus() != StatusTranca.EM_REPARO) {
-            throw new IllegalArgumentException("Status da tranca inválido");
+            throw new InvalidDataException("Status da tranca inválido");
         }
 
-        // [R3] Verificar se o funcionário que está devolvendo a tranca é o mesmo que retirou para reparo
         if (tranca.getStatus() == StatusTranca.EM_REPARO && !funcionarioService.isFuncionarioValido(dto.getIdFuncionario())) {
-            throw new IllegalArgumentException("Funcionário inválido");
+            throw new InvalidDataException("Funcionário inválido");
         }
 
-        // [R1] Registrar data/hora da inserção no totem, a matrícula do reparador e o número da tranca
         tranca.setStatus(StatusTranca.LIVRE);
         tranca.setDataInsercaoTotem(LocalDateTime.now().toString());
         trancaRepository.save(tranca);
 
-        // [R2] Enviar email para o reparador
         try {
             emailService.enviarEmailParaReparador(dto.getIdFuncionario());
         } catch (Exception e) {
-            // [E2] Tratar erro no envio do email
-            throw new IllegalArgumentException(Constantes.ERROR_ENVIAR_EMAIL);
+            throw new InvalidDataException(Constantes.ERROR_ENVIAR_EMAIL);
         }
     }
 
     public void retirarDaRede(RetirarTrancaDaRedeDTO dto) {
         Tranca tranca = trancaRepository.findById(dto.getIdTranca())
-                .orElseThrow(() -> new IllegalArgumentException(Constantes.TRANCA_NAO_ENCONTRADA));
+                .orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
 
         if (trancaTemBicicleta(tranca)) {
-            throw new IllegalArgumentException(Constantes.TRANCA_PRENCHIDA);
+            throw new InvalidDataException(Constantes.TRANCA_PRENCHIDA);
         }
 
         if (dto.getStatusAcaoReparador() == null) {
-            throw new IllegalArgumentException(Constantes.STATUS_DE_ACAO_REPARADOR_INVALIDO);
+            throw new InvalidDataException(Constantes.STATUS_DE_ACAO_REPARADOR_INVALIDO);
         }
 
         if (dto.getStatusAcaoReparador().equals(StatusAcaoReparador.EM_REPARO)) {
@@ -79,7 +76,7 @@ public class TrancaService {
         } else if (dto.getStatusAcaoReparador().equals(StatusAcaoReparador.APOSENTADA)) {
             tranca.setStatus(StatusTranca.APOSENTADA);
         } else {
-            throw new IllegalArgumentException(Constantes.STATUS_DE_ACAO_REPARADOR_INVALIDO);
+            throw new InvalidDataException(Constantes.STATUS_DE_ACAO_REPARADOR_INVALIDO);
         }
 
         trancaRepository.save(tranca);
@@ -87,7 +84,7 @@ public class TrancaService {
         try {
             emailService.enviarEmailParaReparador(dto.getIdFuncionario());
         } catch (Exception e) {
-            throw new IllegalArgumentException(Constantes.ERROR_ENVIAR_EMAIL);
+            throw new InvalidDataException(Constantes.ERROR_ENVIAR_EMAIL);
         }
     }
 
@@ -105,12 +102,12 @@ public class TrancaService {
     }
 
     public Tranca obterTranca(Long idTranca) {
-        return trancaRepository.findById(idTranca).orElseThrow(() -> new IllegalArgumentException(Constantes.TRANCA_NAO_ENCONTRADA));
+        return trancaRepository.findById(idTranca).orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
     }
 
     public Tranca editarTranca(Long idTranca, NovaTrancaDTO trancaDTO) {
         Tranca existente = trancaRepository.findById(idTranca)
-                .orElseThrow(() -> new IllegalArgumentException(Constantes.TRANCA_NAO_ENCONTRADA));
+                .orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
         existente.setLocalizacao(trancaDTO.getLocalizacao());
         return trancaRepository.save(existente);
     }
@@ -120,19 +117,19 @@ public class TrancaService {
     }
 
     public Tranca obterBicicletaNaTranca(Long idTranca) {
-        return trancaRepository.findById(idTranca).orElseThrow(() -> new IllegalArgumentException(Constantes.TRANCA_NAO_ENCONTRADA));
+        return trancaRepository.findById(idTranca).orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
     }
 
     public void trancarTranca(Long idTranca, Long bicicletaId) {
         Tranca tranca = trancaRepository.findById(idTranca)
-                .orElseThrow(() -> new IllegalArgumentException(Constantes.TRANCA_NAO_ENCONTRADA));
+                .orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
 
         if (tranca.getStatus() != StatusTranca.LIVRE) {
-            throw new IllegalArgumentException("Tranca não está livre");
+            throw new InvalidDataException("Tranca não está livre");
         }
 
         Bicicleta bicicleta = bicicletaRepository.findById(bicicletaId)
-                .orElseThrow(() -> new IllegalArgumentException("Bicicleta não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Bicicleta não encontrada"));
 
         tranca.setStatus(StatusTranca.OCUPADA);
         bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
@@ -142,14 +139,14 @@ public class TrancaService {
 
     public void destrancarTranca(Long idTranca, Long bicicletaId) {
         Tranca tranca = trancaRepository.findById(idTranca)
-                .orElseThrow(() -> new IllegalArgumentException(Constantes.TRANCA_NAO_ENCONTRADA));
+                .orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
 
         if (tranca.getStatus() != StatusTranca.OCUPADA) {
-            throw new IllegalArgumentException("Tranca não está ocupada");
+            throw new InvalidDataException("Tranca não está ocupada");
         }
 
         Bicicleta bicicleta = bicicletaRepository.findById(bicicletaId)
-                .orElseThrow(() -> new IllegalArgumentException("Bicicleta não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Bicicleta não encontrada"));
 
         tranca.setStatus(StatusTranca.LIVRE);
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
@@ -159,14 +156,14 @@ public class TrancaService {
 
     public void alterarStatusTranca(Long idTranca, String acao) {
         Tranca tranca = trancaRepository.findById(idTranca)
-                .orElseThrow(() -> new IllegalArgumentException(Constantes.TRANCA_NAO_ENCONTRADA));
+                .orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
 
         try {
             StatusTranca novoStatus = StatusTranca.valueOf(acao.toUpperCase());
             tranca.setStatus(novoStatus);
             trancaRepository.save(tranca);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Status de tranca inválido");
+            throw new InvalidDataException("Status de tranca inválido");
         }
     }
 }

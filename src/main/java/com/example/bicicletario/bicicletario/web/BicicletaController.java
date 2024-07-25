@@ -4,10 +4,12 @@ import com.example.bicicletario.bicicletario.application.BicicletaService;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.NoSuchElementException;
-import static com.example.bicicletario.bicicletario.application.utils.ErroUtil.*;
+
+import java.util.List;
+
 import static com.example.bicicletario.bicicletario.domain.constants.Constantes.*;
 
 @RestController
@@ -21,95 +23,50 @@ public class BicicletaController {
     }
 
     @GetMapping
-    public ResponseEntity listarBicicletas() {
-        try {
-            return ResponseEntity.ok(bicicletaService.listarBicicletas());
-        } catch (Exception e) {
-            return erroInterno(ERRO_LISTAR_BICICLETAS);
-        }
+    public ResponseEntity<List<Bicicleta>> listarBicicletas() {
+        List<Bicicleta> bicicletas = bicicletaService.listarBicicletas();
+        return ResponseEntity.ok(bicicletas);
     }
 
     @PostMapping
-    public ResponseEntity criarBicicleta(@RequestBody NovaBicicletaDTO bicicleta) {
-        try {
-            return ResponseEntity.ok(bicicletaService.criarBicicleta(bicicleta));
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (Exception e) {
-            return erroInterno(ERRO_CRIAR_BICICLETA);
-        }
+    public ResponseEntity<Bicicleta> criarBicicleta(@RequestBody NovaBicicletaDTO bicicleta) {
+        Bicicleta bicicletaCadastrada = bicicletaService.criarBicicleta(bicicleta);
+        return ResponseEntity.ok(bicicletaCadastrada);
     }
 
     @PostMapping("/integrarNaRede")
-    public ResponseEntity integrarNaRede(@RequestBody IntegrarBicicletaNaRedeDTO dto) {
-        try {
-            bicicletaService.integrarNaRede(dto);
-            return ResponseEntity.ok(DADOS_CADASTRADOS);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(STATUS_DA_BICICLETA_INVALIDO);
-        } catch (Exception e) {
-            return erroInterno(ERRO_INTEGRAR_BICICLETA);
-        }
+    public ResponseEntity<String> integrarNaRede(@RequestBody IntegrarBicicletaNaRedeDTO dto) {
+        bicicletaService.integrarNaRede(dto);
+        return ResponseEntity.ok(DADOS_CADASTRADOS);
     }
 
     @PostMapping("/retirarDaRede")
-    public ResponseEntity retirarDaRede(@RequestBody RetirarBicicletaDaRedeDTO dto) {
-        try {
-            bicicletaService.retirarDaRede(dto);
-            return ResponseEntity.ok(DADOS_CADASTRADOS);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(STATUS_DA_BICICLETA_INVALIDO);
-        } catch (Exception e) {
-            return erroInterno(ERRO_RETIRAR_BICICLETA);
-        }
+    public ResponseEntity<String> retirarDaRede(@RequestBody RetirarBicicletaDaRedeDTO dto) {
+        bicicletaService.retirarDaRede(dto);
+        return ResponseEntity.ok(DADOS_CADASTRADOS);
     }
 
     @GetMapping("/{idBicicleta}")
-    public ResponseEntity obterBicicleta(@PathVariable Long idBicicleta) {
-        try {
-            return ResponseEntity.ok(bicicletaService.obterBicicleta(idBicicleta));
-        } catch (NoSuchElementException e) {
-            return erroNaoEncontrado(BICICLETA_NAO_ENCONTRADA);
-        } catch (Exception e) {
-            return erroInterno(ERRO_OBTER_BICICLETA);
-        }
+    public ResponseEntity<Bicicleta> obterBicicleta(@PathVariable Long idBicicleta) {
+        Bicicleta bicicleta = bicicletaService.obterBicicleta(idBicicleta);
+        return ResponseEntity.ok(bicicleta);
     }
 
     @PutMapping("/{idBicicleta}")
-    public ResponseEntity editarBicicleta(@PathVariable Long idBicicleta, @RequestBody NovaBicicletaDTO bicicletaDTO) {
-        try {
-            return ResponseEntity.ok(bicicletaService.editarBicicleta(idBicicleta, bicicletaDTO));
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (NoSuchElementException e) {
-            return erroNaoEncontrado(BICICLETA_NAO_ENCONTRADA);
-        } catch (Exception e) {
-            return erroInterno(ERRO_EDITAR_BICICLETA);
-        }
+    public ResponseEntity<Bicicleta> editarBicicleta(@PathVariable Long idBicicleta, @RequestBody NovaBicicletaDTO bicicletaDTO) {
+        Bicicleta bicicletaEditada = bicicletaService.editarBicicleta(idBicicleta, bicicletaDTO);
+        return ResponseEntity.ok(bicicletaEditada);
     }
 
     @DeleteMapping("/{idBicicleta}")
-    public ResponseEntity removerBicicleta(@PathVariable Long idBicicleta) {
-        try {
-            bicicletaService.removerBicicleta(idBicicleta);
-            return ResponseEntity.ok(BICICLETA_REMOVIDA);
-        } catch (NoSuchElementException e) {
-            return erroNaoEncontrado(BICICLETA_NAO_ENCONTRADA);
-        } catch (Exception e) {
-            return erroInterno(ERRO_REMOVER_BICICLETA);
-        }
+    public ResponseEntity<String> removerBicicleta(@PathVariable Long idBicicleta) {
+        bicicletaService.removerBicicleta(idBicicleta);
+        return ResponseEntity.ok(BICICLETA_REMOVIDA);
     }
 
     @PostMapping("/{idBicicleta}/status/{acao}")
-    public ResponseEntity alterarStatusBicicleta(@PathVariable Long idBicicleta, @PathVariable String acao) {
-        try {
-            return ResponseEntity.ok(bicicletaService.alterarStatusBicicleta(idBicicleta, acao));
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(STATUS_DA_BICICLETA_INVALIDO);
-        } catch (NoSuchElementException e) {
-            return erroNaoEncontrado(BICICLETA_NAO_ENCONTRADA);
-        } catch (Exception e) {
-            return erroInterno(ERRO_ALTERAR_STATUS_BICICLETA);
-        }
+    public ResponseEntity<Bicicleta> alterarStatusBicicleta(@PathVariable Long idBicicleta, @PathVariable String acao) {
+        Bicicleta bicicleta = bicicletaService.alterarStatusBicicleta(idBicicleta, acao);
+        return ResponseEntity.ok(bicicleta);
     }
 }

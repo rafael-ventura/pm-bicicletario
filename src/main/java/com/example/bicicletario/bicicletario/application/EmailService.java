@@ -9,7 +9,6 @@ import static com.example.bicicletario.bicicletario.domain.constants.Constantes.
 
 @Service
 public class EmailService {
-
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(EmailService.class);
     private final FuncionarioService funcionarioService;
 
@@ -17,9 +16,13 @@ public class EmailService {
         this.funcionarioService = funcionarioService;
     }
 
-
     public void enviarEmail(String email, String assunto, String mensagem) {
-        logger.info(String.format("Email enviado para: %s com assunto: %s e mensagem: %s", email, assunto, mensagem));
+        if (email != null && !email.isEmpty()) {
+            logger.info(String.format("Email enviado para: %s com assunto: %s e mensagem: %s", email, assunto, mensagem));
+            // Lógica de envio de e-mail aqui
+        } else {
+            logger.warn("Endereço de e-mail inválido. O e-mail não foi enviado.");
+        }
     }
 
     public void enviarEmailParaReparador(Long idFuncionario) {

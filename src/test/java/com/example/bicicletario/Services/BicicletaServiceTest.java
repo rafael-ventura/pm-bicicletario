@@ -3,6 +3,10 @@ package com.example.bicicletario.Services;
 import com.example.bicicletario.bicicletario.application.BicicletaService;
 import com.example.bicicletario.bicicletario.application.EmailService;
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
+import com.example.bicicletario.bicicletario.application.exceptions.BadRequestException;
+import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
+import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
+import com.example.bicicletario.bicicletario.domain.constants.Constantes;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
@@ -106,11 +110,11 @@ class BicicletaServiceTest {
     void obterBicicletaInvalida() {
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             bicicletaService.obterBicicleta(1L);
         });
 
-        assertEquals("Bicicleta não encontrada", exception.getMessage());
+        assertEquals(Constantes.BICICLETA_NAO_ENCONTRADA, exception.getMessage());
     }
 
     @Test
@@ -127,11 +131,11 @@ class BicicletaServiceTest {
     void removerBicicletaInvalida() {
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             bicicletaService.removerBicicleta(1L);
         });
 
-        assertEquals("Bicicleta não encontrada", exception.getMessage());
+        assertEquals(Constantes.BICICLETA_NAO_ENCONTRADA, exception.getMessage());
     }
 
     @Test
@@ -140,11 +144,11 @@ class BicicletaServiceTest {
         bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
             bicicletaService.removerBicicleta(1L);
         });
 
-        assertEquals("Bicicleta não está aposentada", exception.getMessage());
+        assertEquals(Constantes.BICICLETA_NAO_APOSENTADA, exception.getMessage());
     }
 
     @Test
@@ -189,11 +193,11 @@ class BicicletaServiceTest {
         NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             bicicletaService.editarBicicleta(1L, bicicletaDTO);
         });
 
-        assertEquals("Bicicleta não encontrada", exception.getMessage());
+        assertEquals(Constantes.BICICLETA_NAO_ENCONTRADA, exception.getMessage());
     }
 
     @Test
@@ -226,11 +230,11 @@ class BicicletaServiceTest {
 
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             bicicletaService.integrarNaRede(dto);
         });
 
-        assertEquals("Bicicleta não encontrada", exception.getMessage());
+        assertEquals(Constantes.BICICLETA_NAO_ENCONTRADA, exception.getMessage());
     }
 
     @Test
@@ -246,11 +250,11 @@ class BicicletaServiceTest {
 
         when(trancaRepository.findById(1L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             bicicletaService.integrarNaRede(dto);
         });
 
-        assertEquals("Tranca não encontrada", exception.getMessage());
+        assertEquals(Constantes.TRANCA_NAO_ENCONTRADA, exception.getMessage());
     }
 
     @Test
@@ -269,12 +273,13 @@ class BicicletaServiceTest {
         when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
         when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(false);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
             bicicletaService.integrarNaRede(dto);
         });
 
-        assertEquals("Funcionário inválido para esta operação", exception.getMessage());
+        assertEquals(Constantes.FUNCIONARIO_INVALIDO, exception.getMessage());
     }
+
 
     @Test
     void retirarDaRede() {
@@ -307,11 +312,11 @@ class BicicletaServiceTest {
 
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             bicicletaService.retirarDaRede(dto);
         });
 
-        assertEquals("Bicicleta não encontrada", exception.getMessage());
+        assertEquals(Constantes.BICICLETA_NAO_ENCONTRADA, exception.getMessage());
     }
 
     @Test
@@ -330,11 +335,11 @@ class BicicletaServiceTest {
         tranca.setStatus(StatusTranca.LIVRE);
         when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
             bicicletaService.retirarDaRede(dto);
         });
 
-        assertEquals("Tranca não está ocupada", exception.getMessage());
+        assertEquals(Constantes.TRANCA_NAO_OCUPADA, exception.getMessage());
     }
 
     @Test
@@ -350,11 +355,11 @@ class BicicletaServiceTest {
 
         when(trancaRepository.findById(1L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             bicicletaService.retirarDaRede(dto);
         });
 
-        assertEquals("Tranca não encontrada", exception.getMessage());
+        assertEquals(Constantes.TRANCA_NAO_ENCONTRADA, exception.getMessage());
     }
 
     @Test
@@ -388,7 +393,7 @@ class BicicletaServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
             bicicletaService.alterarStatusBicicleta(1L, "invalido");
         });
 

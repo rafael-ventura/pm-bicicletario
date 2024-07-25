@@ -1,17 +1,15 @@
 package com.example.bicicletario.bicicletario.web;
 
 import com.example.bicicletario.bicicletario.application.TrancaService;
-import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import static com.example.bicicletario.bicicletario.application.utils.ErroUtil.*;
 import static com.example.bicicletario.bicicletario.domain.constants.Constantes.*;
 
 @RestController
@@ -25,138 +23,68 @@ public class TrancaController {
     }
 
     @PostMapping("/integrarNaRede")
-    public ResponseEntity integrarNaRede(@RequestBody IntegrarBicicletaNaRedeDTO dto) {
-        try {
-            trancaService.integrarNaRede(dto);
-            return ResponseEntity.ok(DADOS_CADASTRADOS);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (Exception e) {
-            return erroInterno(ERRO_INTEGRAR_TRANCA);
-        }
+    public ResponseEntity<String> integrarNaRede(@RequestBody IntegrarBicicletaNaRedeDTO dto) {
+        trancaService.integrarNaRede(dto);
+        return ResponseEntity.ok(DADOS_CADASTRADOS);
     }
 
     @PostMapping("/retirarDaRede")
-    public ResponseEntity retirarDaRede(@RequestBody RetirarTrancaDaRedeDTO dto) {
-        try {
-            trancaService.retirarDaRede(dto);
-            return ResponseEntity.ok(DADOS_CADASTRADOS);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (Exception e) {
-            return erroInterno(ERRO_RETIRAR_TRANCA);
-        }
+    public ResponseEntity<String> retirarDaRede(@RequestBody RetirarTrancaDaRedeDTO dto) {
+        trancaService.retirarDaRede(dto);
+        return ResponseEntity.ok(DADOS_CADASTRADOS);
     }
 
     @GetMapping
-    public ResponseEntity listarTrancas() {
-        try {
-            List<Tranca> trancas = trancaService.listarTrancas();
-            return ResponseEntity.ok(trancas);
-        } catch (Exception e) {
-            return erroInterno(ERRO_LISTAR_TRANCAS);
-        }
+    public ResponseEntity<List<Tranca>> listarTrancas() {
+        List<Tranca> trancas = trancaService.listarTrancas();
+        return ResponseEntity.ok(trancas);
     }
 
     @PostMapping
-    public ResponseEntity cadastrarTranca(@RequestBody NovaTrancaDTO tranca) {
-        try {
-            Tranca trancaCadastrada = trancaService.cadastrarTranca(tranca);
-            return ResponseEntity.ok(trancaCadastrada);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (Exception e) {
-            return erroInterno(ERRO_CRIAR_TRANCA);
-        }
+    public ResponseEntity<Tranca> cadastrarTranca(@RequestBody NovaTrancaDTO tranca) {
+        Tranca trancaCadastrada = trancaService.cadastrarTranca(tranca);
+        return ResponseEntity.ok(trancaCadastrada);
     }
 
     @GetMapping("/{idTranca}")
-    public ResponseEntity obterTranca(@PathVariable Long idTranca) {
-        try {
-            Tranca tranca = trancaService.obterTranca(idTranca);
-            return ResponseEntity.ok(tranca);
-        } catch (NoSuchElementException e) {
-            return erroNaoEncontrado(TRANCA_NAO_ENCONTRADA);
-        } catch (Exception e) {
-            return erroInterno(ERRO_OBTER_TRANCA);
-        }
+    public ResponseEntity<Tranca> obterTranca(@PathVariable Long idTranca) {
+        Tranca tranca = trancaService.obterTranca(idTranca);
+        return ResponseEntity.ok(tranca);
     }
 
     @PutMapping("/{idTranca}")
-    public ResponseEntity editarTranca(@PathVariable Long idTranca, @RequestBody NovaTrancaDTO tranca) {
-        try {
-            Tranca trancaEditada = trancaService.editarTranca(idTranca, tranca);
-            return ResponseEntity.ok(trancaEditada);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (NoSuchElementException e) {
-            return erroNaoEncontrado(TRANCA_NAO_ENCONTRADA);
-        } catch (Exception e) {
-            return erroInterno(ERRO_EDITAR_TRANCA);
-        }
+    public ResponseEntity<Tranca> editarTranca(@PathVariable Long idTranca, @RequestBody NovaTrancaDTO tranca) {
+        Tranca trancaEditada = trancaService.editarTranca(idTranca, tranca);
+        return ResponseEntity.ok(trancaEditada);
     }
 
     @DeleteMapping("/{idTranca}")
-    public ResponseEntity removerTranca(@PathVariable Long idTranca) {
-        try {
-            trancaService.removerTranca(idTranca);
-            return ResponseEntity.ok(TRANCA_REMOVIDA);
-        } catch (NoSuchElementException e) {
-            return erroNaoEncontrado(TRANCA_NAO_ENCONTRADA);
-        } catch (Exception e) {
-            return erroInterno(ERRO_REMOVER_TRANCA);
-        }
+    public ResponseEntity<String> removerTranca(@PathVariable Long idTranca) {
+        trancaService.removerTranca(idTranca);
+        return ResponseEntity.ok(TRANCA_REMOVIDA);
     }
 
     @GetMapping("/{idTranca}/bicicleta")
-    public ResponseEntity obterBicicletaNaTranca(@PathVariable Long idTranca) {
-        try {
-            Tranca bicicleta = trancaService.obterBicicletaNaTranca(idTranca);
-            return ResponseEntity.ok(bicicleta);
-        } catch (NoSuchElementException e) {
-            return erroNaoEncontrado(BICICLETA_NAO_ENCONTRADA);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (Exception e) {
-            return erroInterno(ERRO_OBTER_BICICLETA_TRANCA);
-        }
+    public ResponseEntity<Tranca> obterBicicletaNaTranca(@PathVariable Long idTranca) {
+        Tranca bicicleta = trancaService.obterBicicletaNaTranca(idTranca);
+        return ResponseEntity.ok(bicicleta);
     }
 
     @PostMapping("/{idTranca}/trancar")
-    public ResponseEntity trancarTranca(@PathVariable Long idTranca, @RequestBody(required = false) Long bicicletaId) {
-        try {
-            trancaService.trancarTranca(idTranca, bicicletaId);
-            return ResponseEntity.ok(DADOS_CADASTRADOS);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (Exception e) {
-            return erroInterno(ERRO_TRANCAR_TRANCA);
-        }
+    public ResponseEntity<String> trancarTranca(@PathVariable Long idTranca, @RequestBody(required = false) Long bicicletaId) {
+        trancaService.trancarTranca(idTranca, bicicletaId);
+        return ResponseEntity.ok(DADOS_CADASTRADOS);
     }
 
     @PostMapping("/{idTranca}/destrancar")
-    public ResponseEntity destrancarTranca(@PathVariable Long idTranca, @RequestBody(required = false) Long bicicletaId) {
-        try {
-            trancaService.destrancarTranca(idTranca, bicicletaId);
-            return ResponseEntity.ok(DADOS_CADASTRADOS);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (Exception e) {
-            return erroInterno(ERRO_DESTRANCAR_TRANCA);
-        }
+    public ResponseEntity<String> destrancarTranca(@PathVariable Long idTranca, @RequestBody(required = false) Long bicicletaId) {
+        trancaService.destrancarTranca(idTranca, bicicletaId);
+        return ResponseEntity.ok(DADOS_CADASTRADOS);
     }
 
     @PostMapping("/{idTranca}/status/{acao}")
-    public ResponseEntity alterarStatusTranca(@PathVariable Long idTranca, @PathVariable String acao) {
-        try {
-            trancaService.alterarStatusTranca(idTranca, acao);
-            return ResponseEntity.ok(DADOS_CADASTRADOS);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (NoSuchElementException e) {
-            return erroNaoEncontrado(TRANCA_NAO_ENCONTRADA);
-        } catch (Exception e) {
-            return erroInterno(ERRO_ALTERAR_STATUS_TRANCA);
-        }
+    public ResponseEntity<String> alterarStatusTranca(@PathVariable Long idTranca, @PathVariable String acao) {
+        trancaService.alterarStatusTranca(idTranca, acao);
+        return ResponseEntity.ok(DADOS_CADASTRADOS);
     }
 }

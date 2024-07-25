@@ -6,6 +6,10 @@ import org.springframework.http.ResponseEntity;
 
 public class ErroUtil {
 
+    private ErroUtil() {
+        throw new IllegalStateException("Classe utilitária");
+    }
+
     public static ResponseEntity<Erro> criarErro(HttpStatus status, String codigo, String mensagem) {
         Erro erro = new Erro(codigo, mensagem);
         return new ResponseEntity<>(erro, status);

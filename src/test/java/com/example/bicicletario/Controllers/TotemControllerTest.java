@@ -1,6 +1,9 @@
 package com.example.bicicletario.Controllers;
 
 import com.example.bicicletario.bicicletario.application.TotemService;
+import com.example.bicicletario.bicicletario.application.exceptions.GlobalExceptionHandler;
+import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
+import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
@@ -12,16 +15,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -41,7 +43,9 @@ class TotemControllerTest {
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(totemController).build();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(totemController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
         this.objectMapper = new ObjectMapper();
     }
 
@@ -62,11 +66,11 @@ class TotemControllerTest {
 
     @Test
     void listarTotens_ThrowsException() throws Exception {
-        when(totemService.listarTotens()).thenThrow(new RuntimeException("Error"));
+        when(totemService.listarTotens()).thenThrow(new RuntimeException("Erro ao listar totens"));
 
         mockMvc.perform(get("/api/totem"))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao listar totens'}"));
+                .andExpect(content().json("{\"codigo\":\"500\",\"mensagem\":\"Erro ao listar totens\"}"));
     }
 
     @Test
@@ -91,73 +95,78 @@ class TotemControllerTest {
     }
 
     @Test
-    void cadastrarTotem_ThrowsIllegalArgumentException() throws Exception {
-        when(totemService.cadastrarTotem(any(NovoTotemDTO.class))).thenThrow(new IllegalArgumentException("Error"));
+    void cadastrarTotem_ThrowsInvalidDataException() throws Exception {
+        when(totemService.cadastrarTotem(any(NovoTotemDTO.class))).thenThrow(new InvalidDataException("Dados inválidos"));
 
         mockMvc.perform(post("/api/totem")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new NovoTotemDTO())))
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().json("{'codigo':'422','mensagem':'Dados inválidos'}"));
+                .andExpect(content().json("{\"codigo\":\"422\",\"mensagem\":\"Dados inválidos\"}"));
     }
 
     @Test
     void cadastrarTotem_ThrowsException() throws Exception {
-        when(totemService.cadastrarTotem(any(NovoTotemDTO.class))).thenThrow(new RuntimeException("Error"));
+        when(totemService.cadastrarTotem(any(NovoTotemDTO.class))).thenThrow(new RuntimeException("Erro ao criar totem"));
 
         mockMvc.perform(post("/api/totem")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new NovoTotemDTO())))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao criar totem'}"));
+                .andExpect(content().json("{\"codigo\":\"500\",\"mensagem\":\"Erro ao criar totem\"}"));
     }
 
     @Test
     void editarTotem() throws Exception {
-        NovoTotemDTO totem = new NovoTotemDTO();
+        NovoTotemDTO totemDTO = new NovoTotemDTO();
+        totemDTO.setLocalizacao("Nova Localizacao");
+        totemDTO.setDescricao("Nova Descricao");
+
+        Totem totem = new Totem();
+        totem.setId(1L);
         totem.setLocalizacao("Nova Localizacao");
         totem.setDescricao("Nova Descricao");
 
-        when(totemService.editarTotem(any(Long.class), any(NovoTotemDTO.class))).thenReturn(new Totem());
+        when(totemService.editarTotem(any(Long.class), any(NovoTotemDTO.class))).thenReturn(totem);
 
         mockMvc.perform(put("/api/totem/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(totem)))
+                        .content(objectMapper.writeValueAsString(totemDTO)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().json(objectMapper.writeValueAsString(totem)));
     }
 
     @Test
-    void editarTotem_ThrowsIllegalArgumentException() throws Exception {
-        when(totemService.editarTotem(any(Long.class), any(NovoTotemDTO.class))).thenThrow(new IllegalArgumentException("Error"));
+    void editarTotem_ThrowsInvalidDataException() throws Exception {
+        doThrow(new InvalidDataException("Dados inválidos")).when(totemService).editarTotem(any(Long.class), any(NovoTotemDTO.class));
 
         mockMvc.perform(put("/api/totem/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new NovoTotemDTO())))
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().json("{'codigo':'422','mensagem':'Dados inválidos'}"));
+                .andExpect(content().json("{\"codigo\":\"422\",\"mensagem\":\"Dados inválidos\"}"));
     }
 
     @Test
-    void editarTotem_ThrowsNoSuchElementException() throws Exception {
-        when(totemService.editarTotem(any(Long.class), any(NovoTotemDTO.class))).thenThrow(new NoSuchElementException("Error"));
+    void editarTotem_ThrowsResourceNotFoundException() throws Exception {
+        doThrow(new ResourceNotFoundException("Totem não encontrado")).when(totemService).editarTotem(any(Long.class), any(NovoTotemDTO.class));
 
         mockMvc.perform(put("/api/totem/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new NovoTotemDTO())))
                 .andExpect(status().isNotFound())
-                .andExpect(content().json("{'codigo':'404','mensagem':'Totem não encontrado'}"));
+                .andExpect(content().json("{\"codigo\":\"404\",\"mensagem\":\"Totem não encontrado\"}"));
     }
 
     @Test
     void editarTotem_ThrowsException() throws Exception {
-        when(totemService.editarTotem(any(Long.class), any(NovoTotemDTO.class))).thenThrow(new RuntimeException("Error"));
+        doThrow(new RuntimeException("Erro ao editar totem")).when(totemService).editarTotem(any(Long.class), any(NovoTotemDTO.class));
 
         mockMvc.perform(put("/api/totem/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new NovoTotemDTO())))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao editar totem'}"));
+                .andExpect(content().json("{\"codigo\":\"500\",\"mensagem\":\"Erro ao editar totem\"}"));
     }
 
     @Test
@@ -168,21 +177,21 @@ class TotemControllerTest {
     }
 
     @Test
-    void removerTotem_ThrowsNoSuchElementException() throws Exception {
-        Mockito.doThrow(new NoSuchElementException("Error")).when(totemService).removerTotem(any(Long.class));
+    void removerTotem_ThrowsResourceNotFoundException() throws Exception {
+        doThrow(new ResourceNotFoundException("Totem não encontrado")).when(totemService).removerTotem(any(Long.class));
 
         mockMvc.perform(delete("/api/totem/1"))
                 .andExpect(status().isNotFound())
-                .andExpect(content().json("{'codigo':'404','mensagem':'Totem não encontrado'}"));
+                .andExpect(content().json("{\"codigo\":\"404\",\"mensagem\":\"Totem não encontrado\"}"));
     }
 
     @Test
     void removerTotem_ThrowsException() throws Exception {
-        Mockito.doThrow(new RuntimeException("Error")).when(totemService).removerTotem(any(Long.class));
+        doThrow(new RuntimeException("Erro ao remover totem")).when(totemService).removerTotem(any(Long.class));
 
         mockMvc.perform(delete("/api/totem/1"))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao remover totem'}"));
+                .andExpect(content().json("{\"codigo\":\"500\",\"mensagem\":\"Erro ao remover totem\"}"));
     }
 
     @Test
@@ -200,11 +209,11 @@ class TotemControllerTest {
 
     @Test
     void listarTrancas_ThrowsException() throws Exception {
-        when(totemService.listarTrancas(any(Long.class))).thenThrow(new RuntimeException("Error"));
+        when(totemService.listarTrancas(any(Long.class))).thenThrow(new RuntimeException("Erro ao listar trancas do totem"));
 
         mockMvc.perform(get("/api/totem/1/trancas"))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao listar trancas do totem'}"));
+                .andExpect(content().json("{\"codigo\":\"500\",\"mensagem\":\"Erro ao listar trancas do totem\"}"));
     }
 
     @Test
@@ -226,11 +235,10 @@ class TotemControllerTest {
 
     @Test
     void listarBicicletas_ThrowsException() throws Exception {
-        when(totemService.listarBicicletas(any(Long.class))).thenThrow(new RuntimeException("Error"));
+        when(totemService.listarBicicletas(any(Long.class))).thenThrow(new RuntimeException("Erro ao listar bicicletas do totem"));
 
         mockMvc.perform(get("/api/totem/1/bicicletas"))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{'codigo':'500','mensagem':'Erro ao listar bicicletas do totem'}"));
+                .andExpect(content().json("{\"codigo\":\"500\",\"mensagem\":\"Erro ao listar bicicletas do totem\"}"));
     }
-
 }

@@ -9,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import static com.example.bicicletario.bicicletario.application.utils.ErroUtil.*;
 import static com.example.bicicletario.bicicletario.domain.constants.Constantes.*;
 
 @RestController
@@ -25,78 +23,38 @@ public class TotemController {
     }
 
     @GetMapping
-    public ResponseEntity listarTotens() {
-        try {
-            List<Totem> totens = totemService.listarTotens();
-            return ResponseEntity.ok(totens);
-        } catch (Exception e) {
-            return erroInterno(ERRO_LISTAR_TOTENS);
-        }
+    public ResponseEntity<List<Totem>> listarTotens() {
+        List<Totem> totens = totemService.listarTotens();
+        return ResponseEntity.ok(totens);
     }
 
     @PostMapping
-    public ResponseEntity cadastrarTotem(@RequestBody NovoTotemDTO totemDTO) {
-        try {
-            Totem totemCadastrado = totemService.cadastrarTotem(totemDTO);
-            return ResponseEntity.ok(totemCadastrado);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (Exception e) {
-            return erroInterno(ERRO_CRIAR_TOTEM);
-        }
+    public ResponseEntity<Totem> criarTotem(@RequestBody NovoTotemDTO totem) {
+        Totem totemCadastrado = totemService.cadastrarTotem(totem);
+        return ResponseEntity.ok(totemCadastrado);
     }
 
-    @PutMapping("/{idTotem}")
-    public ResponseEntity editarTotem(@PathVariable Long idTotem, @RequestBody NovoTotemDTO totemDTO) {
-        try {
-            Totem totemEditado = totemService.editarTotem(idTotem, totemDTO);
-            return ResponseEntity.ok(totemEditado);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (NoSuchElementException e) {
-            return erroNaoEncontrado(TOTEM_NAO_ENCONTRADO);
-        } catch (Exception e) {
-            return erroInterno(ERRO_EDITAR_TOTEM);
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<Totem> editarTotem(@PathVariable Long id, @RequestBody NovoTotemDTO totemDTO) {
+        Totem totemEditado = totemService.editarTotem(id, totemDTO);
+        return ResponseEntity.ok(totemEditado);
     }
 
-    @DeleteMapping("/{idTotem}")
-    public ResponseEntity removerTotem(@PathVariable Long idTotem) {
-        try {
-            totemService.removerTotem(idTotem);
-            return ResponseEntity.ok(TOTEM_REMOVIDO);
-        } catch (NoSuchElementException e) {
-            return erroNaoEncontrado(TOTEM_NAO_ENCONTRADO);
-        } catch (Exception e) {
-            return erroInterno(ERRO_REMOVER_TOTEM);
-        }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> removerTotem(@PathVariable Long id) {
+        totemService.removerTotem(id);
+        return ResponseEntity.ok(TOTEM_REMOVIDO);
     }
 
-    @GetMapping("/{idTotem}/trancas")
-    public ResponseEntity listarTrancas(@PathVariable Long idTotem) {
-        try {
-            List<Tranca> trancas = totemService.listarTrancas(idTotem);
-            return ResponseEntity.ok(trancas);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (NoSuchElementException e) {
-            return erroNaoEncontrado(TOTEM_NAO_ENCONTRADO);
-        } catch (Exception e) {
-            return erroInterno(ERRO_LISTAR_TRANCAS);
-        }
+    @GetMapping("/{id}/trancas")
+    public ResponseEntity<List<Tranca>> listarTrancas(@PathVariable Long id) {
+        List<Tranca> trancas = totemService.listarTrancas(id);
+        return ResponseEntity.ok(trancas);
     }
 
-    @GetMapping("/{idTotem}/bicicletas")
-    public ResponseEntity listarBicicletas(@PathVariable Long idTotem) {
-        try {
-            List<Bicicleta> bicicletas = totemService.listarBicicletas(idTotem);
-            return ResponseEntity.ok(bicicletas);
-        } catch (IllegalArgumentException e) {
-            return erroInvalido(DADOS_INVALIDOS);
-        } catch (NoSuchElementException e) {
-            return erroNaoEncontrado(TOTEM_NAO_ENCONTRADO);
-        } catch (Exception e) {
-            return erroInterno(ERRO_LISTAR_BICICLETAS_TOTEM);
-        }
+    @GetMapping("/{id}/bicicletas")
+    public ResponseEntity<List<Bicicleta>> listarBicicletas(@PathVariable Long id) {
+        List<Bicicleta> bicicletas = totemService.listarBicicletas(id);
+        return ResponseEntity.ok(bicicletas);
     }
 }

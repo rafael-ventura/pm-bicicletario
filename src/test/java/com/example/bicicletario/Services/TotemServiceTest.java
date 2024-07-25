@@ -1,6 +1,8 @@
 package com.example.bicicletario.Services;
 
 import com.example.bicicletario.bicicletario.application.TotemService;
+import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
+import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Totem;
@@ -20,8 +22,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -85,6 +86,17 @@ class TotemServiceTest {
     }
 
     @Test
+    void cadastrarTotem_ThrowsInvalidDataException() {
+        NovoTotemDTO novoTotem = new NovoTotemDTO();
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            totemService.cadastrarTotem(novoTotem);
+        });
+
+        assertEquals("Todos os dados do formulário são obrigatórios", exception.getMessage());
+    }
+
+    @Test
     void editarTotem() {
         Totem totem = new Totem();
         totem.setId(1L);
@@ -111,12 +123,42 @@ class TotemServiceTest {
     }
 
     @Test
+    void editarTotem_ThrowsResourceNotFoundException() {
+        when(totemRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+        NovoTotemDTO totemDTO = new NovoTotemDTO();
+        totemDTO.setLocalizacao("Nova Localizacao");
+        totemDTO.setDescricao("Nova Descricao");
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            totemService.editarTotem(1L, totemDTO);
+        });
+
+        assertEquals("Totem não encontrado", exception.getMessage());
+    }
+
+    @Test
+    void editarTotem_ThrowsInvalidDataException() {
+        Totem totem = new Totem();
+        totem.setId(1L);
+
+        when(totemRepository.findById(any(Long.class))).thenReturn(Optional.of(totem));
+
+        NovoTotemDTO totemDTO = new NovoTotemDTO();
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            totemService.editarTotem(1L, totemDTO);
+        });
+
+        assertEquals("Todos os dados do formulário são obrigatórios", exception.getMessage());
+    }
+
+    @Test
     void removerTotem() {
         Totem totem = new Totem();
         totem.setId(1L);
 
         when(totemRepository.findById(any(Long.class))).thenReturn(Optional.of(totem));
-        when(trancaRepository.existsByTotemId(any(Long.class))).thenReturn(false);
 
         totemService.removerTotem(1L);
 
@@ -124,15 +166,37 @@ class TotemServiceTest {
     }
 
     @Test
+    void removerTotem_ThrowsResourceNotFoundException() {
+        when(totemRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            totemService.removerTotem(1L);
+        });
+
+        assertEquals("Totem não encontrado", exception.getMessage());
+    }
+
+    @Test
     void listarTrancas() {
         Tranca tranca = new Tranca();
         tranca.setId(1L);
 
+        when(totemRepository.findById(any(Long.class))).thenReturn(Optional.of(new Totem()));
         when(trancaRepository.findByTotemId(any(Long.class))).thenReturn(List.of(tranca));
-        when(trancaMapper.toDtoList(any())).thenReturn(List.of(new Tranca()));
 
         List<Tranca> result = totemService.listarTrancas(1L);
         assertEquals(1, result.size());
+    }
+
+    @Test
+    void listarTrancas_ThrowsResourceNotFoundException() {
+        when(totemRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            totemService.listarTrancas(1L);
+        });
+
+        assertEquals("Totem não encontrado", exception.getMessage());
     }
 
     @Test
@@ -140,10 +204,21 @@ class TotemServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1L);
 
-        when(bicicletaRepository.findByTrancaId(any(Long.class))).thenReturn(List.of(bicicleta));
-        when(bicicletaMapper.toDtoList(any())).thenReturn(List.of(new Bicicleta()));
+        when(totemRepository.findById(any(Long.class))).thenReturn(Optional.of(new Totem()));
+        when(bicicletaRepository.findByTotemId(any(Long.class))).thenReturn(List.of(bicicleta));
 
         List<Bicicleta> result = totemService.listarBicicletas(1L);
         assertEquals(1, result.size());
+    }
+
+    @Test
+    void listarBicicletas_ThrowsResourceNotFoundException() {
+        when(totemRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            totemService.listarBicicletas(1L);
+        });
+
+        assertEquals("Totem não encontrado", exception.getMessage());
     }
 }

@@ -3,6 +3,8 @@ package com.example.bicicletario.Services;
 import com.example.bicicletario.bicicletario.application.EmailService;
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
 import com.example.bicicletario.bicicletario.application.TrancaService;
+import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
+import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
@@ -60,7 +62,7 @@ class TrancaServiceTest {
 
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
             trancaService.integrarNaRede(dto);
         });
 
@@ -95,7 +97,7 @@ class TrancaServiceTest {
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
         when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(false);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
             trancaService.integrarNaRede(dto);
         });
 
@@ -131,7 +133,7 @@ class TrancaServiceTest {
 
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
             trancaService.retirarDaRede(dto);
         });
 
@@ -149,7 +151,7 @@ class TrancaServiceTest {
 
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
             trancaService.retirarDaRede(dto);
         });
 
@@ -179,7 +181,7 @@ class TrancaServiceTest {
     void obterTrancaInvalida() {
         when(trancaRepository.findById(1L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             trancaService.obterTranca(1L);
         });
 
