@@ -6,11 +6,12 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class TotemRepository {
     private final List<Totem> totems = new ArrayList<>();
-
+private final AtomicLong counter = new AtomicLong();
     public List<Totem> findAll() {
         return new ArrayList<>(totems);
     }
@@ -20,7 +21,10 @@ public class TotemRepository {
     }
 
     public Totem save(Totem totem) {
-        totems.removeIf(t -> t.getId().equals(totem.getId()));
+        if (totem.getId() != null) {
+            totems.removeIf(t -> t.getId().equals(totem.getId()));
+        }
+        totem.setId(counter.incrementAndGet());
         totems.add(totem);
         return totem;
     }

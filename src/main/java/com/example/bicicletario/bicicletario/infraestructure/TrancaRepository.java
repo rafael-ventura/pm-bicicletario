@@ -6,10 +6,12 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class TrancaRepository {
     private final List<Tranca> trancas = new ArrayList<>();
+    private final AtomicLong counter = new AtomicLong();
 
     public List<Tranca> findAll() {
         return new ArrayList<>(trancas);
@@ -20,7 +22,10 @@ public class TrancaRepository {
     }
 
     public Tranca save(Tranca tranca) {
-        trancas.removeIf(t -> t.getId().equals(tranca.getId()));
+        if (tranca.getId() != null) {
+            trancas.removeIf(t -> t.getId().equals(tranca.getId()));
+        }
+        tranca.setId(counter.incrementAndGet());
         trancas.add(tranca);
         return tranca;
     }
