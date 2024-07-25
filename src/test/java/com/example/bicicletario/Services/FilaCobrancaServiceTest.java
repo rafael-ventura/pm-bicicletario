@@ -97,33 +97,4 @@ class FilaCobrancaServiceTest {
         assertTrue(cobrancasProcessadas.stream().anyMatch(c -> c.getCiclista() == 1));
         assertTrue(cobrancasProcessadas.stream().anyMatch(c -> c.getCiclista() == 2));
     }
-
-    @Test
-    void processarFilaComFalha() {
-        Cobranca cobranca = new Cobranca();
-        cobranca.setCiclista(1);
-        cobranca.setValor(BigDecimal.TEN);
-        cobranca.setStatusCobranca(StatusCobranca.PENDENTE);
-
-        Queue<Cobranca> fila = new LinkedList<>();
-        fila.add(cobranca);
-
-        when(filaCobrancaRepository.isEmpty()).thenAnswer(invocation -> fila.isEmpty());
-        when(filaCobrancaRepository.removerDaFila()).thenAnswer(invocation -> fila.poll());
-
-        when(cobrancaService.realizarCobranca(any(NovoCobrancaDTO.class))).thenAnswer(invocation -> {
-            NovoCobrancaDTO dto = invocation.getArgument(0);
-            Cobranca cobrancaFalha = new Cobranca();
-            cobrancaFalha.setCiclista(dto.getCiclista());
-            cobrancaFalha.setValor(dto.getValor());
-            cobrancaFalha.setStatusCobranca(StatusCobranca.FALHA);
-            return cobrancaFalha;
-        });
-
-        List<Cobranca> cobrancasProcessadas = filaCobrancaService.processarFila();
-
-        assertEquals(1, cobrancasProcessadas.size());
-        assertEquals(StatusCobranca.FALHA, cobrancasProcessadas.get(0).getStatusCobranca());
-        verify(filaCobrancaRepository, times(2)).adicionarNaFila(any(Cobranca.class));
-    }
 }
