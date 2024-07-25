@@ -1,6 +1,9 @@
 package com.example.bicicletario.bicicletario.infraestructure;
 
 import com.example.bicicletario.bicicletario.domain.Cobranca;
+import com.example.bicicletario.bicicletario.web.CobrancaController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -8,6 +11,8 @@ import java.util.Map;
 
 @Repository
 public class CobrancaRepository {
+
+    private static final Logger logger = LoggerFactory.getLogger(CobrancaController.class);
 
     private Map<Integer, Cobranca> cobrancas = new HashMap<>();
     private int currentId = 1;
@@ -21,7 +26,7 @@ public class CobrancaRepository {
     }
 
     public Cobranca findById(int id) {
-        System.out.println("Retornando cobranca");
+        logger.info("Retornando cobranca");
         return cobrancas.get(id);
     }
 

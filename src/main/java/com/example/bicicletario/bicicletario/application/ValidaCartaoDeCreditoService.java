@@ -6,9 +6,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class ValidaCartaoDeCreditoService {
 
-    private static final String URL_VALIDACAO = "http://localhost:8080/administradoraCC/validar";
-
-
 
     public boolean validarCartao(NovoCartaoDeCreditoDTO cartaoDeCredito) {
         if (!validarCamposCartao(cartaoDeCredito)) {
