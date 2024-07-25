@@ -280,6 +280,52 @@ class BicicletaServiceTest {
         assertEquals(Constantes.FUNCIONARIO_INVALIDO, exception.getMessage());
     }
 
+    @Test
+    void integrarNaRedeStatusBicicletaInvalido() {
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
+        dto.setIdBicicleta(1L);
+        dto.setIdTranca(1L);
+        dto.setIdFuncionario(1L);
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.LIVRE);
+        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            bicicletaService.integrarNaRede(dto);
+        });
+
+        assertEquals(Constantes.STATUS_DA_BICICLETA_INVALIDO, exception.getMessage());
+    }
+
+    @Test
+    void integrarNaRedeErroEnvioEmail() {
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
+        dto.setIdBicicleta(1L);
+        dto.setIdTranca(1L);
+        dto.setIdFuncionario(1L);
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.LIVRE);
+        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
+        doThrow(new RuntimeException()).when(emailService).enviarEmailParaReparador(anyLong());
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            bicicletaService.integrarNaRede(dto);
+        });
+
+        assertEquals(Constantes.ERROR_ENVIAR_EMAIL, exception.getMessage());
+    }
 
     @Test
     void retirarDaRede() {
@@ -399,4 +445,17 @@ class BicicletaServiceTest {
 
         assertEquals("Ação inválida", exception.getMessage());
     }
+
+    @Test
+    void alterarStatusBicicletaAcaoInvalida() {
+        Bicicleta bicicleta = new Bicicleta();
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            bicicletaService.alterarStatusBicicleta(1L, "invalido");
+        });
+
+        assertEquals("Ação inválida", exception.getMessage());
+    }
+
 }

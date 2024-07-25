@@ -5,6 +5,7 @@ import com.example.bicicletario.bicicletario.application.FuncionarioService;
 import com.example.bicicletario.bicicletario.application.TrancaService;
 import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
 import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
+import com.example.bicicletario.bicicletario.domain.constants.Constantes;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
@@ -104,6 +105,43 @@ class TrancaServiceTest {
         assertEquals("Funcionário inválido", exception.getMessage());
     }
 
+    @Test
+    void integrarNaRedeStatusTrancaInvalido() {
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
+        dto.setIdTranca(1L);
+
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.OCUPADA);
+
+        when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            trancaService.integrarNaRede(dto);
+        });
+
+        assertEquals("Status da tranca inválido", exception.getMessage());
+    }
+
+    @Test
+    void integrarNaRedeErroEnvioEmail() {
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
+        dto.setIdTranca(1L);
+        dto.setIdFuncionario(1L);
+
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.NOVA);
+
+        when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
+        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
+        doThrow(new InvalidDataException(Constantes.ERROR_ENVIAR_EMAIL)).when(emailService).enviarEmailParaReparador(anyLong());
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            trancaService.integrarNaRede(dto);
+        });
+
+        assertEquals(Constantes.ERROR_ENVIAR_EMAIL, exception.getMessage());
+    }
+
 
     @Test
     void retirarDaRedeTrancaValida() {
@@ -137,7 +175,7 @@ class TrancaServiceTest {
             trancaService.retirarDaRede(dto);
         });
 
-        assertEquals("Tranca está com bicicleta presa", exception.getMessage());
+        assertEquals(Constantes.TRANCA_PRENCHIDA, exception.getMessage());
     }
 
     @Test
