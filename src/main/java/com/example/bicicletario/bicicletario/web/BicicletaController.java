@@ -21,7 +21,7 @@ public class BicicletaController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listarBicicletas() {
+    public ResponseEntity listarBicicletas() {
         try {
             return ResponseEntity.ok(bicicletaService.listarBicicletas());
         } catch (Exception e) {
@@ -30,7 +30,7 @@ public class BicicletaController {
     }
 
     @PostMapping
-    public ResponseEntity<?> criarBicicleta(@RequestBody NovaBicicletaDTO bicicleta) {
+    public ResponseEntity criarBicicleta(@RequestBody NovaBicicletaDTO bicicleta) {
         try {
             return ResponseEntity.ok(bicicletaService.criarBicicleta(bicicleta));
         } catch (IllegalArgumentException e) {
@@ -41,7 +41,7 @@ public class BicicletaController {
     }
 
     @PostMapping("/integrarNaRede")
-    public ResponseEntity<?> integrarNaRede(@RequestBody IntegrarBicicletaNaRedeDTO dto) {
+    public ResponseEntity integrarNaRede(@RequestBody IntegrarBicicletaNaRedeDTO dto) {
         try {
             bicicletaService.integrarNaRede(dto);
             return ResponseEntity.ok(DADOS_CADASTRADOS);
@@ -53,7 +53,7 @@ public class BicicletaController {
     }
 
     @PostMapping("/retirarDaRede")
-    public ResponseEntity<?> retirarDaRede(@RequestBody RetirarBicicletaDaRedeDTO dto) {
+    public ResponseEntity retirarDaRede(@RequestBody RetirarBicicletaDaRedeDTO dto) {
         try {
             bicicletaService.retirarDaRede(dto);
             return ResponseEntity.ok(DADOS_CADASTRADOS);
@@ -76,7 +76,7 @@ public class BicicletaController {
     }
 
     @PutMapping("/{idBicicleta}")
-    public ResponseEntity<?> editarBicicleta(@PathVariable Long idBicicleta, @RequestBody NovaBicicletaDTO bicicletaDTO) {
+    public ResponseEntity editarBicicleta(@PathVariable Long idBicicleta, @RequestBody NovaBicicletaDTO bicicletaDTO) {
         try {
             return ResponseEntity.ok(bicicletaService.editarBicicleta(idBicicleta, bicicletaDTO));
         } catch (IllegalArgumentException e) {
@@ -89,7 +89,7 @@ public class BicicletaController {
     }
 
     @DeleteMapping("/{idBicicleta}")
-    public ResponseEntity<?> removerBicicleta(@PathVariable Long idBicicleta) {
+    public ResponseEntity removerBicicleta(@PathVariable Long idBicicleta) {
         try {
             bicicletaService.removerBicicleta(idBicicleta);
             return ResponseEntity.ok(BICICLETA_REMOVIDA);
@@ -101,7 +101,7 @@ public class BicicletaController {
     }
 
     @PostMapping("/{idBicicleta}/status/{acao}")
-    public ResponseEntity<?> alterarStatusBicicleta(@PathVariable Long idBicicleta, @PathVariable String acao) {
+    public ResponseEntity alterarStatusBicicleta(@PathVariable Long idBicicleta, @PathVariable String acao) {
         try {
             return ResponseEntity.ok(bicicletaService.alterarStatusBicicleta(idBicicleta, acao));
         } catch (IllegalArgumentException e) {
