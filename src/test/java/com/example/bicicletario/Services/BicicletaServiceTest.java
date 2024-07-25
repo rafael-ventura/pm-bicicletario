@@ -365,7 +365,7 @@ class BicicletaServiceTest {
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
         when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "disponibilizar");
+        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "disponivel");
         verify(bicicletaRepository, times(1)).save(bicicleta);
         assertEquals(StatusBicicleta.DISPONIVEL, result.getStatusBicicleta());
     }
@@ -378,7 +378,7 @@ class BicicletaServiceTest {
         when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
         when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "reparar");
+        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "reparo solicitado");
         verify(bicicletaRepository, times(1)).save(bicicleta);
         assertEquals(StatusBicicleta.REPARO_SOLICITADO, result.getStatusBicicleta());
     }

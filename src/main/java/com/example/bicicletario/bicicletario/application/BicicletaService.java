@@ -172,12 +172,24 @@ public class BicicletaService {
         Optional<Bicicleta> optionalBicicleta = bicicletaRepository.findById(id);
         if (optionalBicicleta.isPresent()) {
             Bicicleta bicicleta = optionalBicicleta.get();
-            switch (acao) {
-                case "disponibilizar":
+            switch (acao.toLowerCase()) {
+                case "disponivel":
                     bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
                     break;
-                case "reparar":
+                case "em uso":
+                    bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
+                    break;
+                case "nova":
+                    bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
+                    break;
+                case "aposentada":
+                    bicicleta.setStatusBicicleta(StatusBicicleta.APOSENTADA);
+                    break;
+                case "reparo solicitado":
                     bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
+                    break;
+                case "em reparo":
+                    bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
                     break;
                 default:
                     throw new IllegalArgumentException("Ação inválida");
@@ -187,5 +199,4 @@ public class BicicletaService {
             throw new IllegalArgumentException("Bicicleta não encontrada");
         }
     }
-
 }

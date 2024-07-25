@@ -12,7 +12,6 @@ import static com.example.bicicletario.bicicletario.domain.constants.Constantes.
 public class EmailService {
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(EmailService.class);
-
     private final FuncionarioService funcionarioService;
 
     public EmailService(FuncionarioService funcionarioService) {
