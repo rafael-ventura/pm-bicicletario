@@ -22,7 +22,7 @@ public class CobrancaController {
     private CobrancaService cobrancaService;
 
     @PostMapping
-    public ResponseEntity<?> realizarCobranca(@RequestBody NovoCobrancaDTO novaCobranca) {
+    public ResponseEntity realizarCobranca(@RequestBody NovoCobrancaDTO novaCobranca) {
         try {
             logger.info("Realizando cobranca");
             Cobranca cobranca = cobrancaService.realizarCobranca(novaCobranca);
@@ -36,7 +36,7 @@ public class CobrancaController {
     }
 
     @GetMapping("/{idCobranca}")
-    public ResponseEntity<?> obterCobranca(@PathVariable int idCobranca) {
+    public ResponseEntity obterCobranca(@PathVariable int idCobranca) {
         logger.info("Pegando cobranca");
         Cobranca cobranca = cobrancaService.obterCobrancaPorId(idCobranca);
         if (cobranca != null) {

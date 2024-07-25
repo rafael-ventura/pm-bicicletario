@@ -40,7 +40,7 @@ public class FilaCobrancaController {
     }
 
     @PostMapping("/processaCobrancasEmFila")
-    public ResponseEntity<?> processarFila() {
+    public ResponseEntity processarFila() {
         try {
             logger.info("Processando Cobrancas da fila");
             List<Cobranca> cobrancasProcessadas = filaCobrancaService.processarFila();

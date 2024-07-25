@@ -19,7 +19,7 @@ public class ValidaCartaoDeCreditoController {
     private ValidaCartaoDeCreditoService validaCartaoDeCreditoService;
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> validarCartaoDeCredito(@RequestBody NovoCartaoDeCreditoDTO cartaoDeCredito) {
+    public ResponseEntity validarCartaoDeCredito(@RequestBody NovoCartaoDeCreditoDTO cartaoDeCredito) {
         logger.info("Validando cartão de credito");
         boolean isValid = validaCartaoDeCreditoService.validarCartao(cartaoDeCredito);
 

@@ -20,7 +20,7 @@ public class EmailController {
     private EmailService emailService;
 
     @PostMapping("/enviarEmail")
-    public ResponseEntity<?> enviarEmail(@RequestBody NovoEmailDTO novoEmailDTO) {
+    public ResponseEntity enviarEmail(@RequestBody NovoEmailDTO novoEmailDTO) {
         try {
             logger.info("Envio de email");
             Email email = emailService.enviarEmail(novoEmailDTO);
