@@ -5,6 +5,7 @@ import com.example.bicicletario.bicicletario.application.FilaCobrancaService;
 import com.example.bicicletario.bicicletario.domain.Cobranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusCobranca;
+import com.example.bicicletario.bicicletario.infraestructure.CobrancaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.FilaCobrancaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,9 @@ class FilaCobrancaServiceTest {
     @Mock
     private CobrancaService cobrancaService;
 
+    @Mock
+    private CobrancaRepository cobrancaRepository;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -43,10 +47,25 @@ class FilaCobrancaServiceTest {
         novaCobrancaDTO.setCiclista(1);
         novaCobrancaDTO.setValor(BigDecimal.TEN);
 
+        Cobranca cobranca = new Cobranca();
+        cobranca.setId(1);
+        cobranca.setCiclista(novaCobrancaDTO.getCiclista());
+        cobranca.setValor(novaCobrancaDTO.getValor());
+        cobranca.setStatusCobranca(StatusCobranca.PENDENTE);
+        cobranca.setHoraSolicitacao("2023-07-26T12:00:00");
+
+        when(cobrancaRepository.save(any(Cobranca.class))).thenReturn(cobranca);
+
         Cobranca result = filaCobrancaService.adicionarNaFila(novaCobrancaDTO);
 
         assertNotNull(result);
+        assertEquals(1, result.getId());
+        assertEquals(novaCobrancaDTO.getCiclista(), result.getCiclista());
+        assertEquals(novaCobrancaDTO.getValor(), result.getValor());
         assertEquals(StatusCobranca.PENDENTE, result.getStatusCobranca());
+        assertNotNull(result.getHoraSolicitacao());
+
+        verify(cobrancaRepository, times(1)).save(any(Cobranca.class));
         verify(filaCobrancaRepository, times(1)).adicionarNaFila(result);
     }
 

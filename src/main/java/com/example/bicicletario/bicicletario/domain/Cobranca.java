@@ -5,14 +5,14 @@ import com.example.bicicletario.bicicletario.domain.enums.StatusCobranca;
 import java.math.BigDecimal;
 
 public class Cobranca {
-    private int id;
+    private Integer id;
     private StatusCobranca statusCobranca;
     private String horaSolicitacao;
     private String horaFinalizacao;
     private BigDecimal valor;
     private int ciclista;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

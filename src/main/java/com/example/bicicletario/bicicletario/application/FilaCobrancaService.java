@@ -2,6 +2,7 @@ package com.example.bicicletario.bicicletario.application;
 import com.example.bicicletario.bicicletario.domain.Cobranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusCobranca;
+import com.example.bicicletario.bicicletario.infraestructure.CobrancaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.FilaCobrancaRepository;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -15,9 +16,13 @@ public class FilaCobrancaService {
 
     private final FilaCobrancaRepository filaCobrancaRepository;
     private final CobrancaService cobrancaService;
-    public FilaCobrancaService(FilaCobrancaRepository filaCobrancaRepository, CobrancaService cobrancaService) {
+    private final CobrancaRepository cobrancaRepository;
+    public FilaCobrancaService(FilaCobrancaRepository filaCobrancaRepository,
+                               CobrancaService cobrancaService,
+                               CobrancaRepository cobrancaRepository) {
         this.filaCobrancaRepository = filaCobrancaRepository;
         this.cobrancaService = cobrancaService;
+        this.cobrancaRepository = cobrancaRepository;
     }
 
     public Cobranca adicionarNaFila(NovoCobrancaDTO novaCobranca) {
@@ -32,6 +37,7 @@ public class FilaCobrancaService {
         cobranca.setValor(novaCobranca.getValor());
         cobranca.setStatusCobranca(StatusCobranca.PENDENTE);
         cobranca.setHoraSolicitacao(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+        cobranca = cobrancaRepository.save(cobranca);
 
         // Adicionar a cobrança na fila
         filaCobrancaRepository.adicionarNaFila(cobranca);
@@ -47,14 +53,14 @@ public class FilaCobrancaService {
             NovoCobrancaDTO novoCobrancaDTO = new NovoCobrancaDTO();
             novoCobrancaDTO.setCiclista(cobranca.getCiclista());
             novoCobrancaDTO.setValor(cobranca.getValor());
-            Cobranca pagamentoConfirmado = cobrancaService.realizarCobranca(novoCobrancaDTO);
+            Cobranca cobrancaProcessada = cobrancaService.realizarCobranca(novoCobrancaDTO);
 
-            if (!pagamentoConfirmado.getStatusCobranca().equals(StatusCobranca.PAGA)) {
+            if (!cobrancaProcessada.getStatusCobranca().equals(StatusCobranca.PAGA)) {
                 cobranca.setStatusCobranca(StatusCobranca.FALHA);
                 cobranca.setHoraFinalizacao(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
                 adicionarNaFila(novoCobrancaDTO);
             }
-            cobrancasProcessadas.add(cobranca);
+            cobrancasProcessadas.add(cobrancaProcessada);
         }
 
         return cobrancasProcessadas;
