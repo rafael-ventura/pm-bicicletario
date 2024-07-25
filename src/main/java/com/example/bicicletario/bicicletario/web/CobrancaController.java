@@ -17,8 +17,12 @@ public class CobrancaController {
 
     private static final Logger logger = LoggerFactory.getLogger(CobrancaController.class);
 
+    private final CobrancaService cobrancaService;
+
     @Autowired
-    private CobrancaService cobrancaService;
+    public CobrancaController(CobrancaService cobrancaService) {
+        this.cobrancaService = cobrancaService;
+    }
 
     @PostMapping
     public ResponseEntity realizarCobranca(@RequestBody NovoCobrancaDTO novaCobranca) {

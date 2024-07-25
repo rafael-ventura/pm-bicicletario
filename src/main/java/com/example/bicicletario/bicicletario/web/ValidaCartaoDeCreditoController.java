@@ -15,8 +15,13 @@ public class ValidaCartaoDeCreditoController {
 
     private static final Logger logger = LoggerFactory.getLogger(ValidaCartaoDeCreditoController.class);
 
+    private final ValidaCartaoDeCreditoService validaCartaoDeCreditoService;
+
     @Autowired
-    private ValidaCartaoDeCreditoService validaCartaoDeCreditoService;
+    public ValidaCartaoDeCreditoController(ValidaCartaoDeCreditoService validaCartaoDeCreditoService) {
+        this.validaCartaoDeCreditoService = validaCartaoDeCreditoService;
+    }
+
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity validarCartaoDeCredito(@RequestBody NovoCartaoDeCreditoDTO cartaoDeCredito) {

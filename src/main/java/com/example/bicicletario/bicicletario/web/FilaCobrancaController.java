@@ -18,8 +18,13 @@ public class FilaCobrancaController {
 
     private static final Logger logger = LoggerFactory.getLogger(FilaCobrancaController.class);
 
+    private final FilaCobrancaService filaCobrancaService;
+
     @Autowired
-    private FilaCobrancaService filaCobrancaService;
+    public FilaCobrancaController(FilaCobrancaService filaCobrancaService) {
+        this.filaCobrancaService = filaCobrancaService;
+    }
+
 
     @PostMapping("/filaCobranca")
     public ResponseEntity adicionarNaFila(@RequestBody NovoCobrancaDTO novaCobranca) {

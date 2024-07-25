@@ -14,15 +14,12 @@ import java.time.format.DateTimeFormatter;
 public class CobrancaService {
 
     private final CobrancaRepository cobrancaRepository;
-    private final EmailService emailService;
     private final AdministradoraCCService administradoraCCService;
 
     @Autowired
     public CobrancaService(CobrancaRepository cobrancaRepository,
-                           EmailService emailService,
                            AdministradoraCCService administradoraCCService) {
         this.cobrancaRepository = cobrancaRepository;
-        this.emailService = emailService;
         this.administradoraCCService = administradoraCCService;
     }
 

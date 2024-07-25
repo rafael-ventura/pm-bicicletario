@@ -16,8 +16,12 @@ public class EmailController {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailController.class);
 
+    private final EmailService emailService;
+
     @Autowired
-    private EmailService emailService;
+    public EmailController(EmailService emailService) {
+        this.emailService = emailService;
+    }
 
     @PostMapping("/enviarEmail")
     public ResponseEntity enviarEmail(@RequestBody NovoEmailDTO novoEmailDTO) {
