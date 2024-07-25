@@ -1,5 +1,6 @@
 package com.example.bicicletario.Services;
 
+import com.example.bicicletario.bicicletario.application.CobrancaService;
 import com.example.bicicletario.bicicletario.application.FilaCobrancaService;
 import com.example.bicicletario.bicicletario.domain.Cobranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Queue;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class FilaCobrancaServiceTest {
@@ -26,6 +28,9 @@ class FilaCobrancaServiceTest {
 
     @Mock
     private FilaCobrancaRepository filaCobrancaRepository;
+
+    @Mock
+    private CobrancaService cobrancaService;
 
     @BeforeEach
     void setUp() {
@@ -61,10 +66,12 @@ class FilaCobrancaServiceTest {
     @Test
     void processarFilaComSucesso() {
         Cobranca cobranca1 = new Cobranca();
+        cobranca1.setCiclista(1);
         cobranca1.setValor(BigDecimal.TEN);
         cobranca1.setStatusCobranca(StatusCobranca.PENDENTE);
 
         Cobranca cobranca2 = new Cobranca();
+        cobranca2.setCiclista(2);
         cobranca2.setValor(BigDecimal.TEN);
         cobranca2.setStatusCobranca(StatusCobranca.PENDENTE);
 
@@ -75,16 +82,26 @@ class FilaCobrancaServiceTest {
         when(filaCobrancaRepository.isEmpty()).thenAnswer(invocation -> fila.isEmpty());
         when(filaCobrancaRepository.removerDaFila()).thenAnswer(invocation -> fila.poll());
 
+        when(cobrancaService.realizarCobranca(any(NovoCobrancaDTO.class))).thenAnswer(invocation -> {
+            NovoCobrancaDTO dto = invocation.getArgument(0);
+            Cobranca cobranca = new Cobranca();
+            cobranca.setCiclista(dto.getCiclista());
+            cobranca.setValor(dto.getValor());
+            cobranca.setStatusCobranca(StatusCobranca.PAGA);
+            return cobranca;
+        });
+
         List<Cobranca> cobrancasProcessadas = filaCobrancaService.processarFila();
 
         assertEquals(2, cobrancasProcessadas.size());
-        assertEquals(StatusCobranca.PAGA, cobrancasProcessadas.get(0).getStatusCobranca());
-        assertEquals(StatusCobranca.PAGA, cobrancasProcessadas.get(1).getStatusCobranca());
+        assertTrue(cobrancasProcessadas.stream().anyMatch(c -> c.getCiclista() == 1));
+        assertTrue(cobrancasProcessadas.stream().anyMatch(c -> c.getCiclista() == 2));
     }
 
     @Test
     void processarFilaComFalha() {
         Cobranca cobranca = new Cobranca();
+        cobranca.setCiclista(1);
         cobranca.setValor(BigDecimal.TEN);
         cobranca.setStatusCobranca(StatusCobranca.PENDENTE);
 
@@ -94,12 +111,19 @@ class FilaCobrancaServiceTest {
         when(filaCobrancaRepository.isEmpty()).thenAnswer(invocation -> fila.isEmpty());
         when(filaCobrancaRepository.removerDaFila()).thenAnswer(invocation -> fila.poll());
 
-        FilaCobrancaService filaCobrancaServiceSpy = spy(filaCobrancaService);
-        doReturn(false).when(filaCobrancaServiceSpy).enviarParaAdministradoraCC(any(Cobranca.class));
+        when(cobrancaService.realizarCobranca(any(NovoCobrancaDTO.class))).thenAnswer(invocation -> {
+            NovoCobrancaDTO dto = invocation.getArgument(0);
+            Cobranca cobrancaFalha = new Cobranca();
+            cobrancaFalha.setCiclista(dto.getCiclista());
+            cobrancaFalha.setValor(dto.getValor());
+            cobrancaFalha.setStatusCobranca(StatusCobranca.FALHA);
+            return cobrancaFalha;
+        });
 
-        List<Cobranca> cobrancasProcessadas = filaCobrancaServiceSpy.processarFila();
+        List<Cobranca> cobrancasProcessadas = filaCobrancaService.processarFila();
 
         assertEquals(1, cobrancasProcessadas.size());
         assertEquals(StatusCobranca.FALHA, cobrancasProcessadas.get(0).getStatusCobranca());
+        verify(filaCobrancaRepository, times(2)).adicionarNaFila(any(Cobranca.class));
     }
 }

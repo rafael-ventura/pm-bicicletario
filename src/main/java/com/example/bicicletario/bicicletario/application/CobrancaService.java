@@ -63,7 +63,6 @@ public class CobrancaService {
 
     // Método para recuperar dados do cartão de crédito
     private CartaoDeCredito recuperarCartaoDeCredito(int idCiclista) {
-        // simulando ida a /cartaoDeCredito/{idCiclista}
         CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
         cartaoDeCredito.setId(idCiclista);
         cartaoDeCredito.setCvv("707");
