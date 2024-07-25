@@ -1,7 +1,6 @@
 package com.example.bicicletario.bicicletario.application;
 
 import com.example.bicicletario.bicicletario.domain.HelloWorld;
-import com.example.bicicletario.bicicletario.infraestructure.HelloWorldRepository;
 import org.springframework.stereotype.Service;
 
 @Service

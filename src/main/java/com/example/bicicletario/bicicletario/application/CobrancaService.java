@@ -1,5 +1,4 @@
 package com.example.bicicletario.bicicletario.application;
-import com.example.bicicletario.bicicletario.Exception.NotFoundException;
 import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
 import com.example.bicicletario.bicicletario.domain.Cobranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
@@ -14,16 +13,18 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class CobrancaService {
 
-
-
-    @Autowired
-    private CobrancaRepository cobrancaRepository;
-
-    @Autowired
-    private EmailService emailService;
+    private final CobrancaRepository cobrancaRepository;
+    private final EmailService emailService;
+    private final AdministradoraCCService administradoraCCService;
 
     @Autowired
-    private AdministradoraCCService administradoraCCService;
+    public CobrancaService(CobrancaRepository cobrancaRepository,
+                           EmailService emailService,
+                           AdministradoraCCService administradoraCCService) {
+        this.cobrancaRepository = cobrancaRepository;
+        this.emailService = emailService;
+        this.administradoraCCService = administradoraCCService;
+    }
 
     public Cobranca obterCobrancaPorId(int idCobranca) {
         return cobrancaRepository.findById(idCobranca);
@@ -39,9 +40,6 @@ public class CobrancaService {
         // Recuperar dados do cartão de crédito
         CartaoDeCredito cartaoDeCredito = recuperarCartaoDeCredito(novaCobranca.getCiclista());
 
-        if (cartaoDeCredito == null) {
-            throw new NotFoundException("Cartão de crédito não encontrado");
-        }
 
         // Criar cobrança
         Cobranca cobranca = new Cobranca();
@@ -58,15 +56,10 @@ public class CobrancaService {
             cobranca.setHoraFinalizacao(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
         } else {
             cobranca.setStatusCobranca(StatusCobranca.FALHA);
-            // #TODO
-            // Implementar enviar para a fila de cobrança
         }
 
         // Salvar cobrança
         cobranca = cobrancaRepository.save(cobranca);
-
-        // Enviar email ao ciclista
-        // enviarEmailCobranca(cartaoDeCredito, cobranca);
 
         return cobranca;
     }
@@ -82,10 +75,4 @@ public class CobrancaService {
         return cartaoDeCredito;
     }
 
-    // Método para enviar email
-    /*
-    private void enviarEmailCobranca(CartaoDeCredito cartaoDeCredito, Cobranca cobranca) {
-        emailService.enviarEmail(cartaoDeCredito.getEmail(), "Detalhes da sua cobrança", "Detalhes da cobrança...");
-    }
-    */
 }

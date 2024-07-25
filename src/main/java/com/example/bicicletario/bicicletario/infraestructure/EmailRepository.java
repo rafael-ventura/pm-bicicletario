@@ -3,7 +3,6 @@ import com.example.bicicletario.bicicletario.domain.Email;
 import org.springframework.stereotype.Repository;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class EmailRepository {

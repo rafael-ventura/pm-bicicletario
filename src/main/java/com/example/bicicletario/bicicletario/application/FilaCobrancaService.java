@@ -11,13 +11,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 @Service
 public class FilaCobrancaService {
 
-    @Autowired
-    private FilaCobrancaRepository filaCobrancaRepository;
+    private final FilaCobrancaRepository filaCobrancaRepository;
+
+    public FilaCobrancaService(FilaCobrancaRepository filaCobrancaRepository) {
+        this.filaCobrancaRepository = filaCobrancaRepository;
+    }
 
     public Cobranca adicionarNaFila(NovoCobrancaDTO novaCobranca) {
         // Validação do valor

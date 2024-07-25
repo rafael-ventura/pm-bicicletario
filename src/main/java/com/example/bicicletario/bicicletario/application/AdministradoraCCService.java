@@ -1,9 +1,7 @@
 package com.example.bicicletario.bicicletario.application;
 
 import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

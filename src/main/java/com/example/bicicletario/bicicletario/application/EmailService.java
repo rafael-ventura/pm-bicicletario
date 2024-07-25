@@ -1,6 +1,6 @@
 package com.example.bicicletario.bicicletario.application;
 
-import com.example.bicicletario.bicicletario.Exception.NotFoundException;
+import com.example.bicicletario.bicicletario.exception.NotFoundException;
 import com.example.bicicletario.bicicletario.domain.Email;
 import com.example.bicicletario.bicicletario.domain.dto.NovoEmailDTO;
 import com.example.bicicletario.bicicletario.infraestructure.EmailRepository;
@@ -12,11 +12,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
+    private final EmailRepository emailRepository;
 
     @Autowired
-    private EmailRepository emailRepository;
+    public EmailService(JavaMailSender mailSender, EmailRepository emailRepository) {
+        this.mailSender = mailSender;
+        this.emailRepository = emailRepository;
+    }
+
 
     public Email enviarEmail(NovoEmailDTO novoEmailDTO) throws Exception {
         // Validação básica de e-mail

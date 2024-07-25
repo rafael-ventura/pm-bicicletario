@@ -1,4 +1,4 @@
-package com.example.bicicletario.bicicletario.Exception;
+package com.example.bicicletario.bicicletario.exception;
 
 public class NotFoundException extends RuntimeException {
 
