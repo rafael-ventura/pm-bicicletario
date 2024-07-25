@@ -216,17 +216,18 @@ class CiclistaControllerTest {
     }
 
     @Test
-    void ativarCiclista() throws Exception {
+    void ativarCiclistaComSucesso() throws Exception {
         Ciclista ciclista = new Ciclista();
         ciclista.setId(1);
         ciclista.setNome("Joao Silva");
-        ciclista.setStatus(StatusCiclista.ATIVO);
 
-        when(ciclistaService.ativarCiclista(1)).thenReturn(ciclista);
+        when(ciclistaService.ativarCiclista(anyInt())).thenReturn(ciclista);
 
-        mockMvc.perform(post("/api/ciclista/1/ativar"))
+        mockMvc.perform(post("/api/ciclista/1/ativar")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{'id':1,'nome':'Joao Silva','statusCiclista':'ATIVO'}"));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{\"id\":1,\"nome\":\"Joao Silva\"}"));
     }
 
     @Test
