@@ -59,8 +59,9 @@ public class FilaCobrancaService {
         return cobrancasProcessadas;
     }
 
-    private boolean enviarParaAdministradoraCC(Cobranca cobranca) {
+    public boolean enviarParaAdministradoraCC(Cobranca cobranca) {
         // Lógica de integração com administradora de cartão de crédito
+
         return true; // Simulação de sucesso
     }
 }

@@ -14,8 +14,6 @@ public class AdministradoraCCService {
 
     private static final Logger logger = LoggerFactory.getLogger(AdministradoraCCService.class);
 
-
-
     public boolean enviarParaAdministradoraCC(CartaoDeCredito cartaoDeCredito, BigDecimal valor) {
         try {
             // Criar o mapa de dados para a requisição
@@ -26,6 +24,12 @@ public class AdministradoraCCService {
             cobrancaData.put("nomeTitular", cartaoDeCredito.getNomeTitular());
             cobrancaData.put("valor", valor);
 
+            // Simulação de verificação
+            if (cartaoDeCredito.getNumero() == null || cartaoDeCredito.getValidade() == null ||
+                    cartaoDeCredito.getCvv() == null || cartaoDeCredito.getNomeTitular() == null ||
+                    valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new IllegalArgumentException("Dados do cartão de crédito inválidos");
+            }
 
             return true;
         } catch (Exception e) {
