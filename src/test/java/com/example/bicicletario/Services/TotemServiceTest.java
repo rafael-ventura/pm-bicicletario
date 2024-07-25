@@ -91,14 +91,23 @@ class TotemServiceTest {
         totem.setLocalizacao("Localizacao");
         totem.setDescricao("Descricao");
 
-        Totem Totem = new Totem();
-        Totem.setId(1L);
-        Totem.setLocalizacao("Nova Localizacao");
-        Totem.setDescricao("Nova Descricao");
+        Totem updatedTotem = new Totem();
+        updatedTotem.setId(1L);
+        updatedTotem.setLocalizacao("Nova Localizacao");
+        updatedTotem.setDescricao("Nova Descricao");
 
         when(totemRepository.findById(any(Long.class))).thenReturn(Optional.of(totem));
-        when(totemRepository.save(any(Totem.class))).thenReturn(totem);
+        when(totemRepository.save(any(Totem.class))).thenReturn(updatedTotem);
 
+        NovoTotemDTO totemDTO = new NovoTotemDTO();
+        totemDTO.setLocalizacao("Nova Localizacao");
+        totemDTO.setDescricao("Nova Descricao");
+
+        Totem result = totemService.editarTotem(1L, totemDTO);
+
+        assertNotNull(result);
+        assertEquals("Nova Localizacao", result.getLocalizacao());
+        assertEquals("Nova Descricao", result.getDescricao());
     }
 
     @Test
