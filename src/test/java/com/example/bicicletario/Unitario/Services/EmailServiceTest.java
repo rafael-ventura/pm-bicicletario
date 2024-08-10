@@ -2,6 +2,7 @@ package com.example.bicicletario.Unitario.Services;
 
 import com.example.bicicletario.bicicletario.application.EmailService;
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
+import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -10,7 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 class EmailServiceTest {
 
@@ -30,7 +31,7 @@ class EmailServiceTest {
     void enviarEmailParaReparador_FuncionarioNotFound() {
         when(funcionarioService.get(1L)).thenReturn(null);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             emailService.enviarEmailParaReparador(1L);
         });
 
@@ -39,13 +40,13 @@ class EmailServiceTest {
 
     @Test
     void enviarEmail_EmailInvalido() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             emailService.enviarEmail(null, "Assunto", "Mensagem");
         });
 
         assertEquals("Endereço de e-mail inválido.", exception.getMessage());
 
-        exception = assertThrows(IllegalArgumentException.class, () -> {
+        exception = assertThrows(ResourceNotFoundException.class, () -> {
             emailService.enviarEmail("", "Assunto", "Mensagem");
         });
 
