@@ -1,6 +1,7 @@
 package com.example.bicicletario.bicicletario.application.external;
 
 import com.example.bicicletario.bicicletario.domain.Aluguel;
+import com.example.bicicletario.bicicletario.domain.Devolucao;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,14 @@ public class EmailService {
         email.setEmail("ciclista" + idCiclista + "@bicicletario.com");
         email.setAssunto("Aluguel de bicicleta");
         email.setMensagem("Você alugou a bicicleta " + aluguel.getBicicleta() + " com sucesso!");
+        enviarEmail(email);
+    }
+
+    public void enviarEmailDevolucao(int idCiclista, Devolucao devolucao) {
+        EmailDTO email = new EmailDTO();
+        email.setEmail("ciclista" + idCiclista + "@bicicletario.com");
+        email.setAssunto("Devolução de bicicleta");
+        email.setMensagem("Você devolveu a bicicleta " + devolucao.getIdBicicleta() + " com sucesso!");
         enviarEmail(email);
     }
 }

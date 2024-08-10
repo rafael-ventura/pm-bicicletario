@@ -34,4 +34,11 @@ public class AluguelRepository {
     public void delete(Aluguel aluguel) {
         alugueis.remove(aluguel.getId());
     }
+
+    public Optional<Optional<Aluguel>> findByBicicletaAndHoraFimIsNull(int idBicicleta) {
+        return Optional.of(alugueis.values().stream()
+                .filter(aluguel -> aluguel.getBicicleta() == idBicicleta &&
+                        aluguel.getHoraFim() == null)
+                .findFirst());
+    }
 }

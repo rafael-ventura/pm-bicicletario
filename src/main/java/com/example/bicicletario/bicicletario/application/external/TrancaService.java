@@ -18,4 +18,8 @@ public class TrancaService {
         tranca.setStatus("Livre");
         return Optional.of(tranca);
     }
+
+    public void prenderBicicleta(int idTranca, int idBicicleta) {
+        // Prende a bicicleta na tranca
+    }
 }
