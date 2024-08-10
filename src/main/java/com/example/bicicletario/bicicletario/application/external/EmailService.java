@@ -1,5 +1,6 @@
 package com.example.bicicletario.bicicletario.application.external;
 
+import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,5 +11,13 @@ public class EmailService {
     private final static Logger logger = LoggerFactory.getLogger(EmailService.class);
     public void enviarEmail(EmailDTO email) {
         logger.info("Enviando email para " + email.getEmail() + " com a mensagem: " + email.getMensagem() + " e o assunto: " + email.getAssunto());
+    }
+
+    public void enviarEmailAluguel(int idCiclista, Aluguel aluguel) {
+        EmailDTO email = new EmailDTO();
+        email.setEmail("ciclista" + idCiclista + "@bicicletario.com");
+        email.setAssunto("Aluguel de bicicleta");
+        email.setMensagem("Você alugou a bicicleta " + aluguel.getBicicleta() + " com sucesso!");
+        enviarEmail(email);
     }
 }

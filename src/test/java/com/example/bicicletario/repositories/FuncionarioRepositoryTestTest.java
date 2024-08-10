@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FuncionarioRepositoryTest {
+class FuncionarioRepositoryTestTest {
 
     private FuncionarioRepository funcionarioRepository;
 

@@ -96,7 +96,7 @@ public class CartaoDeCreditoService {
         }
     }
 
-    private void enviarEmailAlteracaoDeDados(int idCiclista) {
+    public void enviarEmailAlteracaoDeDados(int idCiclista) {
         Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(() -> new ResourceNotFoundException("Ciclista não encontrado."));
         logger.info("E-mail de confirmação enviado para: " + ciclista.getEmail());
         // Simulação de envio de e-mail

@@ -19,4 +19,8 @@ public class AdministradoraCCService {
             throw new InvalidDataException("Cartão inválido");
         }
     }
+
+    public boolean processarPagamento(int idCiclista, double v) {
+        return true;
+    }
 }
