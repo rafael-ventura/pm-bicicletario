@@ -1,4 +1,4 @@
-package com.example.bicicletario.Services;
+package com.example.bicicletario.Unitario.Services;
 
 import com.example.bicicletario.bicicletario.application.EmailService;
 import com.example.bicicletario.bicicletario.application.FuncionarioService;

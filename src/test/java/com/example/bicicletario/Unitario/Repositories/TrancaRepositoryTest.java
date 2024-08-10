@@ -1,4 +1,4 @@
-package com.example.bicicletario.Repositories;
+package com.example.bicicletario.Unitario.Repositories;
 
 import com.example.bicicletario.bicicletario.domain.models.Totem;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
