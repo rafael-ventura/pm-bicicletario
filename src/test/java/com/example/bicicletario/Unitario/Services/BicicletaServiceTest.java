@@ -37,26 +37,20 @@ import static org.mockito.Mockito.*;
 
 class BicicletaServiceTest {
 
-    @InjectMocks
-    private BicicletaService bicicletaService;
-
-    @Mock
-    private FuncionarioService funcionarioService;
-
-    @Mock
-    private EmailService emailService;
-
-    @Mock
-    private BicicletaRepository bicicletaRepository;
-
-    @Mock
-    private TrancaRepository trancaRepository;
-
-    @Mock
-    private BicicletaMapper bicicletaMapper;
-
     private final ByteArrayOutputStream consoleContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
+    @InjectMocks
+    private BicicletaService bicicletaService;
+    @Mock
+    private FuncionarioService funcionarioService;
+    @Mock
+    private EmailService emailService;
+    @Mock
+    private BicicletaRepository bicicletaRepository;
+    @Mock
+    private TrancaRepository trancaRepository;
+    @Mock
+    private BicicletaMapper bicicletaMapper;
 
     @BeforeEach
     public void setup() {
@@ -458,4 +452,108 @@ class BicicletaServiceTest {
         assertEquals("Ação inválida", exception.getMessage());
     }
 
+    @Test
+    void integrarNaRedeBicicletaEmReparo() {
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
+        dto.setIdBicicleta(1L);
+        dto.setIdTranca(1L);
+        dto.setIdFuncionario(1L);
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.LIVRE);
+        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
+
+        bicicletaService.integrarNaRede(dto);
+        verify(bicicletaRepository, times(1)).save(bicicleta);
+        verify(trancaRepository, times(1)).save(tranca);
+    }
+
+    @Test
+    void integrarNaRedeTrancaOcupada() {
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
+        dto.setIdBicicleta(1L);
+        dto.setIdTranca(1L);
+        dto.setIdFuncionario(1L);
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.OCUPADA);
+        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            bicicletaService.integrarNaRede(dto);
+        });
+
+        assertEquals(Constantes.TRANCA_NAO_DISPONIVEL, exception.getMessage());
+    }
+
+    @Test
+    void retirarDaRedeSemStatusReparador() {
+        RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
+        dto.setIdBicicleta(1L);
+        dto.setIdTranca(1L);
+        dto.setIdFuncionario(1L);
+        dto.setStatusAcaoReparador(null);
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.OCUPADA);
+        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            bicicletaService.retirarDaRede(dto);
+        });
+
+        assertEquals(Constantes.ACAO_INVALIDA, exception.getMessage());
+    }
+
+    @Test
+    void alterarStatusBicicletaNova() {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "nova");
+        verify(bicicletaRepository, times(1)).save(bicicleta);
+        assertEquals(StatusBicicleta.NOVA, result.getStatusBicicleta());
+    }
+
+    @Test
+    void alterarStatusBicicletaEmUso() {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "em uso");
+        verify(bicicletaRepository, times(1)).save(bicicleta);
+        assertEquals(StatusBicicleta.EM_USO, result.getStatusBicicleta());
+    }
+
+    @Test
+    void alterarStatusBicicletaAposentada() {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
+
+        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "aposentada");
+        verify(bicicletaRepository, times(1)).save(bicicleta);
+        assertEquals(StatusBicicleta.APOSENTADA, result.getStatusBicicleta());
+    }
 }
