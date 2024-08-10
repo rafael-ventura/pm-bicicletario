@@ -44,7 +44,7 @@ class BicicletaControllerTest {
         ResponseEntity<List<Bicicleta>> response = bicicletaController.listarBicicletas();
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().size());
         assertEquals(bicicleta.getId(), response.getBody().get(0).getId());
@@ -62,7 +62,7 @@ class BicicletaControllerTest {
         ResponseEntity<Bicicleta> response = bicicletaController.criarBicicleta(novaBicicletaDTO);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(bicicleta.getId(), response.getBody().getId());
     }
@@ -76,7 +76,7 @@ class BicicletaControllerTest {
         ResponseEntity<String> response = bicicletaController.integrarNaRede(dto);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("Dados cadastrados", response.getBody());
         verify(bicicletaService).integrarNaRede(dto);
     }
@@ -90,7 +90,7 @@ class BicicletaControllerTest {
         ResponseEntity<String> response = bicicletaController.retirarDaRede(dto);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("Dados cadastrados", response.getBody());
         verify(bicicletaService).retirarDaRede(dto);
     }
@@ -107,7 +107,7 @@ class BicicletaControllerTest {
         ResponseEntity<Bicicleta> response = bicicletaController.obterBicicleta(idBicicleta);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(idBicicleta, response.getBody().getId());
     }
@@ -125,7 +125,7 @@ class BicicletaControllerTest {
         ResponseEntity<Bicicleta> response = bicicletaController.editarBicicleta(idBicicleta, novaBicicletaDTO);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(idBicicleta, response.getBody().getId());
     }
@@ -139,7 +139,7 @@ class BicicletaControllerTest {
         ResponseEntity<String> response = bicicletaController.removerBicicleta(idBicicleta);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("Bicicleta removida", response.getBody());
         verify(bicicletaService).removerBicicleta(idBicicleta);
     }
@@ -157,7 +157,7 @@ class BicicletaControllerTest {
         ResponseEntity<Bicicleta> response = bicicletaController.alterarStatusBicicleta(idBicicleta, acao);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(idBicicleta, response.getBody().getId());
         verify(bicicletaService).alterarStatusBicicleta(idBicicleta, acao);

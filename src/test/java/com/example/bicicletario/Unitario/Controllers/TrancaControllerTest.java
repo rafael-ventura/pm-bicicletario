@@ -42,7 +42,7 @@ class TrancaControllerTest {
         ResponseEntity<String> response = trancaController.integrarNaRede(dto);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("Dados cadastrados", response.getBody());
         verify(trancaService).integrarNaRede(dto);
     }
@@ -56,7 +56,7 @@ class TrancaControllerTest {
         ResponseEntity<String> response = trancaController.retirarDaRede(dto);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("Dados cadastrados", response.getBody());
         verify(trancaService).retirarDaRede(dto);
     }
@@ -72,7 +72,7 @@ class TrancaControllerTest {
         ResponseEntity<List<Tranca>> response = trancaController.listarTrancas();
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().size());
         assertEquals(tranca.getId(), response.getBody().get(0).getId());
@@ -90,7 +90,7 @@ class TrancaControllerTest {
         ResponseEntity<Tranca> response = trancaController.cadastrarTranca(novaTrancaDTO);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(tranca.getId(), response.getBody().getId());
     }
@@ -107,7 +107,7 @@ class TrancaControllerTest {
         ResponseEntity<Tranca> response = trancaController.obterTranca(idTranca);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(idTranca, response.getBody().getId());
     }
@@ -125,7 +125,7 @@ class TrancaControllerTest {
         ResponseEntity<Tranca> response = trancaController.editarTranca(idTranca, novaTrancaDTO);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(idTranca, response.getBody().getId());
     }
@@ -139,7 +139,7 @@ class TrancaControllerTest {
         ResponseEntity<String> response = trancaController.removerTranca(idTranca);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("Tranca removida", response.getBody());
         verify(trancaService).removerTranca(idTranca);
     }
@@ -156,7 +156,7 @@ class TrancaControllerTest {
         ResponseEntity<Tranca> response = trancaController.obterBicicletaNaTranca(idTranca);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(idTranca, response.getBody().getId());
     }
@@ -171,7 +171,7 @@ class TrancaControllerTest {
         ResponseEntity<String> response = trancaController.trancarTranca(idTranca, bicicletaId);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("Dados cadastrados", response.getBody());
         verify(trancaService).trancarTranca(idTranca, bicicletaId);
     }
@@ -186,7 +186,7 @@ class TrancaControllerTest {
         ResponseEntity<String> response = trancaController.destrancarTranca(idTranca, bicicletaId);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("Dados cadastrados", response.getBody());
         verify(trancaService).destrancarTranca(idTranca, bicicletaId);
     }
@@ -201,7 +201,7 @@ class TrancaControllerTest {
         ResponseEntity<String> response = trancaController.alterarStatusTranca(idTranca, acao);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("Dados cadastrados", response.getBody());
         verify(trancaService).alterarStatusTranca(idTranca, acao);
     }

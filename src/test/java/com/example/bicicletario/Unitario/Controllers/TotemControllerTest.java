@@ -43,7 +43,7 @@ class TotemControllerTest {
         ResponseEntity<List<Totem>> response = totemController.listarTotens();
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().size());
         assertEquals(totem.getId(), response.getBody().get(0).getId());
@@ -61,7 +61,7 @@ class TotemControllerTest {
         ResponseEntity<Totem> response = totemController.criarTotem(novoTotem);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(totem.getId(), response.getBody().getId());
     }
@@ -79,7 +79,7 @@ class TotemControllerTest {
         ResponseEntity<Totem> response = totemController.editarTotem(totemId, novoTotem);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(totemId, response.getBody().getId());
     }
@@ -93,7 +93,7 @@ class TotemControllerTest {
         ResponseEntity<String> response = totemController.removerTotem(totemId);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("Totem removido", response.getBody());
     }
 
@@ -109,7 +109,7 @@ class TotemControllerTest {
         ResponseEntity<List<Tranca>> response = totemController.listarTrancas(totemId);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().size());
         assertEquals(tranca.getId(), response.getBody().get(0).getId());
@@ -127,7 +127,7 @@ class TotemControllerTest {
         ResponseEntity<List<Bicicleta>> response = totemController.listarBicicletas(totemId);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().size());
         assertEquals(bicicleta.getId(), response.getBody().get(0).getId());

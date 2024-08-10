@@ -3,14 +3,17 @@ package com.example.bicicletario.Unitario.Services;
 import com.example.bicicletario.bicicletario.application.EmailService;
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
 import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
+import com.example.bicicletario.bicicletario.domain.dto.EmailDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class EmailServiceTest {
@@ -18,13 +21,13 @@ class EmailServiceTest {
     @Mock
     private FuncionarioService funcionarioService;
 
+    @Spy
     @InjectMocks
     private EmailService emailService;
 
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
-        emailService = new EmailService(funcionarioService);
     }
 
     @Test
@@ -64,8 +67,10 @@ class EmailServiceTest {
 
     @Test
     void enviarEmail_Sucesso() {
-        emailService.enviarEmail("teste@teste.com", "Assunto", "Mensagem");
+        EmailDto message = new EmailDto("teste@teste.com", "Assunto", "Mensagem");
 
-        // Simulação de envio bem-sucedido; nada precisa ser verificado aqui
+        emailService.enviarEmail(message.getEmail(), message.getAssunto(), message.getMensagem());
+
+        verify(emailService).enviarEmail(message.getEmail(), message.getAssunto(), message.getMensagem());
     }
 }
