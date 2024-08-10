@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class BicicletaControllerTest {
+class BicicletaControllerTest {
 
     @Mock
     private BicicletaService bicicletaService;

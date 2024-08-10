@@ -42,8 +42,7 @@ public class BicicletaService {
     }
 
     public Bicicleta obterBicicleta(Long idBicicleta) {
-        return bicicletaRepository.findById(idBicicleta)
-                .orElseThrow(() -> new ResourceNotFoundException(Constantes.BICICLETA_NAO_ENCONTRADA));
+        return findBicicletaByIdOrThrow(idBicicleta);
     }
 
     public Bicicleta criarBicicleta(NovaBicicletaDTO bicicletaDTO) {
@@ -53,53 +52,29 @@ public class BicicletaService {
     }
 
     public Bicicleta editarBicicleta(Long idBicicleta, NovaBicicletaDTO bicicletaDTO) {
-        Bicicleta bicicleta = bicicletaRepository.findById(idBicicleta)
-                .orElseThrow(() -> new ResourceNotFoundException(Constantes.BICICLETA_NAO_ENCONTRADA));
-
-        bicicleta.setMarca(bicicletaDTO.getMarca());
-        bicicleta.setModelo(bicicletaDTO.getModelo());
-        bicicleta.setAno(bicicletaDTO.getAno());
-        bicicleta.setStatusBicicleta(bicicletaDTO.getStatus());
-
+        Bicicleta bicicleta = findBicicletaByIdOrThrow(idBicicleta);
+        updateBicicletaComDTO(bicicleta, bicicletaDTO);
         return bicicletaRepository.save(bicicleta);
     }
 
     public void removerBicicleta(Long idBicicleta) {
-        Bicicleta bicicleta = bicicletaRepository.findById(idBicicleta)
-                .orElseThrow(() -> new ResourceNotFoundException(Constantes.BICICLETA_NAO_ENCONTRADA));
-
-        if (bicicleta.getStatusBicicleta() != StatusBicicleta.APOSENTADA) {
-            throw new BadRequestException(Constantes.BICICLETA_NAO_APOSENTADA);
-        }
-
+        Bicicleta bicicleta = findBicicletaByIdOrThrow(idBicicleta);
+        validaBicicletaStatusParaRemocao(bicicleta);
         bicicletaRepository.deleteById(idBicicleta);
     }
 
     public void integrarNaRede(IntegrarBicicletaNaRedeDTO dto) {
-        Bicicleta bicicleta = bicicletaRepository.findById(dto.getIdBicicleta())
-                .orElseThrow(() -> new ResourceNotFoundException(Constantes.BICICLETA_NAO_ENCONTRADA));
+        Bicicleta bicicleta = findBicicletaByIdOrThrow(dto.getIdBicicleta());
+        Tranca tranca = findTrancaByIdOrThrow(dto.getIdTranca());
 
-        if (bicicleta.getStatusBicicleta() != StatusBicicleta.NOVA && bicicleta.getStatusBicicleta() != StatusBicicleta.EM_REPARO) {
-            throw new InvalidDataException(Constantes.STATUS_DA_BICICLETA_INVALIDO);
+        validaBicicletaStatusParaIntegracao(bicicleta);
+        validaTrancaStatusParaIntegracao(tranca);
+
+        if (bicicleta.getStatusBicicleta() == StatusBicicleta.EM_REPARO) {
+            validaFuncionarioParaReparo(dto.getIdFuncionario());
         }
 
-        Tranca tranca = trancaRepository.findById(dto.getIdTranca())
-                .orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
-
-        if (tranca.getStatus() != StatusTranca.LIVRE) {
-            throw new InvalidDataException(Constantes.TRANCA_NAO_DISPONIVEL);
-        }
-
-        if (bicicleta.getStatusBicicleta() == StatusBicicleta.EM_REPARO && !funcionarioService.isFuncionarioValido(dto.getIdFuncionario())) {
-            throw new InvalidDataException(Constantes.FUNCIONARIO_INVALIDO);
-        }
-
-        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
-        bicicleta.setDataInsercaoTranca(LocalDateTime.now().toString());
-        bicicletaRepository.save(bicicleta);
-
-        tranca.setStatus(StatusTranca.OCUPADA);
-        trancaRepository.save(tranca);
+        updateBicicletaETrancaParaIntegracao(bicicleta, tranca);
 
         try {
             emailService.enviarEmailParaReparador(dto.getIdFuncionario());
@@ -109,34 +84,13 @@ public class BicicletaService {
     }
 
     public void retirarDaRede(RetirarBicicletaDaRedeDTO dto) {
-        Bicicleta bicicleta = bicicletaRepository.findById(dto.getIdBicicleta())
-                .orElseThrow(() -> new ResourceNotFoundException(Constantes.BICICLETA_NAO_ENCONTRADA));
+        Bicicleta bicicleta = findBicicletaByIdOrThrow(dto.getIdBicicleta());
+        Tranca tranca = findTrancaByIdOrThrow(dto.getIdTranca());
 
-        Tranca tranca = trancaRepository.findById(dto.getIdTranca())
-                .orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
+        validaTrancaStatusParaRemover(tranca);
+        validaBicicletaStatusParaRemover(bicicleta, dto.getStatusAcaoReparador());
 
-        if (tranca.getStatus() != StatusTranca.OCUPADA) {
-            throw new InvalidDataException(Constantes.TRANCA_NAO_OCUPADA);
-        }
-
-        if (bicicleta.getStatusBicicleta() != StatusBicicleta.REPARO_SOLICITADO) {
-            throw new InvalidDataException(Constantes.STATUS_DA_BICICLETA_INVALIDO);
-        }
-
-        if (dto.getStatusAcaoReparador().equals(StatusAcaoReparador.EM_REPARO)) {
-            bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
-        } else if (dto.getStatusAcaoReparador().equals(StatusAcaoReparador.APOSENTADA)) {
-            bicicleta.setStatusBicicleta(StatusBicicleta.APOSENTADA);
-        } else {
-            throw new InvalidDataException(Constantes.ACAO_INVALIDA);
-        }
-
-        bicicleta.setDataRemocaoTranca(LocalDateTime.now().toString());
-        bicicleta.setDataInsercaoTranca(null);
-        bicicletaRepository.save(bicicleta);
-
-        tranca.setStatus(StatusTranca.LIVRE);
-        trancaRepository.save(tranca);
+        updateBicicletaETrancaParaRemover(bicicleta, tranca, dto.getStatusAcaoReparador());
 
         try {
             emailService.enviarEmailParaReparador(dto.getIdFuncionario());
@@ -146,9 +100,91 @@ public class BicicletaService {
     }
 
     public Bicicleta alterarStatusBicicleta(Long id, String acao) {
-        Bicicleta bicicleta = bicicletaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Constantes.BICICLETA_NAO_ENCONTRADA));
+        Bicicleta bicicleta = findBicicletaByIdOrThrow(id);
+        updateBicicletaStatus(bicicleta, acao);
+        return bicicletaRepository.save(bicicleta);
+    }
 
+    private Bicicleta findBicicletaByIdOrThrow(Long idBicicleta) {
+        return bicicletaRepository.findById(idBicicleta)
+                .orElseThrow(() -> new ResourceNotFoundException(Constantes.BICICLETA_NAO_ENCONTRADA));
+    }
+
+    private Tranca findTrancaByIdOrThrow(Long idTranca) {
+        return trancaRepository.findById(idTranca)
+                .orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
+    }
+
+    private void updateBicicletaComDTO(Bicicleta bicicleta, NovaBicicletaDTO bicicletaDTO) {
+        bicicleta.setMarca(bicicletaDTO.getMarca());
+        bicicleta.setModelo(bicicletaDTO.getModelo());
+        bicicleta.setAno(bicicletaDTO.getAno());
+        bicicleta.setStatusBicicleta(bicicletaDTO.getStatus());
+    }
+
+    private void validaBicicletaStatusParaRemocao(Bicicleta bicicleta) {
+        if (bicicleta.getStatusBicicleta() != StatusBicicleta.APOSENTADA) {
+            throw new BadRequestException(Constantes.BICICLETA_NAO_APOSENTADA);
+        }
+    }
+
+    private void validaBicicletaStatusParaIntegracao(Bicicleta bicicleta) {
+        if (bicicleta.getStatusBicicleta() != StatusBicicleta.NOVA && bicicleta.getStatusBicicleta() != StatusBicicleta.EM_REPARO) {
+            throw new InvalidDataException(Constantes.STATUS_DA_BICICLETA_INVALIDO);
+        }
+    }
+
+    private void validaTrancaStatusParaIntegracao(Tranca tranca) {
+        if (tranca.getStatus() != StatusTranca.LIVRE) {
+            throw new InvalidDataException(Constantes.TRANCA_NAO_DISPONIVEL);
+        }
+    }
+
+    private void validaFuncionarioParaReparo(Long idFuncionario) {
+        if (!funcionarioService.isFuncionarioValido(idFuncionario)) {
+            throw new InvalidDataException(Constantes.FUNCIONARIO_INVALIDO);
+        }
+    }
+
+    private void updateBicicletaETrancaParaIntegracao(Bicicleta bicicleta, Tranca tranca) {
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
+        bicicleta.setDataInsercaoTranca(LocalDateTime.now().toString());
+        bicicletaRepository.save(bicicleta);
+
+        tranca.setStatus(StatusTranca.OCUPADA);
+        trancaRepository.save(tranca);
+    }
+
+    private void validaTrancaStatusParaRemover(Tranca tranca) {
+        if (tranca.getStatus() != StatusTranca.OCUPADA) {
+            throw new InvalidDataException(Constantes.TRANCA_NAO_OCUPADA);
+        }
+    }
+
+    private void validaBicicletaStatusParaRemover(Bicicleta bicicleta, StatusAcaoReparador statusAcaoReparador) {
+        if (bicicleta.getStatusBicicleta() != StatusBicicleta.REPARO_SOLICITADO) {
+            throw new InvalidDataException(Constantes.STATUS_DA_BICICLETA_INVALIDO);
+        }
+        if (statusAcaoReparador == null) {
+            throw new InvalidDataException(Constantes.ACAO_INVALIDA);
+        }
+    }
+
+    private void updateBicicletaETrancaParaRemover(Bicicleta bicicleta, Tranca tranca, StatusAcaoReparador statusAcaoReparador) {
+        if (statusAcaoReparador.equals(StatusAcaoReparador.EM_REPARO)) {
+            bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
+        } else if (statusAcaoReparador.equals(StatusAcaoReparador.APOSENTADA)) {
+            bicicleta.setStatusBicicleta(StatusBicicleta.APOSENTADA);
+        }
+        bicicleta.setDataRemocaoTranca(LocalDateTime.now().toString());
+        bicicleta.setDataInsercaoTranca(null);
+        bicicletaRepository.save(bicicleta);
+
+        tranca.setStatus(StatusTranca.LIVRE);
+        trancaRepository.save(tranca);
+    }
+
+    private void updateBicicletaStatus(Bicicleta bicicleta, String acao) {
         switch (acao.toLowerCase()) {
             case "disponivel":
                 bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
@@ -171,6 +207,5 @@ public class BicicletaService {
             default:
                 throw new InvalidDataException("Ação inválida");
         }
-        return bicicletaRepository.save(bicicleta);
     }
 }

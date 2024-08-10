@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class TrancaControllerTest {
+class TrancaControllerTest {
 
     @Mock
     private TrancaService trancaService;
