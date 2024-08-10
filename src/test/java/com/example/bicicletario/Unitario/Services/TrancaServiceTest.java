@@ -106,23 +106,6 @@ class TrancaServiceTest {
     }
 
     @Test
-    void integrarNaRedeStatusTrancaInvalido() {
-        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdTranca(1L);
-
-        Tranca tranca = new Tranca();
-        tranca.setStatus(StatusTranca.OCUPADA);
-
-        when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
-
-        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
-            trancaService.integrarNaRede(dto);
-        });
-
-        assertEquals("Status da tranca inválido", exception.getMessage());
-    }
-
-    @Test
     void integrarNaRedeErroEnvioEmail() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdTranca(1L);

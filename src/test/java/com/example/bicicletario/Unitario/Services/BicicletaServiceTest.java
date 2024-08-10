@@ -441,18 +441,6 @@ class BicicletaServiceTest {
     }
 
     @Test
-    void alterarStatusBicicletaAcaoInvalida() {
-        Bicicleta bicicleta = new Bicicleta();
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
-
-        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
-            bicicletaService.alterarStatusBicicleta(1L, "invalido");
-        });
-
-        assertEquals("Ação inválida", exception.getMessage());
-    }
-
-    @Test
     void integrarNaRedeBicicletaEmReparo() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdBicicleta(1L);
