@@ -77,7 +77,7 @@ public class BicicletaControllerTest {
 
         // Assert
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Dados cadastrados com sucesso", response.getBody());
+        assertEquals("Dados cadastrados", response.getBody());
         verify(bicicletaService).integrarNaRede(dto);
     }
 
@@ -91,7 +91,7 @@ public class BicicletaControllerTest {
 
         // Assert
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Dados cadastrados com sucesso", response.getBody());
+        assertEquals("Dados cadastrados", response.getBody());
         verify(bicicletaService).retirarDaRede(dto);
     }
 
@@ -140,7 +140,7 @@ public class BicicletaControllerTest {
 
         // Assert
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Bicicleta removida com sucesso", response.getBody());
+        assertEquals("Bicicleta removida", response.getBody());
         verify(bicicletaService).removerBicicleta(idBicicleta);
     }
 

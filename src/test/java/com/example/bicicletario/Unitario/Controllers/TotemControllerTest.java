@@ -94,7 +94,7 @@ public class TotemControllerTest {
 
         // Assert
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Totem removido com sucesso", response.getBody());
+        assertEquals("Totem removido", response.getBody());
     }
 
     @Test

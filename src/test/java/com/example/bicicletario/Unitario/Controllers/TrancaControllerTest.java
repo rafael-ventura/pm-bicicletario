@@ -43,7 +43,7 @@ public class TrancaControllerTest {
 
         // Assert
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Dados cadastrados com sucesso", response.getBody());
+        assertEquals("Dados cadastrados", response.getBody());
         verify(trancaService).integrarNaRede(dto);
     }
 
@@ -57,7 +57,7 @@ public class TrancaControllerTest {
 
         // Assert
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Dados cadastrados com sucesso", response.getBody());
+        assertEquals("Dados cadastrados", response.getBody());
         verify(trancaService).retirarDaRede(dto);
     }
 
@@ -140,7 +140,7 @@ public class TrancaControllerTest {
 
         // Assert
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Tranca removida com sucesso", response.getBody());
+        assertEquals("Tranca removida", response.getBody());
         verify(trancaService).removerTranca(idTranca);
     }
 
@@ -172,7 +172,7 @@ public class TrancaControllerTest {
 
         // Assert
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Dados cadastrados com sucesso", response.getBody());
+        assertEquals("Dados cadastrados", response.getBody());
         verify(trancaService).trancarTranca(idTranca, bicicletaId);
     }
 
@@ -187,7 +187,7 @@ public class TrancaControllerTest {
 
         // Assert
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Dados cadastrados com sucesso", response.getBody());
+        assertEquals("Dados cadastrados", response.getBody());
         verify(trancaService).destrancarTranca(idTranca, bicicletaId);
     }
 
@@ -202,7 +202,7 @@ public class TrancaControllerTest {
 
         // Assert
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Dados cadastrados com sucesso", response.getBody());
+        assertEquals("Dados cadastrados", response.getBody());
         verify(trancaService).alterarStatusTranca(idTranca, acao);
     }
 }
