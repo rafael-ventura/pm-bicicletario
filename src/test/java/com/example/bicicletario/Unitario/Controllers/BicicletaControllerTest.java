@@ -51,15 +51,15 @@ class BicicletaControllerTest {
     }
 
     @Test
-    void criarBicicleta_Success() {
+    void cadastrarBicicleta_Success() {
         // Arrange
         NovaBicicletaDTO novaBicicletaDTO = new NovaBicicletaDTO();
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1L);
-        when(bicicletaService.criarBicicleta(novaBicicletaDTO)).thenReturn(bicicleta);
+        when(bicicletaService.cadastrarBicicleta(novaBicicletaDTO)).thenReturn(bicicleta);
 
         // Act
-        ResponseEntity<Bicicleta> response = bicicletaController.criarBicicleta(novaBicicletaDTO);
+        ResponseEntity<Bicicleta> response = bicicletaController.cadastrarBicicleta(novaBicicletaDTO);
 
         // Assert
         assertEquals(200, response.getStatusCode().value());
@@ -78,11 +78,11 @@ class BicicletaControllerTest {
         // Assert
         assertEquals(200, response.getStatusCode().value());
         assertEquals("Dados cadastrados", response.getBody());
-        verify(bicicletaService).integrarNaRede(dto);
+        verify(bicicletaService).integrarBicicletaNaRede(dto);
     }
 
     @Test
-    void retirarDaRede_Success() {
+    void retirarBicicletaDaRede_Success() {
         // Arrange
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
 
@@ -92,7 +92,7 @@ class BicicletaControllerTest {
         // Assert
         assertEquals(200, response.getStatusCode().value());
         assertEquals("Dados cadastrados", response.getBody());
-        verify(bicicletaService).retirarDaRede(dto);
+        verify(bicicletaService).retirarBicicletaDaRede(dto);
     }
 
     @Test
@@ -101,7 +101,7 @@ class BicicletaControllerTest {
         Long idBicicleta = 1L;
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(idBicicleta);
-        when(bicicletaService.obterBicicleta(idBicicleta)).thenReturn(bicicleta);
+        when(bicicletaService.obterBicicletaPorId(idBicicleta)).thenReturn(bicicleta);
 
         // Act
         ResponseEntity<Bicicleta> response = bicicletaController.obterBicicleta(idBicicleta);
@@ -113,16 +113,16 @@ class BicicletaControllerTest {
     }
 
     @Test
-    void editarBicicleta_Success() {
+    void atualizarBicicleta_Success() {
         // Arrange
         Long idBicicleta = 1L;
         NovaBicicletaDTO novaBicicletaDTO = new NovaBicicletaDTO();
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(idBicicleta);
-        when(bicicletaService.editarBicicleta(idBicicleta, novaBicicletaDTO)).thenReturn(bicicleta);
+        when(bicicletaService.atualizarBicicleta(idBicicleta, novaBicicletaDTO)).thenReturn(bicicleta);
 
         // Act
-        ResponseEntity<Bicicleta> response = bicicletaController.editarBicicleta(idBicicleta, novaBicicletaDTO);
+        ResponseEntity<Bicicleta> response = bicicletaController.atualizarBicicleta(idBicicleta, novaBicicletaDTO);
 
         // Assert
         assertEquals(200, response.getStatusCode().value());
@@ -141,7 +141,7 @@ class BicicletaControllerTest {
         // Assert
         assertEquals(200, response.getStatusCode().value());
         assertEquals("Bicicleta removida", response.getBody());
-        verify(bicicletaService).removerBicicleta(idBicicleta);
+        verify(bicicletaService).excluirBicicleta(idBicicleta);
     }
 
     @Test

@@ -22,8 +22,9 @@ public class Bicicleta {
 
     private Tranca tranca;
 
-    public Bicicleta() {
+    private Long idFuncionarioUltimaOperacao;
 
+    public Bicicleta() {
     }
 
     public Bicicleta(String marca, String modelo, String ano, int numero, StatusBicicleta statusBicicleta) {
@@ -34,28 +35,30 @@ public class Bicicleta {
         this.statusBicicleta = statusBicicleta;
     }
 
-    public String getDataInsercaoTranca() {
-        return dataInsercaoTranca;
+    // Getters e Setters
+
+    public Long getId() {
+        return id;
     }
 
-    public void setDataInsercaoTranca(String dataInsercaoTranca) {
-        this.dataInsercaoTranca = dataInsercaoTranca;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Tranca getTranca() {
-        return tranca;
+    public String getMarca() {
+        return marca;
     }
 
-    public void setTranca(Tranca tranca) {
-        this.tranca = tranca;
+    public void setMarca(String marca) {
+        this.marca = marca;
     }
 
-    public StatusBicicleta getStatusBicicleta() {
-        return statusBicicleta;
+    public String getModelo() {
+        return modelo;
     }
 
-    public void setStatusBicicleta(StatusBicicleta statusBicicleta) {
-        this.statusBicicleta = statusBicicleta;
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
     }
 
     public String getAno() {
@@ -74,35 +77,43 @@ public class Bicicleta {
         this.numero = numero;
     }
 
-    public String getModelo() {
-        return modelo;
+    public StatusBicicleta getStatusBicicleta() {
+        return statusBicicleta;
     }
 
-    public void setModelo(String modelo) {
-        this.modelo = modelo;
+    public void setStatusBicicleta(StatusBicicleta statusBicicleta) {
+        this.statusBicicleta = statusBicicleta;
     }
 
-    public String getMarca() {
-        return marca;
+    public String getDataInsercaoTranca() {
+        return dataInsercaoTranca;
     }
 
-    public void setMarca(String marca) {
-        this.marca = marca;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setDataInsercaoTranca(String dataInsercaoTranca) {
+        this.dataInsercaoTranca = dataInsercaoTranca;
     }
 
     public String getDataRemocaoTranca() {
         return dataRemocaoTranca;
     }
 
-    public void setDataRemocaoTranca(String string) {
-        this.dataRemocaoTranca = string;
+    public void setDataRemocaoTranca(String dataRemocaoTranca) {
+        this.dataRemocaoTranca = dataRemocaoTranca;
+    }
+
+    public Tranca getTranca() {
+        return tranca;
+    }
+
+    public void setTranca(Tranca tranca) {
+        this.tranca = tranca;
+    }
+
+    public Long getIdFuncionarioUltimaOperacao() {
+        return idFuncionarioUltimaOperacao;
+    }
+
+    public void setIdFuncionarioUltimaOperacao(Long idFuncionarioUltimaOperacao) {
+        this.idFuncionarioUltimaOperacao = idFuncionarioUltimaOperacao;
     }
 }

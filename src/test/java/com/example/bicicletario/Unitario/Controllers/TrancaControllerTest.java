@@ -44,7 +44,7 @@ class TrancaControllerTest {
         // Assert
         assertEquals(200, response.getStatusCode().value());
         assertEquals("Dados cadastrados", response.getBody());
-        verify(trancaService).integrarNaRede(dto);
+        verify(trancaService).incluirTrancaEmTotem(dto);
     }
 
     @Test
@@ -58,7 +58,7 @@ class TrancaControllerTest {
         // Assert
         assertEquals(200, response.getStatusCode().value());
         assertEquals("Dados cadastrados", response.getBody());
-        verify(trancaService).retirarDaRede(dto);
+        verify(trancaService).retirarTrancaDaRede(dto);
     }
 
     @Test
@@ -66,7 +66,7 @@ class TrancaControllerTest {
         // Arrange
         Tranca tranca = new Tranca();
         tranca.setId(1L);
-        when(trancaService.listarTrancas()).thenReturn(List.of(tranca));
+        when(trancaService.listarTodasTrancas()).thenReturn(List.of(tranca));
 
         // Act
         ResponseEntity<List<Tranca>> response = trancaController.listarTrancas();
@@ -84,7 +84,7 @@ class TrancaControllerTest {
         NovaTrancaDTO novaTrancaDTO = new NovaTrancaDTO();
         Tranca tranca = new Tranca();
         tranca.setId(1L);
-        when(trancaService.cadastrarTranca(novaTrancaDTO)).thenReturn(tranca);
+        when(trancaService.cadastrarNovaTranca(novaTrancaDTO)).thenReturn(tranca);
 
         // Act
         ResponseEntity<Tranca> response = trancaController.cadastrarTranca(novaTrancaDTO);
@@ -101,7 +101,7 @@ class TrancaControllerTest {
         Long idTranca = 1L;
         Tranca tranca = new Tranca();
         tranca.setId(idTranca);
-        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+        when(trancaService.obterTrancaPorId(idTranca)).thenReturn(tranca);
 
         // Act
         ResponseEntity<Tranca> response = trancaController.obterTranca(idTranca);
@@ -119,7 +119,7 @@ class TrancaControllerTest {
         NovaTrancaDTO novaTrancaDTO = new NovaTrancaDTO();
         Tranca tranca = new Tranca();
         tranca.setId(idTranca);
-        when(trancaService.editarTranca(idTranca, novaTrancaDTO)).thenReturn(tranca);
+        when(trancaService.atualizarTranca(idTranca, novaTrancaDTO)).thenReturn(tranca);
 
         // Act
         ResponseEntity<Tranca> response = trancaController.editarTranca(idTranca, novaTrancaDTO);
@@ -141,7 +141,7 @@ class TrancaControllerTest {
         // Assert
         assertEquals(200, response.getStatusCode().value());
         assertEquals("Tranca removida", response.getBody());
-        verify(trancaService).removerTranca(idTranca);
+        verify(trancaService).excluirTranca(idTranca);
     }
 
     @Test

@@ -5,5 +5,6 @@ public enum StatusTranca {
     OCUPADA,
     NOVA,
     APOSENTADA,
-    EM_REPARO
+    EM_REPARO,
+    EXCLUIDA
 }

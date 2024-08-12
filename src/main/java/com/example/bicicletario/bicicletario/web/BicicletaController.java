@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.example.bicicletario.bicicletario.domain.constants.Constantes.*;
+import static com.example.bicicletario.bicicletario.domain.constants.Constantes.BICICLETA_REMOVIDA;
+import static com.example.bicicletario.bicicletario.domain.constants.Constantes.DADOS_CADASTRADOS;
 
 @RestController
 @RequestMapping("/api/bicicleta")
@@ -29,38 +30,38 @@ public class BicicletaController {
     }
 
     @PostMapping
-    public ResponseEntity<Bicicleta> criarBicicleta(@RequestBody NovaBicicletaDTO bicicleta) {
-        Bicicleta bicicletaCadastrada = bicicletaService.criarBicicleta(bicicleta);
+    public ResponseEntity<Bicicleta> cadastrarBicicleta(@RequestBody NovaBicicletaDTO bicicleta) {
+        Bicicleta bicicletaCadastrada = bicicletaService.cadastrarBicicleta(bicicleta);
         return ResponseEntity.ok(bicicletaCadastrada);
     }
 
     @PostMapping("/integrarNaRede")
     public ResponseEntity<String> integrarNaRede(@RequestBody IntegrarBicicletaNaRedeDTO dto) {
-        bicicletaService.integrarNaRede(dto);
+        bicicletaService.integrarBicicletaNaRede(dto);
         return ResponseEntity.ok(DADOS_CADASTRADOS);
     }
 
     @PostMapping("/retirarDaRede")
     public ResponseEntity<String> retirarDaRede(@RequestBody RetirarBicicletaDaRedeDTO dto) {
-        bicicletaService.retirarDaRede(dto);
+        bicicletaService.retirarBicicletaDaRede(dto);
         return ResponseEntity.ok(DADOS_CADASTRADOS);
     }
 
     @GetMapping("/{idBicicleta}")
     public ResponseEntity<Bicicleta> obterBicicleta(@PathVariable Long idBicicleta) {
-        Bicicleta bicicleta = bicicletaService.obterBicicleta(idBicicleta);
+        Bicicleta bicicleta = bicicletaService.obterBicicletaPorId(idBicicleta);
         return ResponseEntity.ok(bicicleta);
     }
 
     @PutMapping("/{idBicicleta}")
-    public ResponseEntity<Bicicleta> editarBicicleta(@PathVariable Long idBicicleta, @RequestBody NovaBicicletaDTO bicicletaDTO) {
-        Bicicleta bicicletaEditada = bicicletaService.editarBicicleta(idBicicleta, bicicletaDTO);
+    public ResponseEntity<Bicicleta> atualizarBicicleta(@PathVariable Long idBicicleta, @RequestBody NovaBicicletaDTO bicicletaDTO) {
+        Bicicleta bicicletaEditada = bicicletaService.atualizarBicicleta(idBicicleta, bicicletaDTO);
         return ResponseEntity.ok(bicicletaEditada);
     }
 
     @DeleteMapping("/{idBicicleta}")
     public ResponseEntity<String> removerBicicleta(@PathVariable Long idBicicleta) {
-        bicicletaService.removerBicicleta(idBicicleta);
+        bicicletaService.excluirBicicleta(idBicicleta);
         return ResponseEntity.ok(BICICLETA_REMOVIDA);
     }
 

@@ -24,43 +24,43 @@ public class TrancaController {
 
     @PostMapping("/integrarNaRede")
     public ResponseEntity<String> integrarNaRede(@RequestBody IntegrarBicicletaNaRedeDTO dto) {
-        trancaService.integrarNaRede(dto);
+        trancaService.incluirTrancaEmTotem(dto);
         return ResponseEntity.ok(DADOS_CADASTRADOS);
     }
 
     @PostMapping("/retirarDaRede")
     public ResponseEntity<String> retirarDaRede(@RequestBody RetirarTrancaDaRedeDTO dto) {
-        trancaService.retirarDaRede(dto);
+        trancaService.retirarTrancaDaRede(dto);
         return ResponseEntity.ok(DADOS_CADASTRADOS);
     }
 
     @GetMapping
     public ResponseEntity<List<Tranca>> listarTrancas() {
-        List<Tranca> trancas = trancaService.listarTrancas();
+        List<Tranca> trancas = trancaService.listarTodasTrancas();
         return ResponseEntity.ok(trancas);
     }
 
     @PostMapping
     public ResponseEntity<Tranca> cadastrarTranca(@RequestBody NovaTrancaDTO tranca) {
-        Tranca trancaCadastrada = trancaService.cadastrarTranca(tranca);
+        Tranca trancaCadastrada = trancaService.cadastrarNovaTranca(tranca);
         return ResponseEntity.ok(trancaCadastrada);
     }
 
     @GetMapping("/{idTranca}")
     public ResponseEntity<Tranca> obterTranca(@PathVariable Long idTranca) {
-        Tranca tranca = trancaService.obterTranca(idTranca);
+        Tranca tranca = trancaService.obterTrancaPorId(idTranca);
         return ResponseEntity.ok(tranca);
     }
 
     @PutMapping("/{idTranca}")
     public ResponseEntity<Tranca> editarTranca(@PathVariable Long idTranca, @RequestBody NovaTrancaDTO tranca) {
-        Tranca trancaEditada = trancaService.editarTranca(idTranca, tranca);
+        Tranca trancaEditada = trancaService.atualizarTranca(idTranca, tranca);
         return ResponseEntity.ok(trancaEditada);
     }
 
     @DeleteMapping("/{idTranca}")
     public ResponseEntity<String> removerTranca(@PathVariable Long idTranca) {
-        trancaService.removerTranca(idTranca);
+        trancaService.excluirTranca(idTranca);
         return ResponseEntity.ok(TRANCA_REMOVIDA);
     }
 

@@ -47,4 +47,8 @@ public class TrancaRepository {
     public boolean existsByTotemId(Long idTotem) {
         return trancas.stream().anyMatch(t -> t.getTotem().getId().equals(idTotem));
     }
+
+    public boolean existsByBicicletaId(Long id) {
+        return trancas.stream().anyMatch(t -> t.getBicicleta().getId().equals(id));
+    }
 }

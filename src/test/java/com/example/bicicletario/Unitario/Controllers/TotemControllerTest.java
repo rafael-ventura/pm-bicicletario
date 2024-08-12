@@ -37,7 +37,7 @@ class TotemControllerTest {
         // Arrange
         Totem totem = new Totem();
         totem.setId(1L);
-        when(totemService.listarTotens()).thenReturn(List.of(totem));
+        when(totemService.listarTodosTotens()).thenReturn(List.of(totem));
 
         // Act
         ResponseEntity<List<Totem>> response = totemController.listarTotens();
@@ -55,7 +55,7 @@ class TotemControllerTest {
         NovoTotemDTO novoTotem = new NovoTotemDTO();
         Totem totem = new Totem();
         totem.setId(1L);
-        when(totemService.cadastrarTotem(novoTotem)).thenReturn(totem);
+        when(totemService.cadastrarNovoTotem(novoTotem)).thenReturn(totem);
 
         // Act
         ResponseEntity<Totem> response = totemController.criarTotem(novoTotem);
@@ -73,7 +73,7 @@ class TotemControllerTest {
         NovoTotemDTO novoTotem = new NovoTotemDTO();
         Totem totem = new Totem();
         totem.setId(totemId);
-        when(totemService.editarTotem(totemId, novoTotem)).thenReturn(totem);
+        when(totemService.atualizarTotem(totemId, novoTotem)).thenReturn(totem);
 
         // Act
         ResponseEntity<Totem> response = totemController.editarTotem(totemId, novoTotem);
@@ -103,7 +103,7 @@ class TotemControllerTest {
         Long totemId = 1L;
         Tranca tranca = new Tranca();
         tranca.setId(1L);
-        when(totemService.listarTrancas(totemId)).thenReturn(List.of(tranca));
+        when(totemService.listarTrancasPorTotem(totemId)).thenReturn(List.of(tranca));
 
         // Act
         ResponseEntity<List<Tranca>> response = totemController.listarTrancas(totemId);
@@ -121,7 +121,7 @@ class TotemControllerTest {
         Long totemId = 1L;
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1L);
-        when(totemService.listarBicicletas(totemId)).thenReturn(List.of(bicicleta));
+        when(totemService.listarBicicletasPorTotem(totemId)).thenReturn(List.of(bicicleta));
 
         // Act
         ResponseEntity<List<Bicicleta>> response = totemController.listarBicicletas(totemId);

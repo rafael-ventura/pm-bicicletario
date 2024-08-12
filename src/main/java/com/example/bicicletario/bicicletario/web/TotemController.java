@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.example.bicicletario.bicicletario.domain.constants.Constantes.*;
+import static com.example.bicicletario.bicicletario.domain.constants.Constantes.TOTEM_REMOVIDO;
 
 @RestController
 @RequestMapping("/api/totem")
@@ -24,37 +24,37 @@ public class TotemController {
 
     @GetMapping
     public ResponseEntity<List<Totem>> listarTotens() {
-        List<Totem> totens = totemService.listarTotens();
+        List<Totem> totens = totemService.listarTodosTotens();
         return ResponseEntity.ok(totens);
     }
 
     @PostMapping
     public ResponseEntity<Totem> criarTotem(@RequestBody NovoTotemDTO totem) {
-        Totem totemCadastrado = totemService.cadastrarTotem(totem);
+        Totem totemCadastrado = totemService.cadastrarNovoTotem(totem);
         return ResponseEntity.ok(totemCadastrado);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Totem> editarTotem(@PathVariable Long id, @RequestBody NovoTotemDTO totemDTO) {
-        Totem totemEditado = totemService.editarTotem(id, totemDTO);
+        Totem totemEditado = totemService.atualizarTotem(id, totemDTO);
         return ResponseEntity.ok(totemEditado);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> removerTotem(@PathVariable Long id) {
-        totemService.removerTotem(id);
+        totemService.excluirTotem(id);
         return ResponseEntity.ok(TOTEM_REMOVIDO);
     }
 
     @GetMapping("/{id}/trancas")
     public ResponseEntity<List<Tranca>> listarTrancas(@PathVariable Long id) {
-        List<Tranca> trancas = totemService.listarTrancas(id);
+        List<Tranca> trancas = totemService.listarTrancasPorTotem(id);
         return ResponseEntity.ok(trancas);
     }
 
     @GetMapping("/{id}/bicicletas")
     public ResponseEntity<List<Bicicleta>> listarBicicletas(@PathVariable Long id) {
-        List<Bicicleta> bicicletas = totemService.listarBicicletas(id);
+        List<Bicicleta> bicicletas = totemService.listarBicicletasPorTotem(id);
         return ResponseEntity.ok(bicicletas);
     }
 }

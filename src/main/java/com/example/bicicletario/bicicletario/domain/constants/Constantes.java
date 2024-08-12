@@ -2,7 +2,6 @@ package com.example.bicicletario.bicicletario.domain.constants;
 
 public class Constantes {
 
-    // Mensagens existentes
     public static final String TRANCA_PRENCHIDA = "Tranca está com bicicleta presa";
     public static final String STATUS_DE_ACAO_REPARADOR_INVALIDO = "Status de ação do reparador inválido";
     public static final String TRANCA_NAO_ENCONTRADA = "Tranca não encontrada";

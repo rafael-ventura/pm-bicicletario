@@ -1,4 +1,4 @@
-package com.example.bicicletario.bicicletario.mapper;
+package com.example.bicicletario.bicicletario.domain.mapper;
 
 import com.example.bicicletario.bicicletario.domain.models.Totem;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;

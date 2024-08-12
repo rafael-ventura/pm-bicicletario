@@ -7,13 +7,12 @@ import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeD
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
-import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
+import com.example.bicicletario.bicicletario.domain.mapper.TrancaMapper;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
-import com.example.bicicletario.bicicletario.mapper.TrancaMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,7 +27,8 @@ public class TrancaService {
     private final FuncionarioService funcionarioService;
     private final BicicletaRepository bicicletaRepository;
 
-    public TrancaService(TrancaRepository trancaRepository, TrancaMapper trancaMapper, EmailService emailService, FuncionarioService funcionarioService, BicicletaRepository bicicletaRepository) {
+    public TrancaService(TrancaRepository trancaRepository, TrancaMapper trancaMapper,
+                         EmailService emailService, FuncionarioService funcionarioService, BicicletaRepository bicicletaRepository) {
         this.trancaRepository = trancaRepository;
         this.trancaMapper = trancaMapper;
         this.emailService = emailService;
@@ -36,128 +36,82 @@ public class TrancaService {
         this.bicicletaRepository = bicicletaRepository;
     }
 
-    public void integrarNaRede(IntegrarBicicletaNaRedeDTO dto) {
-        Tranca tranca = findTrancaByIdOrThrow(dto.getIdTranca());
-
-        validarTrancaStatusParaIntegracao(tranca);
-
-        if (tranca.getStatus() == StatusTranca.EM_REPARO) {
-            validarFuncionarioParaReparo(dto.getIdFuncionario());
-        }
-
-        updateTrancaParaIntegracao(tranca);
-
-        try {
-            emailService.enviarEmailParaReparador(dto.getIdFuncionario());
-        } catch (Exception e) {
-            throw new InvalidDataException(Constantes.ERROR_ENVIAR_EMAIL);
-        }
+    public void incluirTrancaEmTotem(IntegrarBicicletaNaRedeDTO dto) {
+        Tranca tranca = obterTrancaPorId(dto.getIdTranca());
+        validarCondicoesParaInclusao(tranca, dto.getIdFuncionario());
+        atualizarTrancaParaInclusao(tranca, dto.getIdFuncionario());
+        enviarEmailInclusao(tranca, dto.getIdFuncionario());
     }
 
-    public void retirarDaRede(RetirarTrancaDaRedeDTO dto) {
-        Tranca tranca = findTrancaByIdOrThrow(dto.getIdTranca());
-
-        validarTrancaParaRemover(tranca, dto.getStatusAcaoReparador());
-
-        updateTrancaParaRemover(tranca, dto.getStatusAcaoReparador());
-
-        try {
-            emailService.enviarEmailParaReparador(dto.getIdFuncionario());
-        } catch (Exception e) {
-            throw new InvalidDataException(Constantes.ERROR_ENVIAR_EMAIL);
-        }
+    public void retirarTrancaDaRede(RetirarTrancaDaRedeDTO dto) {
+        Tranca tranca = obterTrancaPorId(dto.getIdTranca());
+        validarCondicoesParaRetirada(tranca, dto.getStatusAcaoReparador());
+        atualizarTrancaParaRetirada(tranca, dto.getIdFuncionario(), dto.getStatusAcaoReparador());
+        enviarEmailParaReparador(dto.getIdFuncionario(), tranca);
     }
 
-    public List<Tranca> listarTrancas() {
+    public Tranca cadastrarNovaTranca(NovaTrancaDTO trancaDTO) {
+        validarDadosTranca(trancaDTO);
+        Tranca novaTranca = trancaMapper.toEntity(trancaDTO);
+        novaTranca.setStatus(StatusTranca.NOVA);
+        return trancaRepository.save(novaTranca);
+    }
+
+    public Tranca atualizarTranca(Long idTranca, NovaTrancaDTO trancaDTO) {
+        Tranca trancaExistente = obterTrancaPorId(idTranca);
+        validarDadosTranca(trancaDTO);
+        atualizarDadosTranca(trancaExistente, trancaDTO);
+        return trancaRepository.save(trancaExistente);
+    }
+
+    public void excluirTranca(Long idTranca) {
+        Tranca tranca = obterTrancaPorId(idTranca);
+        validarExclusaoDeTranca(tranca);
+        tranca.setStatus(StatusTranca.EXCLUIDA);
+        trancaRepository.save(tranca);
+    }
+
+    public List<Tranca> listarTodasTrancas() {
         return trancaRepository.findAll();
     }
 
-    public Tranca cadastrarTranca(NovaTrancaDTO trancaDTO) {
-        Tranca tranca = trancaMapper.toEntity(trancaDTO);
-        return trancaRepository.save(tranca);
-    }
-
-    public Tranca obterTranca(Long idTranca) {
-        return findTrancaByIdOrThrow(idTranca);
-    }
-
-    public Tranca editarTranca(Long idTranca, NovaTrancaDTO trancaDTO) {
-        Tranca existente = findTrancaByIdOrThrow(idTranca);
-        existente.setLocalizacao(trancaDTO.getLocalizacao());
-        return trancaRepository.save(existente);
-    }
-
-    public void removerTranca(Long idTranca) {
-        trancaRepository.deleteById(idTranca);
-    }
-
-    public Tranca obterBicicletaNaTranca(Long idTranca) {
-        return findTrancaByIdOrThrow(idTranca);
-    }
-
-    public void trancarTranca(Long idTranca, Long bicicletaId) {
-        Tranca tranca = findTrancaByIdOrThrow(idTranca);
-        Bicicleta bicicleta = findBicicletaByIdOrThrow(bicicletaId);
-
-        validarTrancaStatusParaTrancar(tranca);
-
-        updateTrancaEBicicletaParaTrancar(tranca, bicicleta);
-    }
-
-    public void destrancarTranca(Long idTranca, Long bicicletaId) {
-        Tranca tranca = findTrancaByIdOrThrow(idTranca);
-        Bicicleta bicicleta = findBicicletaByIdOrThrow(bicicletaId);
-
-        validarTrancaStatusParaDestrancar(tranca);
-
-        updateTrancaEBicicletaParaDestrancar(tranca, bicicleta);
-    }
-
-    public void alterarStatusTranca(Long idTranca, String acao) {
-        Tranca tranca = findTrancaByIdOrThrow(idTranca);
-        updateTrancaStatus(tranca, acao);
-    }
-
-    // Métodos auxiliares privados
-
-    private Tranca findTrancaByIdOrThrow(Long idTranca) {
+    public Tranca obterTrancaPorId(Long idTranca) {
         return trancaRepository.findById(idTranca)
                 .orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
     }
 
-    private Bicicleta findBicicletaByIdOrThrow(Long idBicicleta) {
-        return bicicletaRepository.findById(idBicicleta)
-                .orElseThrow(() -> new ResourceNotFoundException("Bicicleta não encontrada"));
+    public Tranca obterBicicletaNaTranca(Long idTranca) {
+        Tranca tranca = obterTrancaPorId(idTranca);
+        verificarBicicletaNaTranca(tranca);
+        return tranca;
     }
 
-    private void validarTrancaStatusParaIntegracao(Tranca tranca) {
-        if (tranca.getStatus() != StatusTranca.NOVA && tranca.getStatus() != StatusTranca.EM_REPARO) {
-            throw new InvalidDataException("Status da tranca inválido");
-        }
+    public void trancarTranca(Long idTranca, Long bicicletaId) {
+        Tranca tranca = obterTrancaPorId(idTranca);
+        associarBicicletaATranca(tranca, bicicletaId);
     }
 
-    private void validarFuncionarioParaReparo(Long idFuncionario) {
-        if (!funcionarioService.isFuncionarioValido(idFuncionario)) {
-            throw new InvalidDataException("Funcionário inválido");
-        }
+    public void destrancarTranca(Long idTranca, Long bicicletaId) {
+        Tranca tranca = obterTrancaPorId(idTranca);
+        removerBicicletaDaTranca(tranca, bicicletaId);
     }
 
-    private void updateTrancaParaIntegracao(Tranca tranca) {
+    public void alterarStatusTranca(Long idTranca, String acao) {
+        Tranca tranca = obterTrancaPorId(idTranca);
+        atualizarStatusTranca(tranca, acao);
+    }
+
+    // Métodos auxiliares privados encapsulados
+
+    private void atualizarTrancaParaInclusao(Tranca tranca, Long idFuncionario) {
         tranca.setStatus(StatusTranca.LIVRE);
         tranca.setDataInsercaoTotem(LocalDateTime.now().toString());
+        tranca.setIdFuncionarioUltimaOperacao(idFuncionario);
         trancaRepository.save(tranca);
     }
 
-    private void validarTrancaParaRemover(Tranca tranca, StatusAcaoReparador statusAcaoReparador) {
-        if (trancaTemBicicleta(tranca)) {
-            throw new InvalidDataException(Constantes.TRANCA_PRENCHIDA);
-        }
-        if (statusAcaoReparador == null) {
-            throw new InvalidDataException(Constantes.STATUS_DE_ACAO_REPARADOR_INVALIDO);
-        }
-    }
-
-    private void updateTrancaParaRemover(Tranca tranca, StatusAcaoReparador statusAcaoReparador) {
+    private void atualizarTrancaParaRetirada(Tranca tranca, Long idFuncionario, StatusAcaoReparador statusAcaoReparador) {
+        tranca.setIdFuncionarioUltimaOperacao(idFuncionario);
         if (statusAcaoReparador.equals(StatusAcaoReparador.EM_REPARO)) {
             tranca.setStatus(StatusTranca.EM_REPARO);
         } else if (statusAcaoReparador.equals(StatusAcaoReparador.APOSENTADA)) {
@@ -166,43 +120,118 @@ public class TrancaService {
         trancaRepository.save(tranca);
     }
 
-    private void validarTrancaStatusParaTrancar(Tranca tranca) {
-        if (tranca.getStatus() != StatusTranca.LIVRE) {
-            throw new InvalidDataException("Tranca não está livre");
-        }
-    }
-
-    private void updateTrancaEBicicletaParaTrancar(Tranca tranca, Bicicleta bicicleta) {
-        tranca.setStatus(StatusTranca.OCUPADA);
-        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
-        trancaRepository.save(tranca);
-        bicicletaRepository.save(bicicleta);
-    }
-
-    private void validarTrancaStatusParaDestrancar(Tranca tranca) {
-        if (tranca.getStatus() != StatusTranca.OCUPADA) {
-            throw new InvalidDataException("Tranca não está ocupada");
-        }
-    }
-
-    private void updateTrancaEBicicletaParaDestrancar(Tranca tranca, Bicicleta bicicleta) {
-        tranca.setStatus(StatusTranca.LIVRE);
-        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
-        trancaRepository.save(tranca);
-        bicicletaRepository.save(bicicleta);
-    }
-
-    private void updateTrancaStatus(Tranca tranca, String acao) {
-        try {
-            StatusTranca novoStatus = StatusTranca.valueOf(acao.toUpperCase());
-            tranca.setStatus(novoStatus);
+    private void associarBicicletaATranca(Tranca tranca, Long bicicletaId) {
+        if (bicicletaId != null) {
+            Bicicleta bicicleta = buscarBicicletaPorId(bicicletaId);
+            tranca.setBicicleta(bicicleta);
+            tranca.setStatus(StatusTranca.OCUPADA);
             trancaRepository.save(tranca);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidDataException("Status de tranca inválido");
+        } else {
+            throw new InvalidDataException(Constantes.BICICLETA_NAO_ENCONTRADA);
+        }
+    }
+
+    private void removerBicicletaDaTranca(Tranca tranca, Long bicicletaId) {
+        if (tranca.getBicicleta() != null && tranca.getBicicleta().getId().equals(bicicletaId)) {
+            tranca.setBicicleta(null);
+            tranca.setStatus(StatusTranca.LIVRE);
+            trancaRepository.save(tranca);
+        } else {
+            throw new InvalidDataException(Constantes.BICICLETA_NAO_ENCONTRADA);
+        }
+    }
+
+    private void atualizarStatusTranca(Tranca tranca, String acao) {
+        switch (acao.toLowerCase()) {
+            case "livre":
+                tranca.setStatus(StatusTranca.LIVRE);
+                break;
+            case "ocupada":
+                tranca.setStatus(StatusTranca.OCUPADA);
+                break;
+            case "em reparo":
+                tranca.setStatus(StatusTranca.EM_REPARO);
+                break;
+            case "nova":
+                tranca.setStatus(StatusTranca.NOVA);
+                break;
+            case "aposentada":
+                tranca.setStatus(StatusTranca.APOSENTADA);
+                break;
+            default:
+                throw new InvalidDataException(Constantes.ERRO_ALTERAR_STATUS_TRANCA);
+        }
+        trancaRepository.save(tranca);
+    }
+
+    private Bicicleta buscarBicicletaPorId(Long bicicletaId) {
+        return bicicletaRepository.findById(bicicletaId)
+                .orElseThrow(() -> new ResourceNotFoundException(Constantes.BICICLETA_NAO_ENCONTRADA));
+    }
+
+    private void verificarBicicletaNaTranca(Tranca tranca) {
+        if (tranca.getBicicleta() == null) {
+            throw new InvalidDataException(Constantes.BICICLETA_NAO_ENCONTRADA);
+        }
+    }
+
+    private void validarCondicoesParaInclusao(Tranca tranca, Long idFuncionario) {
+        if (tranca.getStatus() != StatusTranca.NOVA && tranca.getStatus() != StatusTranca.EM_REPARO) {
+            throw new InvalidDataException(Constantes.TRANCA_NAO_DISPONIVEL);
+        }
+        if (tranca.getStatus() == StatusTranca.EM_REPARO && !funcionarioService.isFuncionarioValido(idFuncionario)) {
+            throw new InvalidDataException(Constantes.FUNCIONARIO_INVALIDO);
+        }
+    }
+
+    private void validarCondicoesParaRetirada(Tranca tranca, StatusAcaoReparador statusAcaoReparador) {
+        if (trancaTemBicicleta(tranca)) {
+            throw new InvalidDataException(Constantes.TRANCA_PRENCHIDA);
+        }
+        if (statusAcaoReparador == null) {
+            throw new InvalidDataException(Constantes.STATUS_DE_ACAO_REPARADOR_INVALIDO);
+        }
+        if (tranca.getStatus() != StatusTranca.EM_REPARO) {
+            throw new InvalidDataException(Constantes.TRANCA_NAO_DISPONIVEL);
+        }
+    }
+
+    private void validarDadosTranca(NovaTrancaDTO trancaDTO) {
+        if (trancaDTO.getLocalizacao() == null || trancaDTO.getModelo() == null || trancaDTO.getAnoDeFabricacao() == null) {
+            throw new InvalidDataException(Constantes.DADOS_INVALIDOS);
+        }
+    }
+
+    private void atualizarDadosTranca(Tranca trancaExistente, NovaTrancaDTO trancaDTO) {
+        trancaExistente.setNumero(trancaDTO.getNumero());
+        trancaExistente.setModelo(trancaDTO.getModelo());
+        trancaExistente.setAnoDeFabricacao(trancaDTO.getAnoDeFabricacao());
+        trancaExistente.setStatus(trancaDTO.getStatus());
+    }
+
+    private void validarExclusaoDeTranca(Tranca tranca) {
+        if (trancaTemBicicleta(tranca)) {
+            throw new InvalidDataException(Constantes.TRANCA_PRENCHIDA);
+        }
+    }
+
+    private void enviarEmailInclusao(Tranca tranca, Long idFuncionario) {
+        try {
+            emailService.enviarEmailParaReparador(idFuncionario);
+        } catch (Exception e) {
+            throw new InvalidDataException(Constantes.ERROR_ENVIAR_EMAIL);
+        }
+    }
+
+    private void enviarEmailParaReparador(Long idFuncionario, Tranca tranca) {
+        try {
+            emailService.enviarEmailParaReparador(idFuncionario);
+        } catch (Exception e) {
+            throw new InvalidDataException(Constantes.ERROR_ENVIAR_EMAIL);
         }
     }
 
     private boolean trancaTemBicicleta(Tranca tranca) {
-        return tranca.getStatus().equals(StatusTranca.OCUPADA);
+        return tranca.getStatus() == StatusTranca.OCUPADA;
     }
 }

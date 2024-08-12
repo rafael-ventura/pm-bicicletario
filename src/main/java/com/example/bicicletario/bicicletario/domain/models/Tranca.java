@@ -2,7 +2,6 @@ package com.example.bicicletario.bicicletario.domain.models;
 
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 
-
 public class Tranca {
 
     private Long id;
@@ -21,7 +20,14 @@ public class Tranca {
 
     private String dataInsercaoTotem;
 
+    private Long idFuncionarioUltimaOperacao;
+
     private Totem totem;
+
+    public Tranca() {
+    }
+
+    // Getters e Setters
 
     public Long getId() {
         return id;
@@ -75,8 +81,8 @@ public class Tranca {
         return totem;
     }
 
-    public void setTotem(Totem totemId) {
-        this.totem = totemId;
+    public void setTotem(Totem totem) {
+        this.totem = totem;
     }
 
     public Bicicleta getBicicleta() {
@@ -87,7 +93,19 @@ public class Tranca {
         this.bicicleta = bicicleta;
     }
 
-    public void setDataInsercaoTotem(String string) {
-        this.dataInsercaoTotem = string;
+    public String getDataInsercaoTotem() {
+        return dataInsercaoTotem;
+    }
+
+    public void setDataInsercaoTotem(String dataInsercaoTotem) {
+        this.dataInsercaoTotem = dataInsercaoTotem;
+    }
+
+    public Long getIdFuncionarioUltimaOperacao() {
+        return idFuncionarioUltimaOperacao;
+    }
+
+    public void setIdFuncionarioUltimaOperacao(Long idFuncionarioUltimaOperacao) {
+        this.idFuncionarioUltimaOperacao = idFuncionarioUltimaOperacao;
     }
 }
