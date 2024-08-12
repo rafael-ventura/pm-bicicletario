@@ -40,14 +40,14 @@ public class TrancaService {
         Tranca tranca = obterTrancaPorId(dto.getIdTranca());
         validarCondicoesParaInclusao(tranca, dto.getIdFuncionario());
         atualizarTrancaParaInclusao(tranca, dto.getIdFuncionario());
-        enviarEmailInclusao(tranca, dto.getIdFuncionario());
+        enviarEmailInclusao(dto.getIdFuncionario());
     }
 
     public void retirarTrancaDaRede(RetirarTrancaDaRedeDTO dto) {
         Tranca tranca = obterTrancaPorId(dto.getIdTranca());
         validarCondicoesParaRetirada(tranca, dto.getStatusAcaoReparador());
         atualizarTrancaParaRetirada(tranca, dto.getIdFuncionario(), dto.getStatusAcaoReparador());
-        enviarEmailParaReparador(dto.getIdFuncionario(), tranca);
+        enviarEmailParaReparador(dto.getIdFuncionario());
     }
 
     public Tranca cadastrarNovaTranca(NovaTrancaDTO trancaDTO) {
@@ -215,7 +215,7 @@ public class TrancaService {
         }
     }
 
-    private void enviarEmailInclusao(Tranca tranca, Long idFuncionario) {
+    private void enviarEmailInclusao(Long idFuncionario) {
         try {
             emailService.enviarEmailParaReparador(idFuncionario);
         } catch (Exception e) {
@@ -223,7 +223,7 @@ public class TrancaService {
         }
     }
 
-    private void enviarEmailParaReparador(Long idFuncionario, Tranca tranca) {
+    private void enviarEmailParaReparador(Long idFuncionario) {
         try {
             emailService.enviarEmailParaReparador(idFuncionario);
         } catch (Exception e) {
