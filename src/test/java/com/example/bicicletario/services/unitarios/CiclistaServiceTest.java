@@ -2,12 +2,14 @@ package com.example.bicicletario.services.unitarios;
 
 import com.example.bicicletario.bicicletario.application.CartaoDeCreditoService;
 import com.example.bicicletario.bicicletario.application.CiclistaService;
+import com.example.bicicletario.bicicletario.application.Constants;
 import com.example.bicicletario.bicicletario.application.external.BicicletaService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
+import com.example.bicicletario.bicicletario.domain.enums.Nacionalidade;
 import com.example.bicicletario.bicicletario.domain.enums.StatusCiclista;
 import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
@@ -52,11 +54,21 @@ class CiclistaServiceTest {
     void cadastrarCiclista_Success() {
         // Arrange
         NovoCiclistaRequestDTO request = new NovoCiclistaRequestDTO();
+
+        // Preencher todos os campos obrigatórios no NovoCiclistaDTO
         NovoCiclistaDTO novoCiclistaDTO = new NovoCiclistaDTO();
-        novoCiclistaDTO.setEmail("test@example.com");
+        novoCiclistaDTO.setEmail("newemail@example.com");
+        novoCiclistaDTO.setNome("Novo Nome");
+        novoCiclistaDTO.setCpf("12345678900");
+        novoCiclistaDTO.setNascimento("1990-01-01");
+        novoCiclistaDTO.setNacionalidade(Nacionalidade.BRASILEIRO);
+
         request.setCiclista(novoCiclistaDTO);
+
         Ciclista ciclista = new Ciclista();
         ciclista.setId(1);
+
+        // Simular os comportamentos do Mapper e do Repositório
         when(ciclistaMapper.toEntity(novoCiclistaDTO)).thenReturn(ciclista);
         when(ciclistaRepository.save(any(Ciclista.class))).thenReturn(ciclista);
 
@@ -69,6 +81,7 @@ class CiclistaServiceTest {
         verify(cartaoDeCreditoService).save(request.getMeioDePagamento(), ciclista.getId());
         verify(ciclistaRepository).save(ciclista);
     }
+
 
     @Test
     void cadastrarCiclista_InvalidData() {
@@ -112,7 +125,7 @@ class CiclistaServiceTest {
             ciclistaService.obterCiclista(idCiclista);
         });
 
-        assertEquals("Ciclista não encontrado: " + idCiclista, exception.getMessage());
+        assertEquals(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista, exception.getMessage());
     }
 
     @Test
@@ -120,9 +133,20 @@ class CiclistaServiceTest {
         // Arrange
         int idCiclista = 1;
         NovoCiclistaDTO novoCiclistaDTO = new NovoCiclistaDTO();
+        // Preenchendo todos os campos obrigatórios
         novoCiclistaDTO.setEmail("newemail@example.com");
+        novoCiclistaDTO.setNome("Novo Nome");
+        novoCiclistaDTO.setCpf("12345678900");
+        novoCiclistaDTO.setNascimento("1990-01-01");
+        novoCiclistaDTO.setNacionalidade(Nacionalidade.BRASILEIRO);
+
         Ciclista ciclista = new Ciclista();
         ciclista.setId(idCiclista);
+        ciclista.setEmail(novoCiclistaDTO.getEmail());
+        ciclista.setNome(novoCiclistaDTO.getNome());
+        ciclista.setCpf(novoCiclistaDTO.getCpf());
+
+        // Simulando o comportamento dos mocks
         when(ciclistaRepository.existsById(idCiclista)).thenReturn(true);
         when(ciclistaMapper.toEntity(novoCiclistaDTO)).thenReturn(ciclista);
         when(ciclistaRepository.save(any(Ciclista.class))).thenReturn(ciclista);
@@ -148,7 +172,7 @@ class CiclistaServiceTest {
             ciclistaService.alterarCiclista(idCiclista, novoCiclistaDTO);
         });
 
-        assertEquals("Ciclista não encontrado: " + idCiclista, exception.getMessage());
+        assertEquals("Ciclista não encontrado com o ID: " + idCiclista, exception.getMessage());
     }
 
     @Test
@@ -157,16 +181,23 @@ class CiclistaServiceTest {
         int idCiclista = 1;
         Ciclista ciclista = new Ciclista();
         ciclista.setId(idCiclista);
+        ciclista.setStatus(StatusCiclista.INATIVO); // Status inicial
+
+        // Simulando a busca do ciclista no repositório
         when(ciclistaRepository.findById(idCiclista)).thenReturn(Optional.of(ciclista));
+
+        // Simulando o comportamento do método save para retornar o ciclista com status atualizado
+        when(ciclistaRepository.save(ciclista)).thenReturn(ciclista);
 
         // Act
         Ciclista result = ciclistaService.ativarCiclista(idCiclista);
 
         // Assert
         assertNotNull(result);
-        assertEquals(StatusCiclista.ATIVO, result.getStatus());
-        verify(ciclistaRepository).save(ciclista);
+        assertEquals(StatusCiclista.ATIVO, result.getStatus()); // Verifica se o status foi atualizado
+        verify(ciclistaRepository).save(ciclista); // Verifica se o método save foi chamado
     }
+
 
     @Test
     void ativarCiclista_NotFound() {
@@ -179,7 +210,7 @@ class CiclistaServiceTest {
             ciclistaService.ativarCiclista(idCiclista);
         });
 
-        assertEquals("Ciclista não encontrado: " + idCiclista, exception.getMessage());
+        assertEquals(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista, exception.getMessage());
     }
 
     @Test
@@ -227,9 +258,10 @@ class CiclistaServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
 
+        // Mockando os repositórios e serviços
         when(ciclistaRepository.findById(idCiclista)).thenReturn(Optional.of(ciclista));
         when(aluguelRepository.findByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(Optional.of(aluguel));
-        when(bicicletaService.getBicicleta()).thenReturn(bicicleta);
+        when(bicicletaService.getBicicleta(1)).thenReturn(Optional.of(bicicleta));
 
         // Act
         Optional<Bicicleta> result = ciclistaService.obterBicicletaAlugada(idCiclista);
@@ -238,4 +270,5 @@ class CiclistaServiceTest {
         assertTrue(result.isPresent());
         assertEquals(bicicleta, result.get());
     }
+
 }

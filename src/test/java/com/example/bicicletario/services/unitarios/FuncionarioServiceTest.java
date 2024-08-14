@@ -119,7 +119,7 @@ class FuncionarioServiceTest {
             funcionarioService.obterFuncionario(idFuncionario);
         });
 
-        assertEquals("Funcionário não encontrado: " + idFuncionario, exception.getMessage());
+        assertEquals("Funcionário não encontrado com o ID: " + idFuncionario, exception.getMessage());
     }
 
     @Test
@@ -154,7 +154,7 @@ class FuncionarioServiceTest {
             funcionarioService.alterarFuncionario(idFuncionario, novoFuncionarioDTO);
         });
 
-        assertEquals("Funcionário não encontrado: " + idFuncionario, exception.getMessage());
+        assertEquals("Funcionário não encontrado com o ID: " + idFuncionario, exception.getMessage());
     }
 
     @Test
@@ -183,6 +183,6 @@ class FuncionarioServiceTest {
             funcionarioService.excluirFuncionario(idFuncionario);
         });
 
-        assertEquals("Funcionário não encontrado: " + idFuncionario, exception.getMessage());
+        assertEquals("Funcionário não encontrado com o ID: " + idFuncionario, exception.getMessage());
     }
 }

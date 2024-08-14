@@ -1,11 +1,14 @@
 package com.example.bicicletario.bicicletario.infraestructure;
 
 import com.example.bicicletario.bicicletario.domain.Devolucao;
+import org.springframework.stereotype.Repository;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Repository
 public class DevolucaoRepository {
     private final Map<Integer, Devolucao> devolucoes = new HashMap<>();
     private final AtomicInteger idGenerator = new AtomicInteger(); // Gerador de ID

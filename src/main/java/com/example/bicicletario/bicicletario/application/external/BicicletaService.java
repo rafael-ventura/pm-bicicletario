@@ -1,6 +1,5 @@
 package com.example.bicicletario.bicicletario.application.external;
 
-import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,4 @@ public class BicicletaService {
         bicicleta.setStatusBicicleta(status);
     }
 
-    public void enviarNotificacaoAluguel(int idCiclista, Aluguel aluguel) {
-
-    }
 }

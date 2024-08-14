@@ -1,6 +1,7 @@
 package com.example.bicicletario.controllers.unitarios;
 
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
+import com.example.bicicletario.bicicletario.domain.Funcionario;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
 import com.example.bicicletario.bicicletario.mapper.FuncionarioMapper;
 import com.example.bicicletario.bicicletario.web.FuncionarioController;
@@ -52,17 +53,22 @@ class FuncionarioControllerTest {
     void cadastrarFuncionario_Success() {
         // Arrange
         NovoFuncionarioDTO novoFuncionarioDTO = new NovoFuncionarioDTO();
+        Funcionario funcionario = new Funcionario(); // Entidade retornada pelo mapper
         NovoFuncionarioDTO savedFuncionarioDTO = new NovoFuncionarioDTO();
-        when(funcionarioService.cadastrarFuncionario(novoFuncionarioDTO)).thenReturn(funcionarioMapper.toEntity(novoFuncionarioDTO));
-        when(novoFuncionarioDTO).thenReturn(savedFuncionarioDTO);
+
+        // Simulando o comportamento do serviço e do mapper
+        when(funcionarioService.cadastrarFuncionario(novoFuncionarioDTO)).thenReturn(funcionario);
+        when(funcionarioMapper.toDto(funcionario)).thenReturn(savedFuncionarioDTO);
 
         // Act
         ResponseEntity<NovoFuncionarioDTO> response = funcionarioController.cadastrarFuncionario(novoFuncionarioDTO);
 
         // Assert
         assertEquals(200, response.getStatusCode().value());
-        assertNotNull(response.getBody());
-        verify(funcionarioMapper).toEntity(novoFuncionarioDTO);
+        assertNotNull(response.getBody()); // Verifica se o corpo da resposta não é nulo
+        assertEquals(savedFuncionarioDTO, response.getBody()); // Verifica se o corpo da resposta é o DTO esperado
+        verify(funcionarioService).cadastrarFuncionario(novoFuncionarioDTO);
+        verify(funcionarioMapper).toDto(funcionario);
     }
 
     @Test

@@ -15,6 +15,7 @@ import com.example.bicicletario.bicicletario.mapper.CartaoDeCreditoMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -47,17 +48,24 @@ public class CartaoDeCreditoService {
     }
 
     public void alterarCartaoDeCredito(int idCiclista, NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO) {
+        // Primeiro, verificar se o cartão de crédito existe
+        CartaoDeCredito cartaoDeCredito = cartaoDeCreditoRepository.findByCiclistaId(idCiclista)
+                .orElseThrow(() -> new ResourceNotFoundException("Cartão de crédito não encontrado."));
+
+        // Agora, validar os dados do cartão de crédito
         validarCartaoDeCredito(novoCartaoDeCreditoDTO);
 
-        CartaoDeCredito cartaoDeCredito = cartaoDeCreditoRepository.findByCiclistaId(idCiclista).orElseThrow(() -> new ResourceNotFoundException("Cartão de crédito não encontrado."));
+        // Atualizar os detalhes do cartão de crédito
         cartaoDeCredito.setNomeTitular(novoCartaoDeCreditoDTO.getNomeTitular());
         cartaoDeCredito.setNumero(novoCartaoDeCreditoDTO.getNumero());
         cartaoDeCredito.setValidade(novoCartaoDeCreditoDTO.getValidade());
         cartaoDeCredito.setCvv(novoCartaoDeCreditoDTO.getCvv());
         cartaoDeCreditoRepository.save(cartaoDeCredito);
 
+        // Enviar email de confirmação
         enviarEmailAlteracaoDeDados(idCiclista);
     }
+
 
     public void validarCartaoDeCredito(NovoCartaoDeCreditoDTO cartaoDeCreditoDTO) {
         if (cartaoDeCreditoDTO.getNomeTitular() == null || cartaoDeCreditoDTO.getNomeTitular().isEmpty()) {
@@ -73,7 +81,11 @@ public class CartaoDeCreditoService {
             throw new InvalidDataException("CVV do cartão de crédito inválido.");
         }
 
-        validarCartaoJuntoACC(cartaoDeCreditoDTO);
+        // Aqui deve ser onde a exceção está faltando
+        boolean valid = administradoraCCService.validarCartao(cartaoDeCreditoDTO, true);
+        if (!valid) {
+            throw new InvalidDataException("Cartão de crédito inválido.");
+        }
     }
 
     private boolean isValidDateFormat(String dateStr) {
@@ -85,19 +97,8 @@ public class CartaoDeCreditoService {
         }
     }
 
-    private void validarCartaoJuntoACC(NovoCartaoDeCreditoDTO cartaoDeCredito) {
-        try {
-            boolean valid = administradoraCCService.validarCartao(cartaoDeCredito, true);
-            if (!valid) {
-                throw new BadRequestException("Cartão de crédito inválido.");
-            }
-        } catch (Exception e) {
-            throw new InvalidDataException("Cartão de crédito inválido.");
-        }
-    }
-
     public void enviarEmailAlteracaoDeDados(int idCiclista) {
-        Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(() -> new ResourceNotFoundException("Ciclista não encontrado."));
+        Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(() -> new ResourceNotFoundException("Ciclista não encontrado com o ID:"));
         logger.info("E-mail de confirmação enviado para: " + ciclista.getEmail());
         // Simulação de envio de e-mail
         EmailDTO email = new EmailDTO();

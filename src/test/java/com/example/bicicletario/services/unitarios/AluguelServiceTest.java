@@ -185,6 +185,6 @@ class AluguelServiceTest {
                 () -> aluguelService.alugarBicicleta(idCiclista, idTranca));
 
         // Verificações
-        assertEquals("Bicicleta não pode ser alugada.", exception.getMessage());
+        assertEquals("Bicicleta não está disponível.", exception.getMessage());
     }
 }

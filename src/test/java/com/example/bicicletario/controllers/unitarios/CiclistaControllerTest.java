@@ -14,6 +14,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import java.util.Optional;
+
+import static com.example.bicicletario.bicicletario.application.Constants.CICLISTA_NAO_ENCONTRADO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -76,7 +78,7 @@ class CiclistaControllerTest {
         try {
             ciclistaController.obterCiclista(idCiclista);
         } catch (ResourceNotFoundException e) {
-            assertEquals("Ciclista não encontrado", e.getMessage());
+            assertEquals(CICLISTA_NAO_ENCONTRADO, e.getMessage());
         }
     }
 

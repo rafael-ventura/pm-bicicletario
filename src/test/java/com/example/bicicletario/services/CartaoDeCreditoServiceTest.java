@@ -97,10 +97,18 @@ class CartaoDeCreditoServiceTest {
     @Test
     void testAlterarCartaoDeCreditoNotFound() {
         NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
+        // Configurando o mock para retornar vazio, simulando que o cartão não foi encontrado
         when(cartaoDeCreditoRepository.findByCiclistaId(anyInt())).thenReturn(Optional.empty());
 
-        assertThrows(InvalidDataException.class, () -> cartaoDeCreditoService.alterarCartaoDeCredito(1, novoCartaoDeCreditoDTO));
+        // Alterando a expectativa para ResourceNotFoundException
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            cartaoDeCreditoService.alterarCartaoDeCredito(1, novoCartaoDeCreditoDTO);
+        });
+
+        // Verificando se a mensagem da exceção é a esperada
+        assertEquals("Cartão de crédito não encontrado.", exception.getMessage());
     }
+
 
     @Test
     void testValidarCartaoDeCredito() {
@@ -117,16 +125,20 @@ class CartaoDeCreditoServiceTest {
 
     @Test
     void testValidarCartaoDeCreditoInvalid() {
+        // Arrange
         NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
         novoCartaoDeCreditoDTO.setNomeTitular("Nome");
         novoCartaoDeCreditoDTO.setNumero("1234567890123456");
         novoCartaoDeCreditoDTO.setValidade("2025-12-31");
         novoCartaoDeCreditoDTO.setCvv("123");
 
+        // Mockando o método para retornar false
         when(administradoraCCService.validarCartao(any(NovoCartaoDeCreditoDTO.class), eq(true))).thenReturn(false);
 
+        // Act & Assert
         assertThrows(InvalidDataException.class, () -> cartaoDeCreditoService.validarCartaoDeCredito(novoCartaoDeCreditoDTO));
     }
+
 
     @Test
     void testSave() {

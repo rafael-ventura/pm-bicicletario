@@ -83,7 +83,18 @@ class CartaoDeCreditoServiceTest {
         novoCartaoDTO.setCvv("123");
 
         CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
+        Ciclista ciclista = new Ciclista();
+        ciclista.setId(1);
+        ciclista.setEmail("test@example.com");
+
+        // Mockando a resposta do repositório de Cartão de Crédito
         when(cartaoDeCreditoRepository.findByCiclistaId(1)).thenReturn(Optional.of(cartaoDeCredito));
+
+        // Mockando a resposta do serviço de validação do cartão
+        when(administradoraCCService.validarCartao(any(NovoCartaoDeCreditoDTO.class), eq(true))).thenReturn(true);
+
+        // Mockando a resposta do repositório de Ciclista
+        when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
 
         // Act
         cartaoDeCreditoService.alterarCartaoDeCredito(1, novoCartaoDTO);
@@ -97,6 +108,12 @@ class CartaoDeCreditoServiceTest {
     void alterarCartaoDeCredito_NotFound() {
         // Arrange
         NovoCartaoDeCreditoDTO novoCartaoDTO = new NovoCartaoDeCreditoDTO();
+        novoCartaoDTO.setNomeTitular("Nome Válido");
+        novoCartaoDTO.setNumero("1234567890123456");
+        novoCartaoDTO.setValidade("2025-12-31");
+        novoCartaoDTO.setCvv("123");
+
+        // Mockando a resposta do repositório para simular que o cartão não foi encontrado
         when(cartaoDeCreditoRepository.findByCiclistaId(1)).thenReturn(Optional.empty());
 
         // Act & Assert
@@ -104,6 +121,7 @@ class CartaoDeCreditoServiceTest {
             cartaoDeCreditoService.alterarCartaoDeCredito(1, novoCartaoDTO);
         });
 
+        // Verifica se a mensagem de erro está correta
         assertEquals("Cartão de crédito não encontrado.", exception.getMessage());
     }
 
@@ -174,6 +192,6 @@ class CartaoDeCreditoServiceTest {
             cartaoDeCreditoService.enviarEmailAlteracaoDeDados(1);
         });
 
-        assertEquals("Ciclista não encontrado.", exception.getMessage());
+        assertEquals("Ciclista não encontrado com o ID:", exception.getMessage());
     }
 }

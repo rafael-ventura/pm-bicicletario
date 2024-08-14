@@ -226,7 +226,7 @@ class CiclistaServiceTest {
         // Mock repository methods
         when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
         when(aluguelRepository.findByCiclistaAndHoraFimIsNull(1)).thenReturn(Optional.of(aluguel));
-        when(bicicletaService.getBicicleta()).thenReturn(bicicleta);
+        when(bicicletaService.getBicicleta(1)).thenReturn(Optional.of(bicicleta));
 
         // Call service method
         Optional<Bicicleta> bicicletaAlugada = ciclistaService.obterBicicletaAlugada(1);
