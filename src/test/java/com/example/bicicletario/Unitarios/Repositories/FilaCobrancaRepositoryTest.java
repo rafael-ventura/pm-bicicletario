@@ -1,4 +1,4 @@
-package com.example.bicicletario.Repositories;
+package com.example.bicicletario.Unitarios.Repositories;
 
 import com.example.bicicletario.bicicletario.domain.Cobranca;
 import com.example.bicicletario.bicicletario.infraestructure.FilaCobrancaRepository;
