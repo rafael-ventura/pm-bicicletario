@@ -59,22 +59,18 @@ public class CiclistaService {
         cartaoDeCreditoService.validarCartaoDeCredito(novoCiclistaRequest.getMeioDePagamento());
     }
 
-    private void validarCiclista(NovoCiclistaDTO novoCiclistaDTO) {
-        validarCamposObrigatorios(novoCiclistaDTO);
-        validarEmail(novoCiclistaDTO.getEmail());
-    }
-
     public Optional<Ciclista> obterCiclista(int idCiclista) {
         return Optional.ofNullable(ciclistaRepository.findById(idCiclista)
                 .orElseThrow(() -> new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista)));
     }
 
-    public Ciclista alterarCiclista(int idCiclista, NovoCiclistaDTO novoCiclistaDTO) throws BadRequestException {
+    public Ciclista alterarCiclista(int idCiclista, NovoCiclistaRequestDTO novoCiclistaDTO) throws BadRequestException {
         if (!ciclistaRepository.existsById(idCiclista)) {
             throw new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista);
         }
         validarCiclista(novoCiclistaDTO);
-        Ciclista ciclista = ciclistaMapper.toEntity(novoCiclistaDTO);
+        NovoCiclistaDTO novoCiclista = novoCiclistaDTO.getCiclista();
+        Ciclista ciclista = ciclistaMapper.toEntity(novoCiclista);
         ciclista.setId(idCiclista);
 
         ciclistaRepository.save(ciclista);

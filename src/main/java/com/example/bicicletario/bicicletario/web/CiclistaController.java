@@ -36,7 +36,7 @@ public class CiclistaController {
     }
 
     @PutMapping("/{idCiclista}")
-    public ResponseEntity<Ciclista> alterarCiclista(@PathVariable int idCiclista, @RequestBody NovoCiclistaDTO novoCiclistaDTO) {
+    public ResponseEntity<Ciclista> alterarCiclista(@PathVariable int idCiclista, @RequestBody NovoCiclistaRequestDTO novoCiclistaDTO) {
         Ciclista ciclista = ciclistaService.alterarCiclista(idCiclista, novoCiclistaDTO);
         return ResponseEntity.ok(ciclista);
     }

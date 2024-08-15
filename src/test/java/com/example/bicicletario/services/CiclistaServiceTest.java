@@ -127,12 +127,14 @@ class CiclistaServiceTest {
 
     @Test
     void testAlterarCiclista_Success() {
-        NovoCiclistaDTO novoCiclistaDTO = new NovoCiclistaDTO();
-        novoCiclistaDTO.setNome("Updated Name");
-        novoCiclistaDTO.setEmail("updated.email@example.com");
-        novoCiclistaDTO.setNascimento("2000-01-01");
-        novoCiclistaDTO.setNacionalidade(Nacionalidade.BRASILEIRO);
-        novoCiclistaDTO.setCpf("12345678900");
+        NovoCiclistaRequestDTO novoCiclistaDTO = new NovoCiclistaRequestDTO();
+        NovoCiclistaDTO novoCiclista = new NovoCiclistaDTO();
+        novoCiclistaDTO.setCiclista(novoCiclista);
+        novoCiclistaDTO.getCiclista().setNome("Updated Name");
+        novoCiclistaDTO.getCiclista().setEmail("updated.email@example.com");
+        novoCiclistaDTO.getCiclista().setNascimento("2000-01-01");
+        novoCiclistaDTO.getCiclista().setNacionalidade(Nacionalidade.BRASILEIRO);
+        novoCiclistaDTO.getCiclista().setCpf("12345678900");
 
         Ciclista ciclista = new Ciclista();
         ciclista.setId(1);
@@ -151,7 +153,7 @@ class CiclistaServiceTest {
 
     @Test
     void testAlterarCiclista_NotFound() {
-        NovoCiclistaDTO novoCiclistaDTO = new NovoCiclistaDTO();
+        NovoCiclistaRequestDTO novoCiclistaDTO = new NovoCiclistaRequestDTO();
 
         when(ciclistaRepository.existsById(anyInt())).thenReturn(false);
 

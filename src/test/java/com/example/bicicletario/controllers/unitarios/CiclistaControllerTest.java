@@ -86,7 +86,7 @@ class CiclistaControllerTest {
     void alterarCiclista_Success() {
         // Arrange
         int idCiclista = 1;
-        NovoCiclistaDTO novoCiclistaDTO = new NovoCiclistaDTO();
+        NovoCiclistaRequestDTO novoCiclistaDTO = new NovoCiclistaRequestDTO();
         Ciclista ciclista = new Ciclista();
         ciclista.setId(idCiclista);
         when(ciclistaService.alterarCiclista(idCiclista, novoCiclistaDTO)).thenReturn(ciclista);

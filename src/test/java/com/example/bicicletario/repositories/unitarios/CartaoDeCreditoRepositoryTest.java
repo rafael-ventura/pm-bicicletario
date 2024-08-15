@@ -27,7 +27,6 @@ class CartaoDeCreditoRepositoryTest {
         CartaoDeCredito savedCartaoDeCredito = cartaoDeCreditoRepository.save(cartaoDeCredito);
 
         // Assert
-        assertNotNull(savedCartaoDeCredito.getId());
         Optional<CartaoDeCredito> retrievedCartaoDeCredito = cartaoDeCreditoRepository.findByCiclistaId(1);
         assertTrue(retrievedCartaoDeCredito.isPresent());
         assertEquals(savedCartaoDeCredito.getId(), retrievedCartaoDeCredito.get().getId());

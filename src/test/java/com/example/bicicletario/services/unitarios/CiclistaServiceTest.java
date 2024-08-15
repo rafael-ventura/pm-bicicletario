@@ -132,23 +132,23 @@ class CiclistaServiceTest {
     void alterarCiclista_Success() {
         // Arrange
         int idCiclista = 1;
-        NovoCiclistaDTO novoCiclistaDTO = new NovoCiclistaDTO();
+        NovoCiclistaRequestDTO novoCiclistaDTO = new NovoCiclistaRequestDTO();
         // Preenchendo todos os campos obrigatórios
-        novoCiclistaDTO.setEmail("newemail@example.com");
-        novoCiclistaDTO.setNome("Novo Nome");
-        novoCiclistaDTO.setCpf("12345678900");
-        novoCiclistaDTO.setNascimento("1990-01-01");
-        novoCiclistaDTO.setNacionalidade(Nacionalidade.BRASILEIRO);
+        novoCiclistaDTO.getCiclista().setEmail("newemail@example.com");
+        novoCiclistaDTO.getCiclista().setNome("Novo Nome");
+        novoCiclistaDTO.getCiclista().setCpf("12345678900");
+        novoCiclistaDTO.getCiclista().setNascimento("1990-01-01");
+        novoCiclistaDTO.getCiclista().setNacionalidade(Nacionalidade.BRASILEIRO);
 
         Ciclista ciclista = new Ciclista();
         ciclista.setId(idCiclista);
-        ciclista.setEmail(novoCiclistaDTO.getEmail());
-        ciclista.setNome(novoCiclistaDTO.getNome());
-        ciclista.setCpf(novoCiclistaDTO.getCpf());
+        ciclista.setEmail(novoCiclistaDTO.getCiclista().getEmail());
+        ciclista.setNome(novoCiclistaDTO.getCiclista().getNome());
+        ciclista.setCpf(novoCiclistaDTO.getCiclista().getCpf());
 
         // Simulando o comportamento dos mocks
         when(ciclistaRepository.existsById(idCiclista)).thenReturn(true);
-        when(ciclistaMapper.toEntity(novoCiclistaDTO)).thenReturn(ciclista);
+        when(ciclistaMapper.toEntity(novoCiclistaDTO.getCiclista())).thenReturn(ciclista);
         when(ciclistaRepository.save(any(Ciclista.class))).thenReturn(ciclista);
 
         // Act
@@ -164,7 +164,7 @@ class CiclistaServiceTest {
     void alterarCiclista_NotFound() {
         // Arrange
         int idCiclista = 1;
-        NovoCiclistaDTO novoCiclistaDTO = new NovoCiclistaDTO();
+        NovoCiclistaRequestDTO novoCiclistaDTO = new NovoCiclistaRequestDTO();
         when(ciclistaRepository.existsById(idCiclista)).thenReturn(false);
 
         // Act & Assert

@@ -181,7 +181,7 @@ class CiclistaControllerTest {
         ciclista.setId(1);
         ciclista.setNome("Joao Silva");
 
-        when(ciclistaService.alterarCiclista(any(Integer.class), any(NovoCiclistaDTO.class))).thenReturn(ciclista);
+        when(ciclistaService.alterarCiclista(any(Integer.class), any(NovoCiclistaRequestDTO.class))).thenReturn(ciclista);
 
         mockMvc.perform(put("/api/ciclista/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -193,7 +193,7 @@ class CiclistaControllerTest {
     @Test
     void editarCiclista_ThrowsResourceNotFoundException() throws Exception {
         // Configura o comportamento esperado do serviço
-        doThrow(new ResourceNotFoundException("Ciclista não encontrado")).when(ciclistaService).alterarCiclista(any(Integer.class), any(NovoCiclistaDTO.class));
+        doThrow(new ResourceNotFoundException("Ciclista não encontrado")).when(ciclistaService).alterarCiclista(any(Integer.class), any(NovoCiclistaRequestDTO.class));
 
         // Realiza a requisição e verifica a resposta
         mockMvc.perform(put("/api/ciclista/1")
@@ -206,7 +206,7 @@ class CiclistaControllerTest {
 
     @Test
     void editarCiclista_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Erro ao editar ciclista")).when(ciclistaService).alterarCiclista(any(Integer.class), any(NovoCiclistaDTO.class));
+        doThrow(new RuntimeException("Erro ao editar ciclista")).when(ciclistaService).alterarCiclista(any(Integer.class), any(NovoCiclistaRequestDTO.class));
 
         mockMvc.perform(put("/api/ciclista/1")
                         .contentType(MediaType.APPLICATION_JSON)

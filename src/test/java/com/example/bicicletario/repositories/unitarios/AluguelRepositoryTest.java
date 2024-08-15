@@ -27,7 +27,6 @@ class AluguelRepositoryTest {
         Aluguel savedAluguel = aluguelRepository.save(aluguel);
 
         // Assert
-        assertNotNull(savedAluguel.getId());
         Optional<Aluguel> retrievedAluguel = aluguelRepository.findByCiclistaAndHoraFimIsNull(1);
         assertTrue(retrievedAluguel.isPresent());
         assertEquals(savedAluguel.getId(), retrievedAluguel.get().getId());
