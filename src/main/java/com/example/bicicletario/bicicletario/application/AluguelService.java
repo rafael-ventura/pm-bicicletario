@@ -6,6 +6,7 @@ import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
+import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
@@ -50,7 +51,7 @@ public class AluguelService {
         // Valida a tranca
         NovoTrancaDTO tranca = trancaService.obterTranca(idTranca)
                 .orElseThrow(() -> new ResourceNotFoundException("Tranca não encontrada."));
-        if (!"ocupada".equals(tranca.getStatus())) {
+        if (!StatusTranca.OCUPADA.equals(tranca.getStatus())) {
             log.warn("Tranca com status inválido. ID Tranca: {}", idTranca);
             throw new InvalidDataException("Tranca não está ocupada.");
         }
@@ -88,7 +89,7 @@ public class AluguelService {
         bicicletaService.atualizarStatus(bicicleta, StatusBicicleta.EM_USO);
 
         // Solicita abertura da tranca e altera status para "livre"
-        trancaService.atualizarStatusTranca(idTranca, "livre");
+        trancaService.atualizarStatusTranca(idTranca, StatusTranca.LIVRE);
 
         // Envia uma mensagem para o ciclista com os dados do aluguel
         emailService.enviarEmailAluguel(idCiclista, aluguel);

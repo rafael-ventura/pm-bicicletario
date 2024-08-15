@@ -7,6 +7,7 @@ import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
+import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
@@ -54,7 +55,7 @@ class AluguelServiceTest {
         int idCiclista = 1;
         int idTranca = 1;
         NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
-        trancaDTO.setStatus("ocupada");
+        trancaDTO.setStatus(StatusTranca.OCUPADA);
         trancaDTO.setBicicleta(1);
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
@@ -72,7 +73,7 @@ class AluguelServiceTest {
         // Assert
         assertNotNull(aluguel);
         verify(bicicletaService).atualizarStatus(bicicleta, StatusBicicleta.EM_USO);
-        verify(trancaService).atualizarStatusTranca(idTranca, "livre");
+        verify(trancaService).atualizarStatusTranca(idTranca, StatusTranca.LIVRE);
         verify(emailService).enviarEmailAluguel(idCiclista, aluguel);
     }
 
@@ -111,7 +112,7 @@ class AluguelServiceTest {
         int idCiclista = 1;
         int idTranca = 1;
         NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
-        trancaDTO.setStatus("livre");
+        trancaDTO.setStatus(StatusTranca.LIVRE);
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
         when(trancaService.obterTranca(idTranca)).thenReturn(Optional.of(trancaDTO));
@@ -128,7 +129,7 @@ class AluguelServiceTest {
         int idCiclista = 1;
         int idTranca = 1;
         NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
-        trancaDTO.setStatus("ocupada");
+        trancaDTO.setStatus(StatusTranca.OCUPADA);
         trancaDTO.setBicicleta(1);
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
@@ -147,7 +148,7 @@ class AluguelServiceTest {
         int idCiclista = 1;
         int idTranca = 1;
         NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
-        trancaDTO.setStatus("ocupada");
+        trancaDTO.setStatus(StatusTranca.OCUPADA);
         trancaDTO.setBicicleta(1);
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
@@ -169,7 +170,7 @@ class AluguelServiceTest {
         int idCiclista = 1;
         int idTranca = 1;
         NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
-        trancaDTO.setStatus("ocupada");
+        trancaDTO.setStatus(StatusTranca.OCUPADA);
         trancaDTO.setBicicleta(1);
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);

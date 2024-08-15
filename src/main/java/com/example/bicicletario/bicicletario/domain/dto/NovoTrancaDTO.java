@@ -1,8 +1,10 @@
 package com.example.bicicletario.bicicletario.domain.dto;
 
+import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
+
 public class NovoTrancaDTO {
     private String localizacao;
-    private String status;
+    private StatusTranca status;
     private int bicicleta;
 
     public String getLocalizacao() {
@@ -13,11 +15,11 @@ public class NovoTrancaDTO {
         this.localizacao = localizacao;
     }
 
-    public String getStatus() {
+    public StatusTranca getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusTranca status) {
         this.status = status;
     }
 

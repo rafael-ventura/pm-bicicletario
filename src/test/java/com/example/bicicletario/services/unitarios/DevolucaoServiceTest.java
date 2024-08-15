@@ -11,6 +11,7 @@ import com.example.bicicletario.bicicletario.domain.Devolucao;
 import com.example.bicicletario.bicicletario.domain.dto.NovoDevolucaoDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
+import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
@@ -55,7 +56,7 @@ class DevolucaoServiceTest {
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         NovoTrancaDTO tranca = new NovoTrancaDTO();
-        tranca.setStatus("livre");
+        tranca.setStatus(StatusTranca.LIVRE);
 
         Aluguel aluguel = new Aluguel();
         aluguel.setId(1);
@@ -108,7 +109,7 @@ class DevolucaoServiceTest {
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         NovoTrancaDTO tranca = new NovoTrancaDTO();
-        tranca.setStatus("ocupada");
+        tranca.setStatus(StatusTranca.OCUPADA);
 
         when(bicicletaService.getBicicleta(1)).thenReturn(Optional.of(bicicleta));
         when(trancaService.obterTranca(2)).thenReturn(Optional.of(tranca));
@@ -130,7 +131,7 @@ class DevolucaoServiceTest {
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         NovoTrancaDTO tranca = new NovoTrancaDTO();
-        tranca.setStatus("livre");
+        tranca.setStatus(StatusTranca.LIVRE);
 
         when(bicicletaService.getBicicleta(1)).thenReturn(Optional.of(bicicleta));
         when(trancaService.obterTranca(2)).thenReturn(Optional.of(tranca));
@@ -153,7 +154,7 @@ class DevolucaoServiceTest {
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         NovoTrancaDTO tranca = new NovoTrancaDTO();
-        tranca.setStatus("livre");
+        tranca.setStatus(StatusTranca.LIVRE);
 
         Aluguel aluguel = new Aluguel();
         aluguel.setId(1);
