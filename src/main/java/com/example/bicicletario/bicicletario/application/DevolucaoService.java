@@ -59,8 +59,8 @@ public class DevolucaoService {
         }
 
         // 3. Busca do aluguel ativo
-        Optional<Aluguel> aluguelOptional = aluguelRepository.findByBicicletaAndHoraFimIsNull(idBicicleta)
-                .orElseThrow(() -> new ResourceNotFoundException("Aluguel ativo não encontrado para esta bicicleta."));
+        Optional<Aluguel> aluguelOptional = Optional.ofNullable(aluguelRepository.findByBicicletaAndHoraFimIsNull(idBicicleta)
+                .orElseThrow(() -> new ResourceNotFoundException("Aluguel ativo não encontrado para esta bicicleta.")));
 
         if (aluguelOptional.isEmpty()) {
             throw new ResourceNotFoundException("Aluguel ativo não encontrado para esta bicicleta.");

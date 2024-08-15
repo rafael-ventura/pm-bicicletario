@@ -35,10 +35,10 @@ public class AluguelRepository {
         alugueis.remove(aluguel.getId());
     }
 
-    public Optional<Optional<Aluguel>> findByBicicletaAndHoraFimIsNull(int idBicicleta) {
-        return Optional.of(alugueis.values().stream()
+    public Optional<Aluguel> findByBicicletaAndHoraFimIsNull(int idBicicleta) {
+        return alugueis.values().stream()
                 .filter(aluguel -> aluguel.getBicicleta() == idBicicleta &&
                         aluguel.getHoraFim() == null)
-                .findFirst());
+                .findFirst();
     }
 }
