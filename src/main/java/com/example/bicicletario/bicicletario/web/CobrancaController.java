@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class CobrancaController {
 
     private static final Logger logger = LoggerFactory.getLogger(CobrancaController.class);
+    private static final String ERROR_LOG_FORMAT = "{} - {}";
 
     private final CobrancaService cobrancaService;
 
@@ -33,7 +34,7 @@ public class CobrancaController {
             return ResponseEntity.status(200).body(cobranca);
         } catch (Exception e) {
             Erro erro = new Erro("422", "Dados Inválidos");
-            logger.error("{} - {}", erro.getCodigo(), erro.getMensagem());
+            logger.error(ERROR_LOG_FORMAT, erro.getCodigo(), erro.getMensagem());
             return ResponseEntity.status(422).body(erro);
         }
     }
@@ -47,7 +48,7 @@ public class CobrancaController {
             return ResponseEntity.ok(cobranca);
         } else {
             Erro erro = new Erro("404", "Cobrança não encontrada");
-            logger.error("{} - {}", erro.getCodigo(), erro.getMensagem());
+            logger.error(ERROR_LOG_FORMAT, erro.getCodigo(), erro.getMensagem());
             return ResponseEntity.status(404).body(erro);
         }
     }

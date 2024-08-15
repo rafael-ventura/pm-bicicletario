@@ -17,6 +17,7 @@ import java.util.List;
 public class FilaCobrancaController {
 
     private static final Logger logger = LoggerFactory.getLogger(FilaCobrancaController.class);
+    private static final String ERROR_LOG_FORMAT = "{} - {}";
 
     private final FilaCobrancaService filaCobrancaService;
 
@@ -35,11 +36,11 @@ public class FilaCobrancaController {
             return ResponseEntity.ok(cobranca);
         } catch (IllegalArgumentException e) {
             Erro erro = new Erro("422", e.getMessage());
-            logger.error("{} - {}", erro.getCodigo(), erro.getMensagem());
+            logger.error(ERROR_LOG_FORMAT, erro.getCodigo(), erro.getMensagem());
             return ResponseEntity.status(422).body(erro);
         } catch (Exception e) {
             Erro erro = new Erro("500", e.getMessage());
-            logger.error("{} - {}", erro.getCodigo(), erro.getMensagem());
+            logger.error(ERROR_LOG_FORMAT, erro.getCodigo(), erro.getMensagem());
             return ResponseEntity.status(500).body(erro);
         }
     }
@@ -53,7 +54,7 @@ public class FilaCobrancaController {
             return ResponseEntity.ok(cobrancasProcessadas);
         } catch (Exception e) {
             Erro erro = new Erro("422", e.getMessage());
-            logger.error("{} - {}", erro.getCodigo(), erro.getMensagem());
+            logger.error(ERROR_LOG_FORMAT, erro.getCodigo(), erro.getMensagem());
             return ResponseEntity.status(422).body(erro);
         }
     }
