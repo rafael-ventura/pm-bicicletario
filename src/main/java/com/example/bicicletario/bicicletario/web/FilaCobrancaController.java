@@ -27,7 +27,7 @@ public class FilaCobrancaController {
 
 
     @PostMapping("/filaCobranca")
-    public ResponseEntity adicionarNaFila(@RequestBody NovoCobrancaDTO novaCobranca) {
+    public ResponseEntity<Object> adicionarNaFila(@RequestBody NovoCobrancaDTO novaCobranca) {
         try {
             logger.info("Adicionando cobranca na fila");
             Cobranca cobranca = filaCobrancaService.adicionarNaFila(novaCobranca);
@@ -35,17 +35,17 @@ public class FilaCobrancaController {
             return ResponseEntity.ok(cobranca);
         } catch (IllegalArgumentException e) {
             Erro erro = new Erro("422", e.getMessage());
-            logger.error(erro.getCodigo() + " - " + erro.getMensagem());
+            logger.error("{} - {}", erro.getCodigo(), erro.getMensagem());
             return ResponseEntity.status(422).body(erro);
         } catch (Exception e) {
             Erro erro = new Erro("500", e.getMessage());
-            logger.error(erro.getCodigo() + " - " + erro.getMensagem());
+            logger.error("{} - {}", erro.getCodigo(), erro.getMensagem());
             return ResponseEntity.status(500).body(erro);
         }
     }
 
     @PostMapping("/processaCobrancasEmFila")
-    public ResponseEntity processarFila() {
+    public ResponseEntity<Object> processarFila() {
         try {
             logger.info("Processando Cobrancas da fila");
             List<Cobranca> cobrancasProcessadas = filaCobrancaService.processarFila();
@@ -53,7 +53,7 @@ public class FilaCobrancaController {
             return ResponseEntity.ok(cobrancasProcessadas);
         } catch (Exception e) {
             Erro erro = new Erro("422", e.getMessage());
-            logger.error(erro.getCodigo() + " - " + erro.getMensagem());
+            logger.error("{} - {}", erro.getCodigo(), erro.getMensagem());
             return ResponseEntity.status(422).body(erro);
         }
     }

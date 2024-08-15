@@ -25,7 +25,7 @@ public class CobrancaController {
     }
 
     @PostMapping
-    public ResponseEntity realizarCobranca(@RequestBody NovoCobrancaDTO novaCobranca) {
+    public ResponseEntity<Object> realizarCobranca(@RequestBody NovoCobrancaDTO novaCobranca) {
         try {
             logger.info("Realizando cobranca");
             Cobranca cobranca = cobrancaService.realizarCobranca(novaCobranca);
@@ -33,13 +33,13 @@ public class CobrancaController {
             return ResponseEntity.status(200).body(cobranca);
         } catch (Exception e) {
             Erro erro = new Erro("422", "Dados Inválidos");
-            logger.error(erro.getCodigo() + " - " + erro.getMensagem());
+            logger.error("{} - {}", erro.getCodigo(), erro.getMensagem());
             return ResponseEntity.status(422).body(erro);
         }
     }
 
     @GetMapping("/{idCobranca}")
-    public ResponseEntity obterCobranca(@PathVariable int idCobranca) {
+    public ResponseEntity<Object>  obterCobranca(@PathVariable int idCobranca) {
         logger.info("Pegando cobranca");
         Cobranca cobranca = cobrancaService.obterCobrancaPorId(idCobranca);
         if (cobranca != null) {
@@ -47,7 +47,7 @@ public class CobrancaController {
             return ResponseEntity.ok(cobranca);
         } else {
             Erro erro = new Erro("404", "Cobrança não encontrada");
-            logger.error(erro.getCodigo() + " - " + erro.getMensagem());
+            logger.error("{} - {}", erro.getCodigo(), erro.getMensagem());
             return ResponseEntity.status(404).body(erro);
         }
     }

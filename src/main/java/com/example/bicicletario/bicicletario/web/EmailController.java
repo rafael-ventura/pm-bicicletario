@@ -24,7 +24,7 @@ public class EmailController {
     }
 
     @PostMapping("/enviarEmail")
-    public ResponseEntity enviarEmail(@RequestBody NovoEmailDTO novoEmailDTO) {
+    public ResponseEntity<Object>  enviarEmail(@RequestBody NovoEmailDTO novoEmailDTO) {
         try {
             logger.info("Envio de email");
             Email email = emailService.enviarEmail(novoEmailDTO);
@@ -33,11 +33,11 @@ public class EmailController {
         } catch (Exception e) {
             if (e.getMessage().contains("E-mail com formato invalido")) {
                 Erro erro = new Erro("422", "E-mail com formato invalido");
-                logger.error(erro.getCodigo() + " - " + erro.getMensagem());
+                logger.error("{} - {}", erro.getCodigo(), erro.getMensagem());
                 return ResponseEntity.status(422).body(erro);
             }
             Erro erro = new Erro("404", "E-mail nao existe");
-            logger.error(erro.getCodigo() + " - " + erro.getMensagem());
+            logger.error("{} - {}", erro.getCodigo(), erro.getMensagem());
             return ResponseEntity.status(404).body(erro);
         }
     }

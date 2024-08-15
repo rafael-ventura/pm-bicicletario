@@ -24,7 +24,7 @@ public class ValidaCartaoDeCreditoController {
 
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity validarCartaoDeCredito(@RequestBody NovoCartaoDeCreditoDTO cartaoDeCredito) {
+    public ResponseEntity<Object> validarCartaoDeCredito(@RequestBody NovoCartaoDeCreditoDTO cartaoDeCredito) {
         logger.info("Validando cartão de credito");
         boolean isValid = validaCartaoDeCreditoService.validarCartao(cartaoDeCredito);
 
@@ -33,7 +33,7 @@ public class ValidaCartaoDeCreditoController {
             return ResponseEntity.status(200).body("Dados atualizados");
         } else {
             Erro erro = new Erro("422", "Dados Inválidos");
-            logger.error(erro.getCodigo() + " - " + erro.getMensagem());
+            logger.error("{} - {}", erro.getCodigo(), erro.getMensagem());
             return ResponseEntity.status(422).body(erro);
         }
     }
