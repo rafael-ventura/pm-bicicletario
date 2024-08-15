@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
-    private final static Logger logger = LoggerFactory.getLogger(EmailService.class);
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
     public void enviarEmail(EmailDTO email) {
         logger.info("Enviando email para {} com a mensagem: {} e o assunto: {}",
                 email.getEmail(), email.getMensagem(), email.getAssunto());

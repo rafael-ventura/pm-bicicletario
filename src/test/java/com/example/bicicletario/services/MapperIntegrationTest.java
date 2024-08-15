@@ -8,13 +8,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-public class MapperIntegrationTest {
+class MapperIntegrationTest {
 
     @Autowired
     private FuncionarioMapper funcionarioMapper;
 
     @Test
-    public void testFuncionarioMapper() {
+    void testFuncionarioMapper() {
         assertNotNull(funcionarioMapper, "FuncionarioMapper deve ser injetado pelo Spring");
     }
 }

@@ -255,7 +255,7 @@ class FuncionarioServiceTest {
     }
 
     @Test
-    public void testObterFuncionarioNaoEncontrado() {
+    void testObterFuncionarioNaoEncontrado() {
         Integer idFuncionario = 1;
         // Utiliza lenient() para permitir stubbings não utilizados
         lenient().when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.empty());

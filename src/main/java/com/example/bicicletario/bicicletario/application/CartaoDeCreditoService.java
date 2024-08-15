@@ -22,7 +22,7 @@ import java.time.format.DateTimeParseException;
 @Service
 public class CartaoDeCreditoService {
 
-    private final static Logger logger = LoggerFactory.getLogger(CartaoDeCreditoService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CartaoDeCreditoService.class);
 
     private final CartaoDeCreditoRepository cartaoDeCreditoRepository;
 
