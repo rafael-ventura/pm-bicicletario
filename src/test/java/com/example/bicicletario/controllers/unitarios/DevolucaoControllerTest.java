@@ -1,10 +1,11 @@
-package com.example.bicicletario.bicicletario.web;
+package com.example.bicicletario.controllers.unitarios;
 
 import com.example.bicicletario.bicicletario.application.DevolucaoService;
 import com.example.bicicletario.bicicletario.domain.Devolucao;
 import com.example.bicicletario.bicicletario.domain.dto.NovoDevolucaoDTO;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
+import com.example.bicicletario.bicicletario.web.DevolucaoController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

@@ -1,9 +1,10 @@
-package com.example.bicicletario.bicicletario.web;
+package com.example.bicicletario.controllers.unitarios;
 
 import com.example.bicicletario.bicicletario.application.AluguelService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.dto.NovoAluguelDTO;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
+import com.example.bicicletario.bicicletario.web.AluguelController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
