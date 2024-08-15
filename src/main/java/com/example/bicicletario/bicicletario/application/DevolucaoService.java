@@ -51,6 +51,7 @@ public class DevolucaoService {
         Bicicleta bicicleta = bicicletaService.getBicicleta()
                 .orElseThrow(() -> new ResourceNotFoundException("Bicicleta não encontrada."));
 
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO); // Simula a bicicleta sendo usada
         if (!StatusBicicleta.EM_USO.equals(bicicleta.getStatusBicicleta())) {
             throw new InvalidDataException("Bicicleta não está em uso.");
         }
@@ -59,6 +60,7 @@ public class DevolucaoService {
         NovoTrancaDTO tranca = trancaService.obterTranca()
                 .orElseThrow(() -> new ResourceNotFoundException("Tranca não encontrada."));
 
+        tranca.setStatus(StatusTranca.LIVRE); // Simula a tranca livre
         if (!StatusTranca.LIVRE.equals(tranca.getStatus())) {
             throw new InvalidDataException("Tranca não está disponível para devolução.");
         }

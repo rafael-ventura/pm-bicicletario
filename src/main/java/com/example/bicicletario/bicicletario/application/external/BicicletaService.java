@@ -15,6 +15,7 @@ public class BicicletaService {
         bicicleta.setModelo("Elite");
         bicicleta.setAno("2021");
         bicicleta.setNumero(1);
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL); // Bicicleta disponível para testes
         return Optional.of(bicicleta);
     }
 

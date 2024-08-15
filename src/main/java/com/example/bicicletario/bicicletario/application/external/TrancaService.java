@@ -20,8 +20,9 @@ public class TrancaService {
     public Optional<NovoTrancaDTO> obterTranca() {
         // Retorna a tranca
         NovoTrancaDTO tranca = new NovoTrancaDTO();
-        tranca.setLocalizacao("Localização da tranca");
-        tranca.setStatus(StatusTranca.LIVRE);
+        tranca.setId(1);
+        tranca.setLocalizacao("Tranca da Urca");
+        tranca.setStatus(StatusTranca.OCUPADA); // Tranca ocupada para testes
         return Optional.of(tranca);
     }
 

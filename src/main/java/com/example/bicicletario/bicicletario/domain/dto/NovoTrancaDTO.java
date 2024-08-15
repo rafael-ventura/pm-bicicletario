@@ -3,9 +3,18 @@ package com.example.bicicletario.bicicletario.domain.dto;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 
 public class NovoTrancaDTO {
+    private int id;
     private String localizacao;
     private StatusTranca status;
     private int bicicleta;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getLocalizacao() {
         return localizacao;
