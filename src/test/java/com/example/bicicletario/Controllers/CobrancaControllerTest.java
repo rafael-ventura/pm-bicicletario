@@ -31,15 +31,6 @@ class CobrancaControllerTest {
     private CobrancaService cobrancaService;
 
     private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
-
-    @BeforeEach
-    void setup() {
-        MockitoAnnotations.openMocks(this);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(cobrancaController).build();
-        this.objectMapper = new ObjectMapper();
-    }
-
     @Test
     void realizarCobrancaComSucesso() throws Exception {
         NovoCobrancaDTO novaCobrancaDTO = new NovoCobrancaDTO();
@@ -53,6 +44,15 @@ class CobrancaControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(cobranca)));
+    }
+
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+        this.mockMvc = MockMvcBuilders.standaloneSetup(cobrancaController).build();
+        this.objectMapper = new ObjectMapper();
     }
 
     @Test
