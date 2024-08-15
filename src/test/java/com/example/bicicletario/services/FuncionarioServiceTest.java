@@ -22,7 +22,7 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Optional;
 
-public class FuncionarioServiceTest {
+class FuncionarioServiceTest {
 
     @Mock
     private FuncionarioRepository funcionarioRepository;
@@ -48,7 +48,7 @@ public class FuncionarioServiceTest {
     }
 
     @Test
-    public void testCadastrarFuncionario() {
+    void testCadastrarFuncionario() {
         NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
         dto.setNome("Joao Silva");
         dto.setCpf("12345678900");
@@ -88,7 +88,7 @@ public class FuncionarioServiceTest {
     }
 
     @Test
-    public void testCadastrarFuncionarioCpfInvalido() {
+    void testCadastrarFuncionarioCpfInvalido() {
         NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
         dto.setNome("Joao Silva");
         dto.setCpf("123.456.789-00");
@@ -104,7 +104,7 @@ public class FuncionarioServiceTest {
     }
 
     @Test
-    public void testCadastrarFuncionarioSenhaDiferente() {
+    void testCadastrarFuncionarioSenhaDiferente() {
         NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
         dto.setNome("Joao Silva");
         dto.setCpf("123.456.789-00");
@@ -120,7 +120,7 @@ public class FuncionarioServiceTest {
     }
 
     @Test
-    public void testExcluirFuncionario() {
+    void testExcluirFuncionario() {
         Integer idFuncionario = 1;
         Funcionario funcionario = new Funcionario();
         when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.of(funcionario));
@@ -131,7 +131,7 @@ public class FuncionarioServiceTest {
     }
 
     @Test
-    public void testExcluirFuncionarioNaoEncontrado() {
+    void testExcluirFuncionarioNaoEncontrado() {
         Integer idFuncionario = 1;
         when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.empty());
 
@@ -141,7 +141,7 @@ public class FuncionarioServiceTest {
     }
 
     @Test
-    public void testAlterarFuncionario() {
+    void testAlterarFuncionario() {
         // ID do funcionário a ser alterado
         Integer idFuncionario = 1;
 
@@ -199,7 +199,7 @@ public class FuncionarioServiceTest {
     }
 
     @Test
-    public void testAlterarFuncionarioNaoEncontrado() {
+    void testAlterarFuncionarioNaoEncontrado() {
         Integer idFuncionario = 1;
         NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
         when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.empty());
@@ -210,7 +210,7 @@ public class FuncionarioServiceTest {
     }
 
     @Test
-    public void testListarFuncionarios() {
+    void testListarFuncionarios() {
         Funcionario funcionario = new Funcionario();
         funcionario.setNome("Joao Silva");
         funcionario.setCpf("12345678900");
@@ -227,7 +227,7 @@ public class FuncionarioServiceTest {
     }
 
     @Test
-    public void testObterFuncionario() {
+    void testObterFuncionario() {
         Integer idFuncionario = 1;
         Funcionario funcionario = new Funcionario();
         funcionario.setId(idFuncionario);

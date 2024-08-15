@@ -4,7 +4,6 @@ import com.example.bicicletario.bicicletario.application.CiclistaService;
 import com.example.bicicletario.bicicletario.application.Constants;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
-import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;

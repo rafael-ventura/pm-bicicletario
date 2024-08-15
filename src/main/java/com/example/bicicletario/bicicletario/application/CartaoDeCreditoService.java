@@ -6,7 +6,6 @@ import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;
-import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.CartaoDeCreditoRepository;
