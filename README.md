@@ -4,7 +4,7 @@ Este repositório contém a implementação de uma API desenvolvida como parte d
 
 ## Descrição do Projeto
 
-A API foi desenvolvida a partir de uma série de requisitos do sistema e casos de uso fornecidos pelo professor e documentados no Swagger. O sistema de controle de bicicletário permite a gestão de ciclistas, bicicletas, trancas, totens, e outras funcionalidades relacionadas ao aluguel e manutenção de equipamentos.
+A API foi desenvolvida a partir de uma série de requisitos do sistema e casos de uso fornecidos pelo professor e documentados no Swagger. O sistema de controle de bicicletário permite a gestão de ciclistas, bicicletas, trancas, totens, e outras funcionalidades relacionadas ao aluguel e manutenção de bicicletas
 
 ### Tecnologias Utilizadas
 
