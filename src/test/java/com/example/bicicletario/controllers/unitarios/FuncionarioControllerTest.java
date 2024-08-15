@@ -53,20 +53,19 @@ class FuncionarioControllerTest {
     void cadastrarFuncionario_Success() {
         // Arrange
         NovoFuncionarioDTO novoFuncionarioDTO = new NovoFuncionarioDTO();
-        Funcionario funcionario = new Funcionario(); // Entidade retornada pelo mapper
+        Funcionario funcionario = new Funcionario();
         NovoFuncionarioDTO savedFuncionarioDTO = new NovoFuncionarioDTO();
 
-        // Simulando o comportamento do serviço e do mapper
+        // mockando o serviço e o mapper
         when(funcionarioService.cadastrarFuncionario(novoFuncionarioDTO)).thenReturn(funcionario);
         when(funcionarioMapper.toDto(funcionario)).thenReturn(savedFuncionarioDTO);
 
-        // Act
         ResponseEntity<NovoFuncionarioDTO> response = funcionarioController.cadastrarFuncionario(novoFuncionarioDTO);
 
         // Assert
         assertEquals(200, response.getStatusCode().value());
-        assertNotNull(response.getBody()); // Verifica se o corpo da resposta não é nulo
-        assertEquals(savedFuncionarioDTO, response.getBody()); // Verifica se o corpo da resposta é o DTO esperado
+        assertNotNull(response.getBody());
+        assertEquals(savedFuncionarioDTO, response.getBody());
         verify(funcionarioService).cadastrarFuncionario(novoFuncionarioDTO);
         verify(funcionarioMapper).toDto(funcionario);
     }
@@ -78,7 +77,6 @@ class FuncionarioControllerTest {
         NovoFuncionarioDTO funcionarioDTO = new NovoFuncionarioDTO();
         when(funcionarioService.obterFuncionario(idFuncionario)).thenReturn(funcionarioDTO);
 
-        // Act
         ResponseEntity<NovoFuncionarioDTO> response = funcionarioController.obterFuncionario(idFuncionario);
 
         // Assert
@@ -95,7 +93,6 @@ class FuncionarioControllerTest {
         NovoFuncionarioDTO updatedFuncionarioDTO = new NovoFuncionarioDTO();
         when(funcionarioService.alterarFuncionario(idFuncionario, novoFuncionarioDTO)).thenReturn(updatedFuncionarioDTO);
 
-        // Act
         ResponseEntity<NovoFuncionarioDTO> response = funcionarioController.alterarFuncionario(idFuncionario, novoFuncionarioDTO);
 
         // Assert
@@ -110,7 +107,6 @@ class FuncionarioControllerTest {
         Integer idFuncionario = 1;
         doNothing().when(funcionarioService).excluirFuncionario(idFuncionario);
 
-        // Act
         ResponseEntity<String> response = funcionarioController.excluirFuncionario(idFuncionario);
 
         // Assert
@@ -124,7 +120,6 @@ class FuncionarioControllerTest {
         // Arrange
         when(funcionarioService.listarFuncionarios()).thenReturn(List.of());
 
-        // Act
         ResponseEntity<List<NovoFuncionarioDTO>> response = funcionarioController.listarFuncionarios();
 
         // Assert
@@ -139,7 +134,6 @@ class FuncionarioControllerTest {
         Integer idFuncionario = 1;
         when(funcionarioService.obterFuncionario(idFuncionario)).thenReturn(null);
 
-        // Act
         ResponseEntity<NovoFuncionarioDTO> response = funcionarioController.obterFuncionario(idFuncionario);
 
         // Assert

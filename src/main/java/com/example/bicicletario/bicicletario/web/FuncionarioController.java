@@ -9,13 +9,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/funcionario")
+@RequestMapping("/api/funcionario")
 public class FuncionarioController {
 
-    @Autowired
-    private FuncionarioService funcionarioService;
-    @Autowired
-    private FuncionarioMapper funcionarioMapper;
+    private final FuncionarioService funcionarioService;
+    private final FuncionarioMapper funcionarioMapper;
+
+    public FuncionarioController(FuncionarioService funcionarioService, FuncionarioMapper funcionarioMapper) {
+        this.funcionarioService = funcionarioService;
+        this.funcionarioMapper = funcionarioMapper;
+    }
 
     @GetMapping
     public ResponseEntity<List<NovoFuncionarioDTO>> listarFuncionarios() {

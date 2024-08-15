@@ -49,7 +49,7 @@ public class AluguelService {
         }
 
         // Valida a tranca
-        NovoTrancaDTO tranca = trancaService.obterTranca(idTranca)
+        NovoTrancaDTO tranca = trancaService.obterTranca()
                 .orElseThrow(() -> new ResourceNotFoundException("Tranca não encontrada."));
         if (!StatusTranca.OCUPADA.equals(tranca.getStatus())) {
             log.warn("Tranca com status inválido. ID Tranca: {}", idTranca);
@@ -57,7 +57,7 @@ public class AluguelService {
         }
 
         // Lê a bicicleta presa na tranca
-        Bicicleta bicicleta = bicicletaService.getBicicleta(tranca.getBicicleta())
+        Bicicleta bicicleta = bicicletaService.getBicicleta()
                 .orElseThrow(() -> new ResourceNotFoundException("Bicicleta não encontrada."));
         if (!StatusBicicleta.DISPONIVEL.equals(bicicleta.getStatusBicicleta())) {
             log.warn("Bicicleta com status inválido. ID Bicicleta: {}", bicicleta.getId());
@@ -71,7 +71,7 @@ public class AluguelService {
         }
 
         // Envia a cobrança para a Administradora CC
-        boolean pagamentoAutorizado = administradoraCCService.processarPagamento(idCiclista, 10.00);
+        boolean pagamentoAutorizado = administradoraCCService.processarPagamento();
         if (!pagamentoAutorizado) {
             log.error("Pagamento não autorizado para ciclista: {}", idCiclista);
             throw new BadRequestException("Pagamento não autorizado.");

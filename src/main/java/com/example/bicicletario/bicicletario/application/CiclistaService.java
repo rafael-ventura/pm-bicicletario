@@ -94,7 +94,7 @@ public class CiclistaService {
         Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(() -> new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista));
         Integer bicicletaId = aluguelRepository.findByCiclistaAndHoraFimIsNull(ciclista.getId()).map(Aluguel::getBicicleta).orElse(null);
         if (bicicletaId != null) {
-            return Optional.of(bicicletaService.getBicicleta(bicicletaId).orElseThrow(
+            return Optional.of(bicicletaService.getBicicleta().orElseThrow(
                     () -> new ResourceNotFoundException(Constants.BICICLETA_NAO_ENCONTRADA + bicicletaId)
             ));
         }
@@ -144,7 +144,7 @@ public class CiclistaService {
     }
 
     private void enviarEmailConfirmacao(String email) {
-        logger.info("Email de confirmação enviado para: " + email);
+        logger.info("Email de confirmação enviado para: {}", email);
         // Lógica para enviar email
     }
 }

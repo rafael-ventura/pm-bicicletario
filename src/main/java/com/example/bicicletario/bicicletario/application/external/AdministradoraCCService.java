@@ -11,7 +11,7 @@ public class AdministradoraCCService {
     // será uma api externa, um outro microserviço, que será, mas nesse momento pode ser apenas um MOCK, com o metodo validarCartao que retorna true ou false
     private final static org.slf4j.Logger logger = LoggerFactory.getLogger(AdministradoraCCService.class);
     public boolean validarCartao(NovoCartaoDeCreditoDTO cartaoDeCredito, boolean value) throws BadRequestException {
-        if (value) {
+        if (value && cartaoDeCredito.getNumero() != null) {
             logger.info("Cartão válido");
             return true;
         } else {
@@ -20,7 +20,7 @@ public class AdministradoraCCService {
         }
     }
 
-    public boolean processarPagamento(int idCiclista, double v) {
+    public boolean processarPagamento() {
         return true;
     }
 }

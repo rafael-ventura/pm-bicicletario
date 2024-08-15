@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 public class EmailService {
     private final static Logger logger = LoggerFactory.getLogger(EmailService.class);
     public void enviarEmail(EmailDTO email) {
-        logger.info("Enviando email para " + email.getEmail() + " com a mensagem: " + email.getMensagem() + " e o assunto: " + email.getAssunto());
+        logger.info("Enviando email para {} com a mensagem: {} e o assunto: {}",
+                email.getEmail(), email.getMensagem(), email.getAssunto());
     }
 
     public void enviarEmailAluguel(int idCiclista, Aluguel aluguel) {

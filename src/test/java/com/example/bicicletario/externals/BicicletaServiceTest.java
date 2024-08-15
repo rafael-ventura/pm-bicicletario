@@ -4,8 +4,6 @@ import com.example.bicicletario.bicicletario.application.external.BicicletaServi
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BicicletaServiceTest {
@@ -13,7 +11,7 @@ public class BicicletaServiceTest {
     @Test
     void testGetBicicleta() {
         BicicletaService bicicletaService = new BicicletaService();
-        Bicicleta bicicleta = bicicletaService.getBicicleta(1).orElseThrow(() -> new RuntimeException("Bicicleta não encontrada."));
+        Bicicleta bicicleta = bicicletaService.getBicicleta().orElseThrow(() -> new RuntimeException("Bicicleta não encontrada."));
 
         assertEquals(1, bicicleta.getId());
         assertEquals("Caloi", bicicleta.getMarca());

@@ -63,10 +63,10 @@ class DevolucaoServiceTest {
         aluguel.setHoraInicio(LocalDateTime.now().minusHours(2).toString());
         aluguel.setCiclista(1);
 
-        when(bicicletaService.getBicicleta(1)).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca(2)).thenReturn(Optional.of(tranca));
+        when(bicicletaService.getBicicleta()).thenReturn(Optional.of(bicicleta));
+        when(trancaService.obterTranca()).thenReturn(Optional.of(tranca));
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.of(aluguel));
-        when(administradoraCCService.processarPagamento(anyInt(), anyDouble())).thenReturn(true);
+        when(administradoraCCService.processarPagamento()).thenReturn(true);
 
         // Act
         Devolucao devolucao = devolucaoService.realizarDevolucao(devolucaoDTO);
@@ -90,7 +90,7 @@ class DevolucaoServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
 
-        when(bicicletaService.getBicicleta(1)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaService.getBicicleta()).thenReturn(Optional.of(bicicleta));
 
         // Act & Assert
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
@@ -111,8 +111,8 @@ class DevolucaoServiceTest {
         NovoTrancaDTO tranca = new NovoTrancaDTO();
         tranca.setStatus(StatusTranca.OCUPADA);
 
-        when(bicicletaService.getBicicleta(1)).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca(2)).thenReturn(Optional.of(tranca));
+        when(bicicletaService.getBicicleta()).thenReturn(Optional.of(bicicleta));
+        when(trancaService.obterTranca()).thenReturn(Optional.of(tranca));
 
         // Act & Assert
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
@@ -133,8 +133,8 @@ class DevolucaoServiceTest {
         NovoTrancaDTO tranca = new NovoTrancaDTO();
         tranca.setStatus(StatusTranca.LIVRE);
 
-        when(bicicletaService.getBicicleta(1)).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca(2)).thenReturn(Optional.of(tranca));
+        when(bicicletaService.getBicicleta()).thenReturn(Optional.of(bicicleta));
+        when(trancaService.obterTranca()).thenReturn(Optional.of(tranca));
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.empty());
 
         // Act & Assert
@@ -161,10 +161,10 @@ class DevolucaoServiceTest {
         aluguel.setHoraInicio(LocalDateTime.now().minusHours(3).toString()); // Mais de 2 horas de uso
         aluguel.setCiclista(1);
 
-        when(bicicletaService.getBicicleta(1)).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca(2)).thenReturn(Optional.of(tranca));
+        when(bicicletaService.getBicicleta()).thenReturn(Optional.of(bicicleta));
+        when(trancaService.obterTranca()).thenReturn(Optional.of(tranca));
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.of(aluguel));
-        when(administradoraCCService.processarPagamento(anyInt(), anyDouble())).thenReturn(true);
+        when(administradoraCCService.processarPagamento()).thenReturn(true);
 
         // Act
         Devolucao devolucao = devolucaoService.realizarDevolucao(devolucaoDTO);
@@ -174,6 +174,6 @@ class DevolucaoServiceTest {
         assertTrue(devolucao.getValorExtra() > 0);
         assertEquals("SUCESSO", devolucao.getStatusPagamento());
 
-        verify(administradoraCCService).processarPagamento(aluguel.getCiclista(), devolucao.getValorExtra());
+        verify(administradoraCCService).processarPagamento();
     }
 }

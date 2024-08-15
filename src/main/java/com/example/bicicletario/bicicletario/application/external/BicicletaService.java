@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Service
 public class BicicletaService {
-    public Optional<Bicicleta> getBicicleta(int id) {
+    public Optional<Bicicleta> getBicicleta() {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
         bicicleta.setMarca("Caloi");

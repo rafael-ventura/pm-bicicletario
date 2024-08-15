@@ -17,7 +17,7 @@ public class TrancaService {
         log.info("Atualizando status da tranca {} para {}", idTranca, status);
     }
 
-    public Optional<NovoTrancaDTO> obterTranca(int idTranca) {
+    public Optional<NovoTrancaDTO> obterTranca() {
         // Retorna a tranca
         NovoTrancaDTO tranca = new NovoTrancaDTO();
         tranca.setLocalizacao("Localização da tranca");
@@ -25,7 +25,7 @@ public class TrancaService {
         return Optional.of(tranca);
     }
 
-    public void prenderBicicleta(int idTranca, int idBicicleta) {
+    public void prenderBicicleta() {
         // Prende a bicicleta na tranca
     }
 }

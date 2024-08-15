@@ -11,10 +11,8 @@ import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
 import com.example.bicicletario.bicicletario.infraestructure.DevolucaoRepository;
 import org.springframework.stereotype.Service;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class DevolucaoService {
@@ -50,7 +48,7 @@ public class DevolucaoService {
         int idTranca = devolucaoDTO.getIdTranca();
 
         // 1. Validação da bicicleta
-        Bicicleta bicicleta = bicicletaService.getBicicleta(idBicicleta)
+        Bicicleta bicicleta = bicicletaService.getBicicleta()
                 .orElseThrow(() -> new ResourceNotFoundException("Bicicleta não encontrada."));
 
         if (!StatusBicicleta.EM_USO.equals(bicicleta.getStatusBicicleta())) {
@@ -58,7 +56,7 @@ public class DevolucaoService {
         }
 
         // 2. Validação da tranca
-        NovoTrancaDTO tranca = trancaService.obterTranca(idTranca)
+        NovoTrancaDTO tranca = trancaService.obterTranca()
                 .orElseThrow(() -> new ResourceNotFoundException("Tranca não encontrada."));
 
         if (!StatusTranca.LIVRE.equals(tranca.getStatus())) {
@@ -85,7 +83,7 @@ public class DevolucaoService {
         // 5. Processamento de pagamento extra, se aplicável
         boolean pagamentoRealizado = true;
         if (valorExtra > 0) {
-            pagamentoRealizado = administradoraCCService.processarPagamento(aluguel.getCiclista(), valorExtra);
+            pagamentoRealizado = administradoraCCService.processarPagamento();
         }
 
         // 6. Atualização do aluguel
@@ -97,7 +95,7 @@ public class DevolucaoService {
 
         // 8. Atualização da tranca
         trancaService.atualizarStatusTranca(idTranca, StatusTranca.OCUPADA);
-        trancaService.prenderBicicleta(idTranca, idBicicleta);
+        trancaService.prenderBicicleta();
 
         // 9. Registro da devolução
         Devolucao devolucao = new Devolucao();
