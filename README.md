@@ -13,8 +13,6 @@ A API foi desenvolvida a partir de uma série de requisitos do sistema e casos d
 - **Arquitetura Limpa (Clean Architecture)**: Seguindo uma estrutura organizada em camadas com domínio, aplicação e infraestrutura separados.
 - **CI/CD com AWS**: Integração e entrega contínua utilizando serviços da AWS como EC2 e S3, além de pipelines de build e deploy automatizados.
 - **Testes Unitários e de Integração**: Cobertura de testes para garantir a qualidade do código.
-- **Docker**: Containerização do sistema para fácil deploy e execução em diferentes ambientes.
-
 ## Estrutura do Repositório
 
 A estrutura segue os princípios da Clean Architecture, organizada da seguinte forma:
