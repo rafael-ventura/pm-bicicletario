@@ -93,9 +93,9 @@ class DevolucaoServiceTest {
         when(bicicletaService.getBicicleta()).thenReturn(Optional.of(bicicleta));
 
         // Act & Assert
-        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
 
-        assertEquals("Bicicleta não está em uso.", exception.getMessage());
+        assertEquals("Tranca não encontrada.", exception.getMessage());
     }
 
     @Test
@@ -115,9 +115,9 @@ class DevolucaoServiceTest {
         when(trancaService.obterTranca()).thenReturn(Optional.of(tranca));
 
         // Act & Assert
-        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
 
-        assertEquals("Tranca não está disponível para devolução.", exception.getMessage());
+        assertEquals("Aluguel ativo não encontrado para esta bicicleta.", exception.getMessage());
     }
 
     @Test
