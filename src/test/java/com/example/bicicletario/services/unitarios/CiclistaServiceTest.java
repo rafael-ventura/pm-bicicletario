@@ -132,23 +132,29 @@ class CiclistaServiceTest {
     void alterarCiclista_Success() {
         // Arrange
         int idCiclista = 1;
-        NovoCiclistaRequestDTO novoCiclistaDTO = new NovoCiclistaRequestDTO();
-        // Preenchendo todos os campos obrigatórios
-        novoCiclistaDTO.getCiclista().setEmail("newemail@example.com");
-        novoCiclistaDTO.getCiclista().setNome("Novo Nome");
-        novoCiclistaDTO.getCiclista().setCpf("12345678900");
-        novoCiclistaDTO.getCiclista().setNascimento("1990-01-01");
-        novoCiclistaDTO.getCiclista().setNacionalidade(Nacionalidade.BRASILEIRO);
 
+        // Inicialize o NovoCiclistaDTO e configure-o corretamente
+        NovoCiclistaDTO novoCiclista = new NovoCiclistaDTO();
+        novoCiclista.setEmail("joao@example.com");
+        novoCiclista.setNome("Joao Alterado");
+        novoCiclista.setCpf("12345678900");
+        novoCiclista.setNascimento("1990-01-01");
+        novoCiclista.setNacionalidade(Nacionalidade.BRASILEIRO);
+
+        // Inicialize o NovoCiclistaRequestDTO e configure-o
+        NovoCiclistaRequestDTO novoCiclistaDTO = new NovoCiclistaRequestDTO();
+        novoCiclistaDTO.setCiclista(novoCiclista);
+
+        // Simular o objeto Ciclista
         Ciclista ciclista = new Ciclista();
         ciclista.setId(idCiclista);
-        ciclista.setEmail(novoCiclistaDTO.getCiclista().getEmail());
-        ciclista.setNome(novoCiclistaDTO.getCiclista().getNome());
-        ciclista.setCpf(novoCiclistaDTO.getCiclista().getCpf());
+        ciclista.setEmail(novoCiclista.getEmail());
+        ciclista.setNome(novoCiclista.getNome());
+        ciclista.setCpf(novoCiclista.getCpf());
 
         // Simulando o comportamento dos mocks
         when(ciclistaRepository.existsById(idCiclista)).thenReturn(true);
-        when(ciclistaMapper.toEntity(novoCiclistaDTO.getCiclista())).thenReturn(ciclista);
+        when(ciclistaMapper.toEntity(novoCiclista)).thenReturn(ciclista);
         when(ciclistaRepository.save(any(Ciclista.class))).thenReturn(ciclista);
 
         // Act
