@@ -1,4 +1,4 @@
-package com.example.bicicletario.bicicletario.application;
+package com.example.bicicletario.bicicletario.application.services;
 
 import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
 import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
@@ -38,17 +38,33 @@ public class TrancaService {
 
     public void incluirTrancaEmTotem(IntegrarBicicletaNaRedeDTO dto) {
         Tranca tranca = obterTrancaPorId(dto.getIdTranca());
+
+        // Validações de status e funcionário
         validarCondicoesParaInclusao(tranca, dto.getIdFuncionario());
+
+        // Verificar se o funcionário que está devolvendo a tranca é o mesmo que retirou para reparo
+        if (tranca.getStatus() == StatusTranca.EM_REPARO) {
+            validarFuncionarioParaReparo(tranca, dto.getIdFuncionario());
+        }
+
+        // Atualizar status e informações da tranca
         atualizarTrancaParaInclusao(tranca, dto.getIdFuncionario());
-        enviarEmailInclusao(dto.getIdFuncionario());
+
+        // Enviar e-mail
+        emailService.enviarEmailParaTranca(dto.getIdFuncionario(), tranca, "Inclusão");
     }
 
     public void retirarTrancaDaRede(RetirarTrancaDaRedeDTO dto) {
         Tranca tranca = obterTrancaPorId(dto.getIdTranca());
+
+        // Usando métodos auxiliares para validação e atualização
         validarCondicoesParaRetirada(tranca, dto.getStatusAcaoReparador());
         atualizarTrancaParaRetirada(tranca, dto.getIdFuncionario(), dto.getStatusAcaoReparador());
-        enviarEmailParaReparador(dto.getIdFuncionario());
+
+        // Enviar e-mail
+        emailService.enviarEmailParaTranca(dto.getIdFuncionario(), tranca, "Retirada");
     }
+
 
     public Tranca cadastrarNovaTranca(NovaTrancaDTO trancaDTO) {
         validarDadosTranca(trancaDTO);
@@ -102,23 +118,6 @@ public class TrancaService {
     }
 
     // Métodos auxiliares privados encapsulados
-
-    private void atualizarTrancaParaInclusao(Tranca tranca, Long idFuncionario) {
-        tranca.setStatus(StatusTranca.LIVRE);
-        tranca.setDataInsercaoTotem(LocalDateTime.now().toString());
-        tranca.setIdFuncionarioUltimaOperacao(idFuncionario);
-        trancaRepository.save(tranca);
-    }
-
-    private void atualizarTrancaParaRetirada(Tranca tranca, Long idFuncionario, StatusAcaoReparador statusAcaoReparador) {
-        tranca.setIdFuncionarioUltimaOperacao(idFuncionario);
-        if (statusAcaoReparador.equals(StatusAcaoReparador.EM_REPARO)) {
-            tranca.setStatus(StatusTranca.EM_REPARO);
-        } else if (statusAcaoReparador.equals(StatusAcaoReparador.APOSENTADA)) {
-            tranca.setStatus(StatusTranca.APOSENTADA);
-        }
-        trancaRepository.save(tranca);
-    }
 
     private void associarBicicletaATranca(Tranca tranca, Long bicicletaId) {
         if (bicicletaId != null) {
@@ -175,27 +174,6 @@ public class TrancaService {
         }
     }
 
-    private void validarCondicoesParaInclusao(Tranca tranca, Long idFuncionario) {
-        if (tranca.getStatus() != StatusTranca.NOVA && tranca.getStatus() != StatusTranca.EM_REPARO) {
-            throw new InvalidDataException(Constantes.TRANCA_NAO_DISPONIVEL);
-        }
-        if (tranca.getStatus() == StatusTranca.EM_REPARO && !funcionarioService.isFuncionarioValido(idFuncionario)) {
-            throw new InvalidDataException(Constantes.FUNCIONARIO_INVALIDO);
-        }
-    }
-
-    private void validarCondicoesParaRetirada(Tranca tranca, StatusAcaoReparador statusAcaoReparador) {
-        if (trancaTemBicicleta(tranca)) {
-            throw new InvalidDataException(Constantes.TRANCA_PRENCHIDA);
-        }
-        if (statusAcaoReparador == null) {
-            throw new InvalidDataException(Constantes.STATUS_DE_ACAO_REPARADOR_INVALIDO);
-        }
-        if (tranca.getStatus() != StatusTranca.EM_REPARO) {
-            throw new InvalidDataException(Constantes.TRANCA_NAO_DISPONIVEL);
-        }
-    }
-
     private void validarDadosTranca(NovaTrancaDTO trancaDTO) {
         if (trancaDTO.getLocalizacao() == null || trancaDTO.getModelo() == null || trancaDTO.getAnoDeFabricacao() == null) {
             throw new InvalidDataException(Constantes.DADOS_INVALIDOS);
@@ -215,23 +193,48 @@ public class TrancaService {
         }
     }
 
-    private void enviarEmailInclusao(Long idFuncionario) {
-        try {
-            emailService.enviarEmailParaReparador(idFuncionario);
-        } catch (Exception e) {
-            throw new InvalidDataException(Constantes.ERROR_ENVIAR_EMAIL);
-        }
-    }
-
-    private void enviarEmailParaReparador(Long idFuncionario) {
-        try {
-            emailService.enviarEmailParaReparador(idFuncionario);
-        } catch (Exception e) {
-            throw new InvalidDataException(Constantes.ERROR_ENVIAR_EMAIL);
-        }
-    }
-
     private boolean trancaTemBicicleta(Tranca tranca) {
         return tranca.getStatus() == StatusTranca.OCUPADA;
+    }
+
+    void atualizarTrancaParaInclusao(Tranca tranca, Long idFuncionario) {
+        tranca.setStatus(StatusTranca.LIVRE);
+        tranca.setDataInsercaoTotem(LocalDateTime.now().toString());
+        tranca.setIdFuncionarioUltimaOperacao(idFuncionario);
+        trancaRepository.save(tranca);
+    }
+
+    private void atualizarTrancaParaRetirada(Tranca tranca, Long idFuncionario, StatusAcaoReparador statusAcaoReparador) {
+        tranca.setIdFuncionarioUltimaOperacao(idFuncionario);
+        if (statusAcaoReparador.equals(StatusAcaoReparador.EM_REPARO)) {
+            tranca.setStatus(StatusTranca.EM_REPARO);
+        } else if (statusAcaoReparador.equals(StatusAcaoReparador.APOSENTADA)) {
+            tranca.setStatus(StatusTranca.APOSENTADA);
+        }
+        trancaRepository.save(tranca);
+    }
+
+    private void validarCondicoesParaInclusao(Tranca tranca, Long idFuncionario) {
+        if (tranca.getStatus() != StatusTranca.NOVA && tranca.getStatus() != StatusTranca.EM_REPARO) {
+            throw new InvalidDataException(Constantes.TRANCA_NAO_DISPONIVEL);
+        }
+        if (tranca.getStatus() == StatusTranca.EM_REPARO && !funcionarioService.isFuncionarioValido(idFuncionario)) {
+            throw new InvalidDataException(Constantes.FUNCIONARIO_INVALIDO);
+        }
+    }
+
+    private void validarCondicoesParaRetirada(Tranca tranca, StatusAcaoReparador statusAcaoReparador) {
+        if (trancaTemBicicleta(tranca)) {
+            throw new InvalidDataException(Constantes.TRANCA_PRENCHIDA);
+        }
+        if (statusAcaoReparador == null) {
+            throw new InvalidDataException(Constantes.STATUS_DE_ACAO_REPARADOR_INVALIDO);
+        }
+    }
+
+    private void validarFuncionarioParaReparo(Tranca tranca, Long idFuncionario) {
+        if (!tranca.getIdFuncionarioUltimaOperacao().equals(idFuncionario)) {
+            throw new InvalidDataException(Constantes.FUNCIONARIO_INVALIDO);
+        }
     }
 }

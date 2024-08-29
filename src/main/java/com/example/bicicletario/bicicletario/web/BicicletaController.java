@@ -1,6 +1,6 @@
 package com.example.bicicletario.bicicletario.web;
 
-import com.example.bicicletario.bicicletario.application.BicicletaService;
+import com.example.bicicletario.bicicletario.application.services.BicicletaService;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;

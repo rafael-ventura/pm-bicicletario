@@ -1,4 +1,4 @@
-package com.example.bicicletario.bicicletario.application;
+package com.example.bicicletario.bicicletario.application.services;
 
 import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
 import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;

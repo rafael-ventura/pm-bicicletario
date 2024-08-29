@@ -1,11 +1,11 @@
 package com.example.bicicletario.Unitario.Services;
 
-import com.example.bicicletario.bicicletario.application.BicicletaService;
-import com.example.bicicletario.bicicletario.application.EmailService;
-import com.example.bicicletario.bicicletario.application.FuncionarioService;
 import com.example.bicicletario.bicicletario.application.exceptions.BadRequestException;
 import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
 import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
+import com.example.bicicletario.bicicletario.application.services.BicicletaService;
+import com.example.bicicletario.bicicletario.application.services.EmailService;
+import com.example.bicicletario.bicicletario.application.services.FuncionarioService;
 import com.example.bicicletario.bicicletario.domain.constants.Constantes;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
@@ -13,11 +13,11 @@ import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDT
 import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
+import com.example.bicicletario.bicicletario.domain.mapper.BicicletaMapper;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
-import com.example.bicicletario.bicicletario.domain.mapper.BicicletaMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -312,14 +312,17 @@ class BicicletaServiceTest {
         tranca.setStatus(StatusTranca.LIVRE);
         when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
         when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
-        doThrow(new RuntimeException()).when(emailService).enviarEmailParaReparador(anyLong());
 
-        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+        doThrow(new BadRequestException(Constantes.ERROR_ENVIAR_EMAIL))
+                .when(emailService).enviarEmailParaReparador(eq(dto.getIdFuncionario()), anyString(), anyString());
+
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
             bicicletaService.integrarBicicletaNaRede(dto);
         });
 
         assertEquals(Constantes.ERROR_ENVIAR_EMAIL, exception.getMessage());
     }
+
 
     @Test
     void retirarBicicletaDaRede() {

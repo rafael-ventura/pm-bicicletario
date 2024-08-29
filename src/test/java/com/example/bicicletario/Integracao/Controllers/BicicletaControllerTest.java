@@ -1,6 +1,6 @@
 package com.example.bicicletario.Integracao.Controllers;
 
-import com.example.bicicletario.bicicletario.application.BicicletaService;
+import com.example.bicicletario.bicicletario.application.services.BicicletaService;
 import com.example.bicicletario.bicicletario.application.exceptions.GlobalExceptionHandler;
 import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
 import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;

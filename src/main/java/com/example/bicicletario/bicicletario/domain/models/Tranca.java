@@ -20,6 +20,8 @@ public class Tranca {
 
     private String dataInsercaoTotem;
 
+    private String dataRemocaoTotem;
+
     private Long idFuncionarioUltimaOperacao;
 
     private Totem totem;
@@ -107,5 +109,13 @@ public class Tranca {
 
     public void setIdFuncionarioUltimaOperacao(Long idFuncionarioUltimaOperacao) {
         this.idFuncionarioUltimaOperacao = idFuncionarioUltimaOperacao;
+    }
+
+    public String getDataRemocaoTotem() {
+        return dataRemocaoTotem;
+    }
+
+    public void setDataRemocaoTotem(String dataRemocaoTotem) {
+        this.dataRemocaoTotem = dataRemocaoTotem;
     }
 }

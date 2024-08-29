@@ -1,6 +1,6 @@
 package com.example.bicicletario.bicicletario.web;
 
-import com.example.bicicletario.bicicletario.application.TotemService;
+import com.example.bicicletario.bicicletario.application.services.TotemService;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Totem;

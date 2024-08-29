@@ -1,24 +1,47 @@
 package com.example.bicicletario.Unitario.Services;
 
-import com.example.bicicletario.bicicletario.application.FuncionarioService;
+import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
+import com.example.bicicletario.bicicletario.application.services.FuncionarioService;
 import com.example.bicicletario.bicicletario.domain.models.Funcionario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 class FuncionarioServiceTest {
 
+    @Mock
+    private RestTemplate restTemplate;
+
+    @InjectMocks
     private FuncionarioService funcionarioService;
 
     @BeforeEach
     void setUp() {
-        funcionarioService = new FuncionarioService();
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
     void testGetFuncionario() {
+        Funcionario funcionarioMock = new Funcionario();
+        funcionarioMock.setId(1L);
+        funcionarioMock.setNome("Funcionario");
+
+        // Mockando a resposta do RestTemplate
+        when(restTemplate.getForEntity(anyString(), eq(Funcionario.class)))
+                .thenReturn(new ResponseEntity<>(funcionarioMock, HttpStatus.OK));
+
         Funcionario funcionario = funcionarioService.get(1L);
+
         assertNotNull(funcionario);
         assertEquals(1L, funcionario.getId());
         assertEquals("Funcionario", funcionario.getNome());
@@ -26,7 +49,26 @@ class FuncionarioServiceTest {
 
     @Test
     void testIsFuncionarioValido() {
+        Funcionario funcionarioMock = new Funcionario();
+        funcionarioMock.setId(1L);
+
+        // Mockando a resposta do RestTemplate
+        when(restTemplate.getForEntity(anyString(), eq(Funcionario.class)))
+                .thenReturn(new ResponseEntity<>(funcionarioMock, HttpStatus.OK));
+
         boolean isValido = funcionarioService.isFuncionarioValido(1L);
-        assertFalse(isValido);
+
+        assertTrue(isValido);
+    }
+
+    @Test
+    void testGetFuncionario_NotFound() {
+        // Mockando uma exceção 404 do RestTemplate
+        when(restTemplate.getForEntity(anyString(), eq(Funcionario.class)))
+                .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            funcionarioService.get(1L);
+        });
     }
 }

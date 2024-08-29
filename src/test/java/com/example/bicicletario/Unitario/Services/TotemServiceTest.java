@@ -1,6 +1,6 @@
 package com.example.bicicletario.Unitario.Services;
 
-import com.example.bicicletario.bicicletario.application.TotemService;
+import com.example.bicicletario.bicicletario.application.services.TotemService;
 import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
 import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.domain.constants.Constantes;

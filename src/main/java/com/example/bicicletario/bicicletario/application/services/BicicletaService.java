@@ -1,4 +1,4 @@
-package com.example.bicicletario.bicicletario.application;
+package com.example.bicicletario.bicicletario.application.services;
 
 import com.example.bicicletario.bicicletario.application.exceptions.BadRequestException;
 import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
@@ -48,12 +48,16 @@ public class BicicletaService {
 
         if (bicicleta.getStatusBicicleta() == StatusBicicleta.EM_REPARO) {
             validarFuncionarioParaReparo(dto.getIdFuncionario());
+            if (!bicicleta.getIdFuncionarioUltimaOperacao().equals(dto.getIdFuncionario())) {
+                throw new InvalidDataException(Constantes.FUNCIONARIO_INVALIDO);
+            }
         }
 
         bicicleta.setDataInsercaoTranca(LocalDateTime.now().toString());
         bicicleta.setIdFuncionarioUltimaOperacao(dto.getIdFuncionario());
         associarBicicletaETranca(bicicleta, tranca, StatusBicicleta.DISPONIVEL, StatusTranca.OCUPADA);
-        enviarEmailParaReparador(dto.getIdFuncionario());
+
+        emailService.enviarEmailParaBicicleta(dto.getIdFuncionario(), bicicleta, tranca, "Inclusão");
     }
 
     public void retirarBicicletaDaRede(RetirarBicicletaDaRedeDTO dto) {
@@ -66,7 +70,8 @@ public class BicicletaService {
         bicicleta.setDataRemocaoTranca(LocalDateTime.now().toString());
         bicicleta.setIdFuncionarioUltimaOperacao(dto.getIdFuncionario());
         associarBicicletaETranca(bicicleta, tranca, definirStatusBicicleta(dto.getStatusAcaoReparador()), StatusTranca.LIVRE);
-        enviarEmailParaReparador(dto.getIdFuncionario());
+
+        emailService.enviarEmailParaBicicleta(dto.getIdFuncionario(), bicicleta, tranca, "Retirada");
     }
 
     // UC10 - Manter Cadastro de Bicicletas
@@ -92,6 +97,8 @@ public class BicicletaService {
         return bicicletaRepository.findAll();
     }
 
+    // Métodos auxiliares privados
+
     public Bicicleta obterBicicletaPorId(Long idBicicleta) {
         return buscarBicicletaPorId(idBicicleta);
     }
@@ -101,8 +108,6 @@ public class BicicletaService {
         atualizarStatusBicicleta(bicicleta, acao);
         return bicicletaRepository.save(bicicleta);
     }
-
-    // Métodos auxiliares privados
 
     private Bicicleta buscarBicicletaPorId(Long idBicicleta) {
         return bicicletaRepository.findById(idBicicleta)
@@ -202,11 +207,5 @@ public class BicicletaService {
         }
     }
 
-    private void enviarEmailParaReparador(Long idFuncionario) {
-        try {
-            emailService.enviarEmailParaReparador(idFuncionario);
-        } catch (Exception e) {
-            throw new InvalidDataException(Constantes.ERROR_ENVIAR_EMAIL);
-        }
-    }
 }
+

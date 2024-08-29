@@ -1,10 +1,10 @@
 package com.example.bicicletario.Unitario.Services;
 
-import com.example.bicicletario.bicicletario.application.EmailService;
-import com.example.bicicletario.bicicletario.application.FuncionarioService;
-import com.example.bicicletario.bicicletario.application.TrancaService;
 import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
 import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
+import com.example.bicicletario.bicicletario.application.services.EmailService;
+import com.example.bicicletario.bicicletario.application.services.FuncionarioService;
+import com.example.bicicletario.bicicletario.application.services.TrancaService;
 import com.example.bicicletario.bicicletario.domain.constants.Constantes;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
@@ -59,7 +59,7 @@ class TrancaServiceTest {
         dto.setIdTranca(1L);
 
         Tranca tranca = new Tranca();
-        tranca.setStatus(StatusTranca.OCUPADA); // Suponha que a Tranca está ocupada
+        tranca.setStatus(StatusTranca.OCUPADA);
 
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
 
@@ -67,9 +67,8 @@ class TrancaServiceTest {
             trancaService.incluirTrancaEmTotem(dto);
         });
 
-        assertEquals("Tranca não disponível", exception.getMessage()); // Ajuste a mensagem esperada
+        assertEquals("Tranca não disponível", exception.getMessage());
     }
-
 
     @Test
     void integrarNaRedeTrancaDisponivel() {
@@ -80,11 +79,11 @@ class TrancaServiceTest {
         tranca.setStatus(StatusTranca.NOVA);
 
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
-        doNothing().when(emailService).enviarEmailParaReparador(anyLong());
 
         trancaService.incluirTrancaEmTotem(dto);
 
         verify(trancaRepository, times(1)).save(tranca);
+        verify(emailService, times(1)).enviarEmailParaTranca(eq(dto.getIdFuncionario()), eq(tranca), eq("Inclusão"));
     }
 
     @Test
@@ -103,9 +102,8 @@ class TrancaServiceTest {
             trancaService.incluirTrancaEmTotem(dto);
         });
 
-        assertEquals("Funcionário inválido para esta operação", exception.getMessage()); // Ajuste a mensagem esperada
+        assertEquals("Funcionário inválido para esta operação", exception.getMessage());
     }
-
 
     @Test
     void integrarNaRedeErroEnvioEmail() {
@@ -118,7 +116,8 @@ class TrancaServiceTest {
 
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
         when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
-        doThrow(new InvalidDataException(Constantes.ERROR_ENVIAR_EMAIL)).when(emailService).enviarEmailParaReparador(anyLong());
+        doThrow(new InvalidDataException(Constantes.ERROR_ENVIAR_EMAIL))
+                .when(emailService).enviarEmailParaTranca(eq(dto.getIdFuncionario()), eq(tranca), eq("Inclusão"));
 
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
             trancaService.incluirTrancaEmTotem(dto);
@@ -137,14 +136,13 @@ class TrancaServiceTest {
         tranca.setStatus(StatusTranca.EM_REPARO);
 
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
-        doNothing().when(emailService).enviarEmailParaReparador(anyLong());
 
         trancaService.retirarTrancaDaRede(dto);
 
         assertEquals(StatusTranca.EM_REPARO, tranca.getStatus());
         verify(trancaRepository, times(1)).save(tranca);
+        verify(emailService, times(1)).enviarEmailParaTranca(eq(dto.getIdFuncionario()), eq(tranca), eq("Retirada"));
     }
-
 
     @Test
     void retirarDaRedeTrancaComBicicleta() {
