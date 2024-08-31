@@ -48,7 +48,7 @@ public class DevolucaoService {
         int idTranca = devolucaoDTO.getIdTranca();
 
         // 1. Validação da bicicleta
-        Bicicleta bicicleta = bicicletaService.getBicicleta()
+        Bicicleta bicicleta = bicicletaService.getBicicletaByTranca()
                 .orElseThrow(() -> new ResourceNotFoundException("Bicicleta não encontrada."));
 
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO); // Simula a bicicleta sendo usada
@@ -85,7 +85,7 @@ public class DevolucaoService {
         // 5. Processamento de pagamento extra, se aplicável
         boolean pagamentoRealizado = true;
         if (valorExtra > 0) {
-            pagamentoRealizado = administradoraCCService.processarPagamento();
+            pagamentoRealizado = administradoraCCService.enviarCobranca();
         }
 
         // 6. Atualização do aluguel

@@ -50,7 +50,7 @@ class AluguelServiceTest {
     }
 
     @Test
-    void alugarBicicleta_success() {
+    void aluguel_success() {
         // Arrange
         int idCiclista = 1;
         int idTranca = 1;
@@ -63,12 +63,12 @@ class AluguelServiceTest {
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
         when(trancaService.obterTranca()).thenReturn(Optional.of(trancaDTO));
-        when(bicicletaService.getBicicleta()).thenReturn(Optional.of(bicicleta));
-        when(administradoraCCService.processarPagamento()).thenReturn(true);
+        when(bicicletaService.getBicicletaByTranca()).thenReturn(Optional.of(bicicleta));
+        when(administradoraCCService.enviarCobranca()).thenReturn(true);
         when(aluguelRepository.save(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
-        Aluguel aluguel = aluguelService.alugarBicicleta(idCiclista, idTranca);
+        Aluguel aluguel = aluguelService.aluguel(idCiclista, idTranca);
 
         // Assert
         assertNotNull(aluguel);
@@ -78,7 +78,7 @@ class AluguelServiceTest {
     }
 
     @Test
-    void alugarBicicleta_ciclistaJaPossuiAluguelAtivo() {
+    void aluguel_ciclistaJaPossuiAluguelAtivo() {
         // Arrange
         int idCiclista = 1;
         int idTranca = 1;
@@ -87,12 +87,12 @@ class AluguelServiceTest {
 
         // Act & Assert
         InvalidDataException exception = assertThrows(InvalidDataException.class,
-                () -> aluguelService.alugarBicicleta(idCiclista, idTranca));
+                () -> aluguelService.aluguel(idCiclista, idTranca));
         assertEquals("Ciclista já possui um aluguel ativo.", exception.getMessage());
     }
 
     @Test
-    void alugarBicicleta_trancaNaoEncontrada() {
+    void aluguel_trancaNaoEncontrada() {
         // Arrange
         int idCiclista = 1;
         int idTranca = 1;
@@ -102,12 +102,12 @@ class AluguelServiceTest {
 
         // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
-                () -> aluguelService.alugarBicicleta(idCiclista, idTranca));
+                () -> aluguelService.aluguel(idCiclista, idTranca));
         assertEquals("Tranca não encontrada.", exception.getMessage());
     }
 
     @Test
-    void alugarBicicleta_trancaNaoOcupada() {
+    void aluguel_trancaNaoOcupada() {
         // Arrange
         int idCiclista = 1;
         int idTranca = 1;
@@ -119,12 +119,12 @@ class AluguelServiceTest {
 
         // Act & Assert
         InvalidDataException exception = assertThrows(InvalidDataException.class,
-                () -> aluguelService.alugarBicicleta(idCiclista, idTranca));
+                () -> aluguelService.aluguel(idCiclista, idTranca));
         assertEquals("Tranca não está ocupada.", exception.getMessage());
     }
 
     @Test
-    void alugarBicicleta_bicicletaNaoEncontrada() {
+    void aluguelNaoEncontrada() {
         // Arrange
         int idCiclista = 1;
         int idTranca = 1;
@@ -134,16 +134,16 @@ class AluguelServiceTest {
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
         when(trancaService.obterTranca()).thenReturn(Optional.of(trancaDTO));
-        when(bicicletaService.getBicicleta()).thenReturn(Optional.empty());
+        when(bicicletaService.getBicicletaByTranca()).thenReturn(Optional.empty());
 
         // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
-                () -> aluguelService.alugarBicicleta(idCiclista, idTranca));
+                () -> aluguelService.aluguel(idCiclista, idTranca));
         assertEquals("Bicicleta não encontrada.", exception.getMessage());
     }
 
     @Test
-    void alugarBicicleta_bicicletaNaoDisponivel() {
+    void aluguelNaoDisponivel() {
         // Arrange
         int idCiclista = 1;
         int idTranca = 1;
@@ -156,16 +156,16 @@ class AluguelServiceTest {
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
         when(trancaService.obterTranca()).thenReturn(Optional.of(trancaDTO));
-        when(bicicletaService.getBicicleta()).thenReturn(Optional.of(bicicleta));
+        when(bicicletaService.getBicicletaByTranca()).thenReturn(Optional.of(bicicleta));
 
         // Act & Assert
         BadRequestException exception = assertThrows(BadRequestException.class,
-                () -> aluguelService.alugarBicicleta(idCiclista, idTranca));
+                () -> aluguelService.aluguel(idCiclista, idTranca));
         assertEquals("Bicicleta não está disponível.", exception.getMessage());
     }
 
     @Test
-    void alugarBicicleta_bicicletaEmReparo() {
+    void aluguelEmReparo() {
         // Arrange
         int idCiclista = 1;
         int idTranca = 1;
@@ -179,11 +179,11 @@ class AluguelServiceTest {
         // Configurando o comportamento dos mocks
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
         when(trancaService.obterTranca()).thenReturn(Optional.of(trancaDTO));
-        when(bicicletaService.getBicicleta()).thenReturn(Optional.of(bicicleta));
+        when(bicicletaService.getBicicletaByTranca()).thenReturn(Optional.of(bicicleta));
 
         // Act & Assert
         BadRequestException exception = assertThrows(BadRequestException.class,
-                () -> aluguelService.alugarBicicleta(idCiclista, idTranca));
+                () -> aluguelService.aluguel(idCiclista, idTranca));
 
         // Verificações
         assertEquals("Bicicleta não está disponível.", exception.getMessage());

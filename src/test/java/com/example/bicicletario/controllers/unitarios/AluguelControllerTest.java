@@ -39,7 +39,7 @@ class AluguelControllerTest {
         aluguel.setCiclista(1);
         aluguel.setTrancaInicio(1);
 
-        when(aluguelService.alugarBicicleta(1, 1)).thenReturn(aluguel);
+        when(aluguelService.aluguel(1, 1)).thenReturn(aluguel);
 
         // Act
         ResponseEntity<Aluguel> response = aluguelController.alugarBicicleta(novoAluguelDTO);
@@ -48,7 +48,7 @@ class AluguelControllerTest {
         assertEquals(201, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().getCiclista());
-        verify(aluguelService).alugarBicicleta(1, 1);
+        verify(aluguelService).aluguel(1, 1);
     }
 
     @Test
@@ -58,13 +58,13 @@ class AluguelControllerTest {
         novoAluguelDTO.setCiclista(1);
         novoAluguelDTO.setTrancaInicio(1);
 
-        when(aluguelService.alugarBicicleta(1, 1)).thenThrow(new InvalidDataException("Ciclista já possui um aluguel ativo."));
+        when(aluguelService.aluguel(1, 1)).thenThrow(new InvalidDataException("Ciclista já possui um aluguel ativo."));
 
         // Act & Assert
         InvalidDataException thrown = assertThrows(InvalidDataException.class, () ->
                 aluguelController.alugarBicicleta(novoAluguelDTO));
 
         assertEquals("Ciclista já possui um aluguel ativo.", thrown.getMessage());
-        verify(aluguelService).alugarBicicleta(1, 1);
+        verify(aluguelService).aluguel(1, 1);
     }
 }

@@ -6,23 +6,14 @@ import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 public class Bicicleta {
 
     public int id;
-
     public String marca;
-
     public String modelo;
-
     public String ano;
-
     public int numero;
-
     public StatusBicicleta statusBicicleta;
-
     public String dataInsercaoTranca;
 
-    public Bicicleta() {
-
-    }
-
+    public Bicicleta() {}
 
     public int getId() {
         return id;

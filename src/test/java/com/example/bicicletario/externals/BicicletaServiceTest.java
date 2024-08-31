@@ -9,9 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BicicletaServiceTest {
 
     @Test
-    void testGetBicicleta() {
+    void testGetBicicletaByTranca() {
         BicicletaService bicicletaService = new BicicletaService();
-        Bicicleta bicicleta = bicicletaService.getBicicleta().orElseThrow(() -> new RuntimeException("Bicicleta não encontrada."));
+        Bicicleta bicicleta = bicicletaService.getBicicletaByTranca().orElseThrow(() -> new RuntimeException("Bicicleta não encontrada."));
 
         assertEquals(1, bicicleta.getId());
         assertEquals("Caloi", bicicleta.getMarca());

@@ -19,7 +19,7 @@ public class AluguelController {
 
     @PostMapping
     public ResponseEntity<Aluguel> alugarBicicleta(@RequestBody NovoAluguelDTO novoAluguelDTO) {
-        Aluguel aluguel = aluguelService.alugarBicicleta(novoAluguelDTO.getCiclista(), novoAluguelDTO.getTrancaInicio());
+        Aluguel aluguel = aluguelService.aluguel(novoAluguelDTO.getCiclista(), novoAluguelDTO.getTrancaInicio());
         return ResponseEntity.status(HttpStatus.CREATED).body(aluguel);
     }
 }

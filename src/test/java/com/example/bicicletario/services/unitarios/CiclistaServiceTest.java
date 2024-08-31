@@ -267,7 +267,7 @@ class CiclistaServiceTest {
         // Mockando os repositórios e serviços
         when(ciclistaRepository.findById(idCiclista)).thenReturn(Optional.of(ciclista));
         when(aluguelRepository.findByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(Optional.of(aluguel));
-        when(bicicletaService.getBicicleta()).thenReturn(Optional.of(bicicleta));
+        when(bicicletaService.getBicicletaByTranca()).thenReturn(Optional.of(bicicleta));
 
         // Act
         Optional<Bicicleta> result = ciclistaService.obterBicicletaAlugada(idCiclista);

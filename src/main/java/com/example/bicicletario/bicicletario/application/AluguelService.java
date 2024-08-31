@@ -4,6 +4,7 @@ import com.example.bicicletario.bicicletario.application.external.EmailService;
 import com.example.bicicletario.bicicletario.application.external.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class AluguelService {
@@ -41,15 +43,18 @@ public class AluguelService {
         this.emailService = emailService;
     }
 
-    public Aluguel alugarBicicleta(int idCiclista, int idTranca) {
-        // Verifica se o ciclista já possui um aluguel ativo
+    public Aluguel aluguel(int idCiclista, int idTranca) {
+        // Verifica se o ciclista já possui um aluguel ativo (E1)
         if (aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)) {
             log.warn("Ciclista já possui um aluguel ativo. ID Ciclista: {}", idCiclista);
+            // Envia email para o ciclista com os dados do aluguel atual
+            Optional<Aluguel> aluguelAtual = aluguelRepository.findByCiclistaAndHoraFimIsNull(idCiclista);
+            emailService.enviarEmailAluguelExistente(idCiclista, aluguelAtual.get());
             throw new InvalidDataException("Ciclista já possui um aluguel ativo.");
         }
 
         // Valida a tranca
-        NovoTrancaDTO tranca = trancaService.obterTranca()
+        NovoTrancaDTO tranca = trancaService.obterTranca(idTranca)
                 .orElseThrow(() -> new ResourceNotFoundException("Tranca não encontrada."));
         if (!StatusTranca.OCUPADA.equals(tranca.getStatus())) {
             log.warn("Tranca com status inválido. ID Tranca: {}", idTranca);
@@ -57,7 +62,7 @@ public class AluguelService {
         }
 
         // Lê a bicicleta presa na tranca
-        Bicicleta bicicleta = bicicletaService.getBicicleta()
+        Bicicleta bicicleta = bicicletaService.getBicicletaByTranca(idTranca)
                 .orElseThrow(() -> new ResourceNotFoundException("Bicicleta não encontrada."));
         if (!StatusBicicleta.DISPONIVEL.equals(bicicleta.getStatusBicicleta())) {
             log.warn("Bicicleta com status inválido. ID Bicicleta: {}", bicicleta.getId());
@@ -70,19 +75,24 @@ public class AluguelService {
             throw new BadRequestException("Bicicleta não pode ser alugada.");
         }
 
-        // Envia a cobrança para a Administradora CC
-        boolean pagamentoAutorizado = administradoraCCService.processarPagamento();
+        // Envia a cobrança para a Administradora CC (R2)
+        NovoCobrancaDTO cobranca = new NovoCobrancaDTO();
+        cobranca.setCiclista(idCiclista);
+        cobranca.setValor(10.0);
+        boolean pagamentoAutorizado = administradoraCCService.enviarCobranca(cobranca);
         if (!pagamentoAutorizado) {
             log.error("Pagamento não autorizado para ciclista: {}", idCiclista);
+            // Registra a cobrança para ser cobrada posteriormente (E3)
+            administradoraCCService.registrarCobrancaPendente(idCiclista);
             throw new BadRequestException("Pagamento não autorizado.");
         }
 
-        // Registra os dados da retirada da bicicleta
+        // Registra os dados da retirada da bicicleta (R3)
         Aluguel aluguel = new Aluguel();
         aluguel.setCiclista(idCiclista);
         aluguel.setBicicleta(bicicleta.getId());
         aluguel.setTrancaInicio(idTranca);
-        aluguel.setHoraInicio(String.valueOf(LocalDateTime.now()));
+        aluguel.setHoraInicio(LocalDateTime.now().toString());
         aluguelRepository.save(aluguel);
 
         // Altera o status da bicicleta para "em uso"
@@ -91,8 +101,8 @@ public class AluguelService {
         // Solicita abertura da tranca e altera status para "livre"
         trancaService.atualizarStatusTranca(idTranca, StatusTranca.LIVRE);
 
-        // Envia uma mensagem para o ciclista com os dados do aluguel
-        emailService.enviarEmailAluguel(idCiclista, aluguel);
+        // Envia uma mensagem para o ciclista com os dados do aluguel (R4)
+        emailService.enviarEmailAluguel(idCiclista, aluguel, bicicleta, tranca);
 
         log.info("Aluguel realizado com sucesso para ciclista: {}", idCiclista);
         return aluguel;
