@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - release-aluguel
+      - dev-vitor-aluguel
   pull_request:
     branches:
-      - release-aluguel
+      - dev-vitor-aluguel
 
 jobs:
   build-and-deploy:
