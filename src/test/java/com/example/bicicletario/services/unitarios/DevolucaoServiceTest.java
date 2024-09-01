@@ -8,6 +8,7 @@ import com.example.bicicletario.bicicletario.application.external.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Devolucao;
+import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoDevolucaoDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
@@ -48,6 +49,7 @@ class DevolucaoServiceTest {
     @Test
     void realizarDevolucao_Success() {
         // Arrange
+        NovoCobrancaDTO novoCobranca = new NovoCobrancaDTO();
         NovoDevolucaoDTO devolucaoDTO = new NovoDevolucaoDTO();
         devolucaoDTO.setIdBicicleta(1);
         devolucaoDTO.setIdTranca(2);
@@ -56,6 +58,7 @@ class DevolucaoServiceTest {
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         NovoTrancaDTO tranca = new NovoTrancaDTO();
+        tranca.setId(1);
         tranca.setStatus(StatusTranca.LIVRE);
 
         Aluguel aluguel = new Aluguel();
@@ -63,10 +66,10 @@ class DevolucaoServiceTest {
         aluguel.setHoraInicio(LocalDateTime.now().minusHours(2).toString());
         aluguel.setCiclista(1);
 
-        when(bicicletaService.getBicicletaByTranca()).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca()).thenReturn(Optional.of(tranca));
+        when(bicicletaService.getBicicletaByTranca(tranca.getId())).thenReturn(Optional.of(bicicleta));
+        when(trancaService.obterTranca(tranca.getId())).thenReturn(Optional.of(tranca));
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.of(aluguel));
-        when(administradoraCCService.enviarCobranca()).thenReturn(true);
+        when(administradoraCCService.enviarCobranca(novoCobranca)).thenReturn(true);
 
         // Act
         Devolucao devolucao = devolucaoService.realizarDevolucao(devolucaoDTO);
@@ -87,10 +90,14 @@ class DevolucaoServiceTest {
         NovoDevolucaoDTO devolucaoDTO = new NovoDevolucaoDTO();
         devolucaoDTO.setIdBicicleta(1);
 
+        NovoTrancaDTO tranca = new NovoTrancaDTO();
+        tranca.setId(1);
+        tranca.setStatus(StatusTranca.LIVRE);
+
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
 
-        when(bicicletaService.getBicicletaByTranca()).thenReturn(Optional.of(bicicleta));
+        when(bicicletaService.getBicicletaByTranca(tranca.getId())).thenReturn(Optional.of(bicicleta));
 
         // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
@@ -109,10 +116,11 @@ class DevolucaoServiceTest {
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         NovoTrancaDTO tranca = new NovoTrancaDTO();
+        tranca.setId(1);
         tranca.setStatus(StatusTranca.OCUPADA);
 
-        when(bicicletaService.getBicicletaByTranca()).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca()).thenReturn(Optional.of(tranca));
+        when(bicicletaService.getBicicletaByTranca(tranca.getId())).thenReturn(Optional.of(bicicleta));
+        when(trancaService.obterTranca(tranca.getId())).thenReturn(Optional.of(tranca));
 
         // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
@@ -131,10 +139,11 @@ class DevolucaoServiceTest {
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         NovoTrancaDTO tranca = new NovoTrancaDTO();
+        tranca.setId(1);
         tranca.setStatus(StatusTranca.LIVRE);
 
-        when(bicicletaService.getBicicletaByTranca()).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca()).thenReturn(Optional.of(tranca));
+        when(bicicletaService.getBicicletaByTranca(tranca.getId())).thenReturn(Optional.of(bicicleta));
+        when(trancaService.obterTranca(tranca.getId())).thenReturn(Optional.of(tranca));
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.empty());
 
         // Act & Assert
@@ -146,6 +155,8 @@ class DevolucaoServiceTest {
     @Test
     void realizarDevolucao_ComPagamentoExtra() {
         // Arrange
+        NovoCobrancaDTO novoCobranca = new NovoCobrancaDTO();
+
         NovoDevolucaoDTO devolucaoDTO = new NovoDevolucaoDTO();
         devolucaoDTO.setIdBicicleta(1);
         devolucaoDTO.setIdTranca(2);
@@ -154,6 +165,7 @@ class DevolucaoServiceTest {
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         NovoTrancaDTO tranca = new NovoTrancaDTO();
+        tranca.setId(1);
         tranca.setStatus(StatusTranca.LIVRE);
 
         Aluguel aluguel = new Aluguel();
@@ -161,10 +173,10 @@ class DevolucaoServiceTest {
         aluguel.setHoraInicio(LocalDateTime.now().minusHours(3).toString()); // Mais de 2 horas de uso
         aluguel.setCiclista(1);
 
-        when(bicicletaService.getBicicletaByTranca()).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca()).thenReturn(Optional.of(tranca));
+        when(bicicletaService.getBicicletaByTranca(tranca.getId())).thenReturn(Optional.of(bicicleta));
+        when(trancaService.obterTranca(tranca.getId())).thenReturn(Optional.of(tranca));
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.of(aluguel));
-        when(administradoraCCService.enviarCobranca()).thenReturn(true);
+        when(administradoraCCService.enviarCobranca(novoCobranca)).thenReturn(true);
 
         // Act
         Devolucao devolucao = devolucaoService.realizarDevolucao(devolucaoDTO);
@@ -174,6 +186,6 @@ class DevolucaoServiceTest {
         assertTrue(devolucao.getValorExtra() > 0);
         assertEquals("SUCESSO", devolucao.getStatusPagamento());
 
-        verify(administradoraCCService).enviarCobranca();
+        verify(administradoraCCService).enviarCobranca(novoCobranca);
     }
 }

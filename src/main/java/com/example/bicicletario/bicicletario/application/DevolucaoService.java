@@ -2,6 +2,7 @@ package com.example.bicicletario.bicicletario.application;
 
 import com.example.bicicletario.bicicletario.application.external.*;
 import com.example.bicicletario.bicicletario.domain.*;
+import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoDevolucaoDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
@@ -44,11 +45,11 @@ public class DevolucaoService {
     public static final String STATUS_FALHA = "FALHA";
 
     public Devolucao realizarDevolucao(NovoDevolucaoDTO devolucaoDTO) {
-        int idBicicleta = devolucaoDTO.getIdBicicleta();
-        int idTranca = devolucaoDTO.getIdTranca();
+        int trancaFim = devolucaoDTO.getTrancaFim();
+        int ciclista = devolucaoDTO.getCiclista();
 
         // 1. Validação da bicicleta
-        Bicicleta bicicleta = bicicletaService.getBicicletaByTranca()
+        Bicicleta bicicleta = bicicletaService.getBicicletaByTranca(trancaFim)
                 .orElseThrow(() -> new ResourceNotFoundException("Bicicleta não encontrada."));
 
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO); // Simula a bicicleta sendo usada
@@ -57,7 +58,7 @@ public class DevolucaoService {
         }
 
         // 2. Validação da tranca
-        NovoTrancaDTO tranca = trancaService.obterTranca()
+        NovoTrancaDTO tranca = trancaService.obterTranca(trancaFim)
                 .orElseThrow(() -> new ResourceNotFoundException("Tranca não encontrada."));
 
         tranca.setStatus(StatusTranca.LIVRE); // Simula a tranca livre
@@ -66,7 +67,7 @@ public class DevolucaoService {
         }
 
         // 3. Busca do aluguel ativo
-        Aluguel aluguel = aluguelRepository.findByBicicletaAndHoraFimIsNull(idBicicleta)
+        Aluguel aluguel = aluguelRepository.findByBicicletaAndHoraFimIsNull(bicicleta.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Aluguel ativo não encontrado para esta bicicleta."));
 
         LocalDateTime horaInicio = LocalDateTime.parse(aluguel.getHoraInicio());
@@ -83,9 +84,10 @@ public class DevolucaoService {
         }
 
         // 5. Processamento de pagamento extra, se aplicável
+        NovoCobrancaDTO cobranca = new NovoCobrancaDTO();
         boolean pagamentoRealizado = true;
         if (valorExtra > 0) {
-            pagamentoRealizado = administradoraCCService.enviarCobranca();
+            pagamentoRealizado = administradoraCCService.enviarCobranca(cobranca);
         }
 
         // 6. Atualização do aluguel
@@ -96,14 +98,14 @@ public class DevolucaoService {
         bicicletaService.atualizarStatus(bicicleta, StatusBicicleta.DISPONIVEL);
 
         // 8. Atualização da tranca
-        trancaService.atualizarStatusTranca(idTranca, StatusTranca.OCUPADA);
-        trancaService.prenderBicicleta();
+        trancaService.atualizarStatusTranca(trancaFim, "TRANCAR");
+        trancaService.prenderBicicleta(bicicleta.getId(), trancaFim);
 
         // 9. Registro da devolução
         Devolucao devolucao = new Devolucao();
         devolucao.setIdAluguel(aluguel.getId());
-        devolucao.setIdBicicleta(idBicicleta);
-        devolucao.setIdTranca(idTranca);
+        devolucao.setIdBicicleta(bicicleta.getId());
+        devolucao.setIdTranca(trancaFim);
         devolucao.setDataHoraDevolucao(horaFim.toString());
         devolucao.setValorExtra(valorExtra);
         devolucao.setCartaoUsado("Dados do cartão do ciclista"); // Este dado precisa ser obtido do serviço de pagamento

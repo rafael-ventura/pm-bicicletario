@@ -99,7 +99,7 @@ public class AluguelService {
         bicicletaService.atualizarStatus(bicicleta, StatusBicicleta.EM_USO);
 
         // Solicita abertura da tranca e altera status para "livre"
-        trancaService.atualizarStatusTranca(idTranca, StatusTranca.LIVRE);
+        trancaService.atualizarStatusTranca(idTranca, "DESTRANCAR");
 
         // Envia uma mensagem para o ciclista com os dados do aluguel (R4)
         emailService.enviarEmailAluguel(idCiclista, aluguel, bicicleta, tranca);
