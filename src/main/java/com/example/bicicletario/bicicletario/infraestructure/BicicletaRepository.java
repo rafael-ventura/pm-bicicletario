@@ -22,12 +22,18 @@ public class BicicletaRepository {
     }
 
     public Bicicleta save(Bicicleta bicicleta) {
-        if (bicicleta.getId() != null) {
-            bicicletas.removeIf(b -> b.getId().equals(bicicleta.getId()));
+        if (bicicleta.getId() == null) {
+            bicicleta.setId(counter.incrementAndGet());
+            bicicletas.add(bicicleta);
+            return bicicleta;
         }
 
-        bicicleta.setId(counter.incrementAndGet());
-        bicicletas.add(bicicleta);
+        for (int i = 0; i < bicicletas.size(); i++) {
+            if (bicicletas.get(i).getId().equals(bicicleta.getId())) {
+                bicicletas.set(i, bicicleta);
+            }
+        }
+
         return bicicleta;
     }
 

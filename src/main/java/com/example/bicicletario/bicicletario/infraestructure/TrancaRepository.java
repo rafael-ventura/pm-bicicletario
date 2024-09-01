@@ -22,11 +22,17 @@ public class TrancaRepository {
     }
 
     public Tranca save(Tranca tranca) {
-        if (tranca.getId() != null) {
-            trancas.removeIf(t -> t.getId().equals(tranca.getId()));
+        if (tranca.getId() == null) {
+            tranca.setId(counter.incrementAndGet());
+            trancas.add(tranca);
+            return tranca;
         }
-        tranca.setId(counter.incrementAndGet());
-        trancas.add(tranca);
+
+        for (int i = 0; i < trancas.size(); i++) {
+            if (trancas.get(i).getId().equals(tranca.getId())) {
+                trancas.set(i, tranca);
+            }
+        }
         return tranca;
     }
 

@@ -11,7 +11,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @Repository
 public class TotemRepository {
     private final List<Totem> totems = new ArrayList<>();
-private final AtomicLong counter = new AtomicLong();
+    private final AtomicLong counter = new AtomicLong();
+
     public List<Totem> findAll() {
         return new ArrayList<>(totems);
     }
@@ -21,11 +22,17 @@ private final AtomicLong counter = new AtomicLong();
     }
 
     public Totem save(Totem totem) {
-        if (totem.getId() != null) {
-            totems.removeIf(t -> t.getId().equals(totem.getId()));
+        if (totem.getId() == null) {
+            totem.setId(counter.incrementAndGet());
+            totems.add(totem);
+            return totem;
         }
-        totem.setId(counter.incrementAndGet());
-        totems.add(totem);
+
+        for (int i = 0; i < totems.size(); i++) {
+            if (totems.get(i).getId().equals(totem.getId())) {
+                totems.set(i, totem);
+            }
+        }
         return totem;
     }
 
