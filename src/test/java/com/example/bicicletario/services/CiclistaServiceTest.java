@@ -212,6 +212,7 @@ class CiclistaServiceTest {
 
     @Test
     void testObterBicicletaAlugada() {
+        int idTranca = 1;
         // Mock Ciclista
         Ciclista ciclista = new Ciclista();
         ciclista.setId(1);
@@ -228,7 +229,7 @@ class CiclistaServiceTest {
         // Mock repository methods
         when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
         when(aluguelRepository.findByCiclistaAndHoraFimIsNull(1)).thenReturn(Optional.of(aluguel));
-        when(bicicletaService.getBicicletaByTranca()).thenReturn(Optional.of(bicicleta));
+        when(bicicletaService.getBicicletaByTranca(idTranca)).thenReturn(Optional.of(bicicleta));
 
         // Call service method
         Optional<Bicicleta> bicicletaAlugada = ciclistaService.obterBicicletaAlugada(1);

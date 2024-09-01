@@ -33,8 +33,8 @@ class DevolucaoControllerTest {
     void realizarDevolucao_Success() {
         // Arrange
         NovoDevolucaoDTO devolucaoDTO = new NovoDevolucaoDTO();
-        devolucaoDTO.setIdBicicleta(1);
-        devolucaoDTO.setIdTranca(2);
+        devolucaoDTO.setCiclista(1);
+        devolucaoDTO.setTrancaFim(1);
 
         Devolucao devolucao = new Devolucao();
         devolucao.setIdBicicleta(1);
@@ -56,8 +56,8 @@ class DevolucaoControllerTest {
     void realizarDevolucao_InvalidDataException() {
         // Arrange
         NovoDevolucaoDTO devolucaoDTO = new NovoDevolucaoDTO();
-        devolucaoDTO.setIdBicicleta(1);
-        devolucaoDTO.setIdTranca(2);
+        devolucaoDTO.setCiclista(1);
+        devolucaoDTO.setTrancaFim(1);
 
         when(devolucaoService.realizarDevolucao(any(NovoDevolucaoDTO.class)))
                 .thenThrow(new InvalidDataException("Dados inválidos"));
@@ -74,8 +74,8 @@ class DevolucaoControllerTest {
     void realizarDevolucao_ResourceNotFoundException() {
         // Arrange
         NovoDevolucaoDTO devolucaoDTO = new NovoDevolucaoDTO();
-        devolucaoDTO.setIdBicicleta(1);
-        devolucaoDTO.setIdTranca(2);
+        devolucaoDTO.setCiclista(1);
+        devolucaoDTO.setTrancaFim(1);
 
         when(devolucaoService.realizarDevolucao(any(NovoDevolucaoDTO.class)))
                 .thenThrow(new ResourceNotFoundException("Recurso não encontrado"));

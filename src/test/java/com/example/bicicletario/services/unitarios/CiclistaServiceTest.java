@@ -257,6 +257,7 @@ class CiclistaServiceTest {
     void obterBicicletaAlugada_Success() {
         // Arrange
         int idCiclista = 1;
+        int idTranca = 1;
         Ciclista ciclista = new Ciclista();
         ciclista.setId(idCiclista);
         Aluguel aluguel = new Aluguel();
@@ -267,7 +268,7 @@ class CiclistaServiceTest {
         // Mockando os repositórios e serviços
         when(ciclistaRepository.findById(idCiclista)).thenReturn(Optional.of(ciclista));
         when(aluguelRepository.findByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(Optional.of(aluguel));
-        when(bicicletaService.getBicicletaByTranca()).thenReturn(Optional.of(bicicleta));
+        when(bicicletaService.getBicicletaByTranca(idTranca)).thenReturn(Optional.of(bicicleta));
 
         // Act
         Optional<Bicicleta> result = ciclistaService.obterBicicletaAlugada(idCiclista);
