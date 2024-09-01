@@ -142,20 +142,11 @@ public class TrancaService {
 
     private void atualizarStatusTranca(Tranca tranca, String acao) {
         switch (acao.toLowerCase()) {
-            case "livre":
+            case "trancar":
                 tranca.setStatus(StatusTranca.LIVRE);
                 break;
-            case "ocupada":
+            case "destrancar":
                 tranca.setStatus(StatusTranca.OCUPADA);
-                break;
-            case "em reparo":
-                tranca.setStatus(StatusTranca.EM_REPARO);
-                break;
-            case "nova":
-                tranca.setStatus(StatusTranca.NOVA);
-                break;
-            case "aposentada":
-                tranca.setStatus(StatusTranca.APOSENTADA);
                 break;
             default:
                 throw new InvalidDataException(Constantes.ERRO_ALTERAR_STATUS_TRANCA);

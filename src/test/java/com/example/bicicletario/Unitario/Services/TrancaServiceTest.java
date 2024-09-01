@@ -323,9 +323,9 @@ class TrancaServiceTest {
         when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
         when(trancaRepository.save(tranca)).thenReturn(tranca);
 
-        trancaService.alterarStatusTranca(1L, "OCUPADA");
+        trancaService.alterarStatusTranca(1L, "TRANCAR");
 
-        assertEquals(StatusTranca.OCUPADA, tranca.getStatus());
+        assertEquals(StatusTranca.LIVRE, tranca.getStatus());
         verify(trancaRepository, times(1)).save(tranca);
     }
 
