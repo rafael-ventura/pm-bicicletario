@@ -17,8 +17,7 @@ public class TrancaService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${equipamento.service.url}")
-    private String baseUrl;
+    private final String baseUrl = "http://ec2-3-91-187-43.compute-1.amazonaws.com:8020/api";
 
 
     public void atualizarStatusTranca(int idTranca, String acao) {
