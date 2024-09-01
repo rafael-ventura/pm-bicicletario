@@ -21,7 +21,6 @@ public class AdministradoraCCService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${externo.service.url}")
     private String baseUrl;
 
     public boolean validarCartao(NovoCartaoDeCreditoDTO cartaoDeCredito, boolean value) throws BadRequestException {
