@@ -67,9 +67,7 @@ public class TotemService {
         if(trancas.isEmpty()) {
             return List.of();
         }
-        trancas.forEach(
-                tranca -> bicicletas.addAll(bicicletaRepository.findByTrancaId(tranca.getId()))
-        );
+        trancas.forEach(tranca -> bicicletas.add(tranca.getBicicleta()));
         return bicicletas;
     }
 
