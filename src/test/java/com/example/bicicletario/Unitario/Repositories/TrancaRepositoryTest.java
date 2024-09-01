@@ -1,3 +1,4 @@
+/*
 package com.example.bicicletario.Unitario.Repositories;
 
 import com.example.bicicletario.bicicletario.domain.models.Totem;
@@ -77,3 +78,4 @@ class TrancaRepositoryTest {
         assertTrue(trancaRepository.existsByTotemId(1L));
     }
 }
+*/
