@@ -43,7 +43,7 @@ public class TrancaRepository {
     public List<Tranca> findByTotemLocalizacao(String totemLocalizacao) {
         List<Tranca> result = new ArrayList<>();
         for (Tranca tranca : trancas) {
-            if (tranca.getTotem().getLocalizacao().equals(totemLocalizacao)) {
+            if (tranca.getLocalizacao().equals(totemLocalizacao)) {
                 result.add(tranca);
             }
         }
