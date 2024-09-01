@@ -8,6 +8,7 @@ import com.example.bicicletario.bicicletario.application.external.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Devolucao;
+import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoDevolucaoDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
@@ -56,11 +57,11 @@ class DevolucaoServiceTest {
         devolucaoDTO.setTrancaFim(2);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1);
+        bicicleta.setId(1L);
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
-        NovoTrancaDTO tranca = new NovoTrancaDTO();
-        tranca.setId(1);
+        Tranca tranca = new Tranca();
+        tranca.setId(1L);
         tranca.setStatus(StatusTranca.LIVRE);
 
         Aluguel aluguel = new Aluguel();
@@ -69,7 +70,7 @@ class DevolucaoServiceTest {
         aluguel.setCiclista(1);
 
         when(bicicletaService.getBicicletaByTranca(devolucaoDTO.getTrancaFim())).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca(devolucaoDTO.getTrancaFim())).thenReturn(Optional.of(tranca));
+        when(trancaService.obterTranca(devolucaoDTO.getTrancaFim())).thenReturn(tranca);
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.of(aluguel));
         when(administradoraCCService.enviarCobranca(novoCobranca)).thenReturn(true);
 
@@ -118,12 +119,13 @@ class DevolucaoServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
-        NovoTrancaDTO tranca = new NovoTrancaDTO();
-        tranca.setId(1);
+        Tranca tranca = new Tranca();
+        NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
+        tranca.setId(1L);
         tranca.setStatus(StatusTranca.OCUPADA);
 
         when(bicicletaService.getBicicletaByTranca(tranca.getId())).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca(tranca.getId())).thenReturn(Optional.of(tranca));
+        when(trancaService.obterTranca(tranca.getId())).thenReturn(tranca);
 
         // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
@@ -146,7 +148,7 @@ class DevolucaoServiceTest {
         tranca.setStatus(StatusTranca.LIVRE);
 
         when(bicicletaService.getBicicletaByTranca(tranca.getId())).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca(tranca.getId())).thenReturn(Optional.of(tranca));
+        when(trancaService.obterTranca(tranca.getId())).thenReturn(tranca);
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.empty());
 
         // Act & Assert

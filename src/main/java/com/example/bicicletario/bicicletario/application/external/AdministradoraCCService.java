@@ -21,7 +21,7 @@ public class AdministradoraCCService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    private String baseUrl;
+    private String baseUrl = "http://ec2-3-91-187-43.compute-1.amazonaws.com:8060/api";
 
     public boolean validarCartao(NovoCartaoDeCreditoDTO cartaoDeCredito, boolean value) throws BadRequestException {
         if (value && cartaoDeCredito.getNumero() != null) {
@@ -34,7 +34,7 @@ public class AdministradoraCCService {
     }
 
     public boolean enviarCobranca(NovoCobrancaDTO novoCobrancaDTO) {
-        String url = baseUrl + "/pagamento";
+        String url = baseUrl + "/cobranca";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

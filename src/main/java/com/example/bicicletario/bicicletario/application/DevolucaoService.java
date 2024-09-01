@@ -58,8 +58,7 @@ public class DevolucaoService {
         }
 
         // 2. Validação da tranca
-        NovoTrancaDTO tranca = trancaService.obterTranca(trancaFim)
-                .orElseThrow(() -> new ResourceNotFoundException("Tranca não encontrada."));
+        Tranca tranca = trancaService.obterTranca(trancaFim);
 
         tranca.setStatus(StatusTranca.LIVRE); // Simula a tranca livre
         if (!StatusTranca.LIVRE.equals(tranca.getStatus())) {
@@ -67,7 +66,7 @@ public class DevolucaoService {
         }
 
         // 3. Busca do aluguel ativo
-        Aluguel aluguel = aluguelRepository.findByBicicletaAndHoraFimIsNull(bicicleta.getId())
+        Aluguel aluguel = aluguelRepository.findByBicicletaAndHoraFimIsNull(Integer.parseInt(bicicleta.getId().toString()))
                 .orElseThrow(() -> new ResourceNotFoundException("Aluguel ativo não encontrado para esta bicicleta."));
 
         LocalDateTime horaInicio = LocalDateTime.parse(aluguel.getHoraInicio());
@@ -99,12 +98,12 @@ public class DevolucaoService {
 
         // 8. Atualização da tranca
         trancaService.atualizarStatusTranca(trancaFim, "TRANCAR");
-        trancaService.prenderBicicleta(bicicleta.getId(), trancaFim);
+        trancaService.prenderBicicleta(Integer.parseInt(bicicleta.getId().toString()), trancaFim);
 
         // 9. Registro da devolução
         Devolucao devolucao = new Devolucao();
         devolucao.setIdAluguel(aluguel.getId());
-        devolucao.setIdBicicleta(bicicleta.getId());
+        devolucao.setIdBicicleta(Integer.parseInt(bicicleta.getId().toString()));
         devolucao.setIdTranca(trancaFim);
         devolucao.setDataHoraDevolucao(horaFim.toString());
         devolucao.setValorExtra(valorExtra);

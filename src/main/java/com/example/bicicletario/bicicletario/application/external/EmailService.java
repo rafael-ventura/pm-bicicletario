@@ -3,6 +3,7 @@ package com.example.bicicletario.bicicletario.application.external;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Devolucao;
+import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ public class EmailService {
                 email.getEmail(), email.getMensagem(), email.getAssunto());
     }
 
-    public void enviarEmailAluguel(int idCiclista, Aluguel aluguel, Bicicleta bicicleta, NovoTrancaDTO tranca) {
+    public void enviarEmailAluguel(int idCiclista, Aluguel aluguel, Bicicleta bicicleta, Tranca tranca) {
         EmailDTO email = new EmailDTO();
         email.setEmail("ciclista" + idCiclista + "@bicicletario.com");
         email.setAssunto("Aluguel de bicicleta");

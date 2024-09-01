@@ -223,8 +223,8 @@ class CiclistaServiceTest {
         Aluguel aluguel = new Aluguel();
         aluguel.setId(1);
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1);
-        aluguel.setBicicleta(bicicleta.getId());
+        bicicleta.setId(1L);
+        aluguel.setBicicleta(Integer.parseInt(bicicleta.getId().toString()));
 
         // Mock repository methods
         when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));

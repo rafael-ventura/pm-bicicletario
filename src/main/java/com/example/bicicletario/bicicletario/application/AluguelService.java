@@ -4,8 +4,8 @@ import com.example.bicicletario.bicicletario.application.external.EmailService;
 import com.example.bicicletario.bicicletario.application.external.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
-import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.exception.BadRequestException;
@@ -54,8 +54,7 @@ public class AluguelService {
         }
 
         // Valida a tranca
-        NovoTrancaDTO tranca = trancaService.obterTranca(idTranca)
-                .orElseThrow(() -> new ResourceNotFoundException("Tranca não encontrada."));
+        Tranca tranca = trancaService.obterTranca(idTranca);
         if (!StatusTranca.OCUPADA.equals(tranca.getStatus())) {
             log.warn("Tranca com status inválido. ID Tranca: {}", idTranca);
             throw new InvalidDataException("Tranca não está ocupada.");
@@ -90,10 +89,9 @@ public class AluguelService {
         // Registra os dados da retirada da bicicleta (R3)
         Aluguel aluguel = new Aluguel();
         aluguel.setCiclista(idCiclista);
-        aluguel.setBicicleta(bicicleta.getId());
+        aluguel.setBicicleta(Integer.parseInt(bicicleta.getId().toString()));
         aluguel.setTrancaInicio(idTranca);
         aluguel.setHoraInicio(LocalDateTime.now().toString());
-        aluguelRepository.save(aluguel);
 
         // Altera o status da bicicleta para "em uso"
         bicicletaService.atualizarStatus(bicicleta, StatusBicicleta.EM_USO);
@@ -104,6 +102,7 @@ public class AluguelService {
         // Envia uma mensagem para o ciclista com os dados do aluguel (R4)
         emailService.enviarEmailAluguel(idCiclista, aluguel, bicicleta, tranca);
 
+        aluguelRepository.save(aluguel);
         log.info("Aluguel realizado com sucesso para ciclista: {}", idCiclista);
         return aluguel;
     }

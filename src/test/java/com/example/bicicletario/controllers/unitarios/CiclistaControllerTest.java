@@ -135,7 +135,7 @@ class CiclistaControllerTest {
         // Arrange
         int idCiclista = 1;
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1);
+        bicicleta.setId(1L);
         when(ciclistaService.obterBicicletaAlugada(idCiclista)).thenReturn(Optional.of(bicicleta));
 
         // Act

@@ -2,24 +2,26 @@ package com.example.bicicletario.bicicletario.domain;
 
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 
-
 public class Bicicleta {
 
-    public int id;
-    public String marca;
-    public String modelo;
-    public String ano;
-    public int numero;
-    public StatusBicicleta statusBicicleta;
-    public String dataInsercaoTranca;
+    private Long id;
+    private String marca;
+    private String modelo;
+    private String ano;
+    private int numero;
+    private StatusBicicleta statusBicicleta;
+    private String dataInsercaoTranca;
+    private String dataRemocaoTranca;
+    private Tranca tranca;
+    private Long idFuncionarioUltimaOperacao;
 
-    public Bicicleta() {}
+    // Getters e Setters
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -69,5 +71,29 @@ public class Bicicleta {
 
     public void setDataInsercaoTranca(String dataInsercaoTranca) {
         this.dataInsercaoTranca = dataInsercaoTranca;
+    }
+
+    public String getDataRemocaoTranca() {
+        return dataRemocaoTranca;
+    }
+
+    public void setDataRemocaoTranca(String dataRemocaoTranca) {
+        this.dataRemocaoTranca = dataRemocaoTranca;
+    }
+
+    public Tranca getTranca() {
+        return tranca;
+    }
+
+    public void setTranca(Tranca tranca) {
+        this.tranca = tranca;
+    }
+
+    public Long getIdFuncionarioUltimaOperacao() {
+        return idFuncionarioUltimaOperacao;
+    }
+
+    public void setIdFuncionarioUltimaOperacao(Long idFuncionarioUltimaOperacao) {
+        this.idFuncionarioUltimaOperacao = idFuncionarioUltimaOperacao;
     }
 }

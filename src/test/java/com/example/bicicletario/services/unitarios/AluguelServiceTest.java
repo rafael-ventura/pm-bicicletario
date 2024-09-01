@@ -5,6 +5,7 @@ import com.example.bicicletario.bicicletario.application.external.EmailService;
 import com.example.bicicletario.bicicletario.application.external.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
@@ -87,7 +88,7 @@ class AluguelServiceTest {
         int idTranca = 1;
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
-        when(trancaService.obterTranca(idTranca)).thenReturn(Optional.empty());
+        when(trancaService.obterTranca(idTranca)).thenThrow(new ResourceNotFoundException("Tranca não encontrada."));
 
         // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
@@ -100,11 +101,13 @@ class AluguelServiceTest {
         // Arrange
         int idCiclista = 1;
         int idTranca = 1;
+        Tranca tranca = new Tranca();
         NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
+        trancaDTO.setId(1);
         trancaDTO.setStatus(StatusTranca.LIVRE);
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
-        when(trancaService.obterTranca(idTranca)).thenReturn(Optional.of(trancaDTO));
+        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
 
         // Act & Assert
         InvalidDataException exception = assertThrows(InvalidDataException.class,
@@ -117,12 +120,13 @@ class AluguelServiceTest {
         // Arrange
         int idCiclista = 1;
         int idTranca = 1;
+        Tranca tranca = new Tranca();
         NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
         trancaDTO.setStatus(StatusTranca.OCUPADA);
         trancaDTO.setBicicleta(1);
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
-        when(trancaService.obterTranca(idTranca)).thenReturn(Optional.of(trancaDTO));
+        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
         when(bicicletaService.getBicicletaByTranca(idTranca)).thenReturn(Optional.empty());
 
         // Act & Assert
@@ -144,7 +148,7 @@ class AluguelServiceTest {
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
-        when(trancaService.obterTranca(idTranca)).thenReturn(Optional.of(trancaDTO));
+        when(trancaService.obterTranca(idTranca)).thenReturn(trancaDTO);
         when(bicicletaService.getBicicletaByTranca(idTranca)).thenReturn(Optional.of(bicicleta));
 
         // Act & Assert
@@ -167,7 +171,7 @@ class AluguelServiceTest {
 
         // Configurando o comportamento dos mocks
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
-        when(trancaService.obterTranca(idTranca)).thenReturn(Optional.of(trancaDTO));
+        when(trancaService.obterTranca(idTranca)).thenReturn(trancaDTO);
         when(bicicletaService.getBicicletaByTranca(idTranca)).thenReturn(Optional.of(bicicleta));
 
         // Act & Assert

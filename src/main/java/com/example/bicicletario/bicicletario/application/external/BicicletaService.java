@@ -10,7 +10,7 @@ import java.util.Optional;
 public class BicicletaService {
     public Optional<Bicicleta> getBicicletaByTranca(int idTranca) {
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1);
+        bicicleta.setId(1L);
         bicicleta.setMarca("Caloi");
         bicicleta.setModelo("Elite");
         bicicleta.setAno("2021");

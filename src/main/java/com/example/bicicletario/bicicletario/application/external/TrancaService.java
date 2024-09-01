@@ -1,12 +1,15 @@
 package com.example.bicicletario.bicicletario.application.external;
 
+import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
+import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.Optional;
@@ -21,7 +24,7 @@ public class TrancaService {
 
 
     public void atualizarStatusTranca(int idTranca, String acao) {
-        String url = baseUrl + "/tranca/" + idTranca + "/status" + "/acao" + acao;
+        String url = baseUrl + "/tranca/" + idTranca + "/status/" + acao;
         log.info("Atualizando status da tranca {} para {}", idTranca, acao);
 
         HttpHeaders headers = new HttpHeaders();
@@ -29,17 +32,17 @@ public class TrancaService {
         // headers.set("Authorization", "Bearer " + token); // Caso precise de autenticação
 
         HttpEntity<String> entity = new HttpEntity<>(acao, headers);
-        restTemplate.exchange(url, HttpMethod.PUT, entity, Void.class);
+        restTemplate.postForEntity(url, entity, Void.class);
     }
 
-    public Optional<NovoTrancaDTO> obterTranca(int idTranca) {
+    public Tranca obterTranca(int idTranca) {
         String url = baseUrl + "/tranca/" + idTranca;
         try {
-            NovoTrancaDTO tranca = restTemplate.getForObject(url, NovoTrancaDTO.class);
-            return Optional.ofNullable(tranca);
+            ResponseEntity<Tranca> response = restTemplate.getForEntity(url, Tranca.class);
+            return response.getBody();
         } catch (Exception e) {
             log.error("Erro ao obter a tranca com ID {}", idTranca, e);
-            return Optional.empty();
+            throw new ResourceNotFoundException("Tranca não encontrada com ID " + idTranca);
         }
     }
 
