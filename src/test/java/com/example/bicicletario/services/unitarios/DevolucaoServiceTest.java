@@ -46,7 +46,7 @@ class DevolucaoServiceTest {
         devolucaoService = new DevolucaoService(devolucaoRepository, aluguelRepository, bicicletaService, trancaService, administradoraCCService, emailService);
     }
 
-    /*@Test
+    @Test
     void realizarDevolucao_Success() {
         // Arrange
         NovoCobrancaDTO novoCobranca = new NovoCobrancaDTO();
@@ -56,6 +56,7 @@ class DevolucaoServiceTest {
         devolucaoDTO.setTrancaFim(2);
 
         Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         NovoTrancaDTO tranca = new NovoTrancaDTO();
@@ -67,8 +68,8 @@ class DevolucaoServiceTest {
         aluguel.setHoraInicio(LocalDateTime.now().minusHours(2).toString());
         aluguel.setCiclista(1);
 
-        when(bicicletaService.getBicicletaByTranca(tranca.getId())).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca(tranca.getId())).thenReturn(Optional.of(tranca));
+        when(bicicletaService.getBicicletaByTranca(devolucaoDTO.getTrancaFim())).thenReturn(Optional.of(bicicleta));
+        when(trancaService.obterTranca(devolucaoDTO.getTrancaFim())).thenReturn(Optional.of(tranca));
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.of(aluguel));
         when(administradoraCCService.enviarCobranca(novoCobranca)).thenReturn(true);
 
@@ -83,7 +84,7 @@ class DevolucaoServiceTest {
 
         verify(devolucaoRepository).save(any(Devolucao.class));
         verify(emailService).enviarEmailDevolucao(anyInt(), any(Devolucao.class));
-    }*/
+    }
 
     @Test
     void realizarDevolucao_BicicletaNaoEmUso() {
