@@ -13,6 +13,7 @@ import com.example.bicicletario.bicicletario.infraestructure.TotemRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -56,13 +57,20 @@ public class TotemService {
     }
 
     public List<Tranca> listarTrancasPorTotem(Long idTotem) {
-        verificarExistenciaTotem(idTotem);
-        return trancaRepository.findByTotemId(idTotem);
+        Totem totem = recuperarTotem(idTotem);
+        return trancaRepository.findByTotemLocalizacao(totem.getLocalizacao());
     }
 
     public List<Bicicleta> listarBicicletasPorTotem(Long idTotem) {
-        verificarExistenciaTotem(idTotem);
-        return bicicletaRepository.findByTotemId(idTotem);
+        List<Bicicleta> bicicletas = new ArrayList<>();
+        List<Tranca> trancas = listarTrancasPorTotem(idTotem);
+        if(trancas.isEmpty()) {
+            return List.of();
+        }
+        trancas.forEach(
+                tranca -> bicicletas.addAll(bicicletaRepository.findByTrancaId(tranca.getId()))
+        );
+        return bicicletas;
     }
 
     // Métodos auxiliares privados
@@ -72,10 +80,11 @@ public class TotemService {
                 .orElseThrow(() -> new ResourceNotFoundException(Constantes.TOTEM_NAO_ENCONTRADO));
     }
 
-    private void verificarExistenciaTotem(Long idTotem) {
+    private Totem recuperarTotem(Long idTotem) {
         if (!totemRepository.existsById(idTotem)) {
             throw new ResourceNotFoundException(Constantes.TOTEM_NAO_ENCONTRADO);
         }
+       return totemRepository.get(idTotem);
     }
 
     private void validarDadosTotem(NovoTotemDTO totemDTO) {

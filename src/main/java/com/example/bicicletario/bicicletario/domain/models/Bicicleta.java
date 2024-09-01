@@ -20,7 +20,7 @@ public class Bicicleta {
 
     private String dataRemocaoTranca;
 
-    private Tranca tranca;
+    private Tranca tranca; //TODO - REVISAR
 
     private Long idFuncionarioUltimaOperacao;
 

@@ -36,6 +36,11 @@ public class TotemRepository {
         return totem;
     }
 
+    //get
+    public Totem get(Long id) {
+        return totems.stream().filter(t -> t.getId().equals(id)).findFirst().orElse(null);
+    }
+
     public void deleteById(Long id) {
         totems.removeIf(t -> t.getId().equals(id));
     }

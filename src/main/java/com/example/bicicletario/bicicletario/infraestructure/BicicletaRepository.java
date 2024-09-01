@@ -47,5 +47,6 @@ public class BicicletaRepository {
 
     public List<Bicicleta> findByTotemId(Long idTotem) {
         return bicicletas.stream().filter(b -> b.getTranca().getTotem().getId().equals(idTotem)).toList();
+        //TODO - REVISAR
     }
 }

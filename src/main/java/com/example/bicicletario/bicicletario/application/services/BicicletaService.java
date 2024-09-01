@@ -69,7 +69,7 @@ public class BicicletaService {
 
         bicicleta.setDataRemocaoTranca(LocalDateTime.now().toString());
         bicicleta.setIdFuncionarioUltimaOperacao(dto.getIdFuncionario());
-        associarBicicletaETranca(bicicleta, tranca, definirStatusBicicleta(dto.getStatusAcaoReparador()), StatusTranca.LIVRE);
+        desassociarBicicletaETranca(bicicleta, tranca, definirStatusBicicleta(dto.getStatusAcaoReparador()), StatusTranca.LIVRE);
 
         emailService.enviarEmailParaBicicleta(dto.getIdFuncionario(), bicicleta, tranca, "Retirada");
     }
@@ -155,6 +155,16 @@ public class BicicletaService {
         bicicletaRepository.save(bicicleta);
 
         tranca.setStatus(statusTranca);
+        tranca.setBicicleta(bicicleta);
+        trancaRepository.save(tranca);
+    }
+
+    private void desassociarBicicletaETranca(Bicicleta bicicleta, Tranca tranca, StatusBicicleta statusBicicleta, StatusTranca statusTranca) {
+        bicicleta.setStatusBicicleta(statusBicicleta);
+        bicicletaRepository.save(bicicleta);
+
+        tranca.setStatus(statusTranca);
+        tranca.setBicicleta(null);
         trancaRepository.save(tranca);
     }
 

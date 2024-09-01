@@ -24,7 +24,7 @@ public class Tranca {
 
     private Long idFuncionarioUltimaOperacao;
 
-    private Totem totem;
+    private Totem totem; //TODO - REVISAR
 
     public Tranca() {
     }

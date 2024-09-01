@@ -201,6 +201,7 @@ public class TrancaService {
         tranca.setStatus(StatusTranca.LIVRE);
         tranca.setDataInsercaoTotem(LocalDateTime.now().toString());
         tranca.setIdFuncionarioUltimaOperacao(idFuncionario);
+        tranca.setTotem(null); //TODO - REVISAR
         trancaRepository.save(tranca);
     }
 
