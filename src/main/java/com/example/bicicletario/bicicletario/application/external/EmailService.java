@@ -1,6 +1,9 @@
 package com.example.bicicletario.bicicletario.application.external;
 
-import com.example.bicicletario.bicicletario.domain.*;
+import com.example.bicicletario.bicicletario.domain.Aluguel;
+import com.example.bicicletario.bicicletario.domain.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.Ciclista;
+import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
 import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import org.slf4j.Logger;
@@ -26,7 +29,7 @@ public class EmailService {
         this.restTemplate = restTemplate;
     }
 
-    public void enviarEmail(EmailDTO email) {
+    public boolean enviarEmail(EmailDTO email) {
         String url = baseUrl + "/enviarEmail";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -35,8 +38,11 @@ public class EmailService {
 
         try {
             ResponseEntity<Void> response = restTemplate.postForEntity(url, request, Void.class);
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                throw new BadRequestException("Erro ao enviar email.");
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return true;
+            } else {
+                logger.error("Erro ao enviar email. Status code: {}", response.getStatusCode());
+                return false;
             }
         } catch (Exception e) {
             logger.error("Erro ao enviar email para {}", email.getEmail(), e);
@@ -85,14 +91,7 @@ public class EmailService {
         enviarEmail(email);
     }
 
-    public void enviarEmailDevolucao(int idCiclista, Devolucao devolucao) {
-        EmailDTO email = new EmailDTO();
-        email.setEmail("ciclista" + idCiclista + "@bicicletario.com");
-        email.setAssunto("Devolução de bicicleta");
-        email.setMensagem("Você devolveu a bicicleta " + devolucao.getIdBicicleta() + " com sucesso!");
-        enviarEmail(email);
-    }
-
+    // TODO - Entender se so devemos enviar email de confirmacao de dados UC01. Ver se nao eh o Matera que tem que alterar o Status do Ciclista pra ativo e nos pra AguardandoConfirmacao apos mandar o Email.
     public void enviarEmailConfirmacao(Ciclista ciclista) {
     }
 }

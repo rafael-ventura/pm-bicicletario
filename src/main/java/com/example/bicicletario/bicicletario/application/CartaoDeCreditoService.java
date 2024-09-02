@@ -6,6 +6,7 @@ import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;
+import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.CartaoDeCreditoRepository;
@@ -72,7 +73,7 @@ public class CartaoDeCreditoService {
             throw new InvalidDataException("CVV do cartão de crédito inválido.");
         }
 
-        boolean valid = administradoraCCService.validarCartao(cartaoDeCreditoDTO, true);
+        boolean valid = administradoraCCService.validarCartao(cartaoDeCreditoDTO);
         if (!valid) {
             throw new InvalidDataException("Cartão de crédito inválido.");
         }
@@ -94,7 +95,12 @@ public class CartaoDeCreditoService {
         email.setEmail(ciclista.getEmail());
         email.setAssunto("Alteração de dados");
         email.setMensagem("Seus dados foram alterados com sucesso.");
-        emailService.enviarEmail(email);
+
+        boolean emailEnviado = emailService.enviarEmail(email);
+        if (!emailEnviado) {
+            logger.error("Falha ao enviar email para {}", ciclista.getEmail());
+            throw new RuntimeException("Erro ao enviar e-mail de confirmação.");
+        }
     }
 
     public void save(NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO, int idCiclista) {

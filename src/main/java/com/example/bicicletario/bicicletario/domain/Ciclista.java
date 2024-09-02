@@ -23,6 +23,26 @@ public class Ciclista {
 
     private StatusCiclista status;
 
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public String getConfirmacaoSenha() {
+        return confirmacaoSenha;
+    }
+
+    public void setConfirmacaoSenha(String confirmacaoSenha) {
+        this.confirmacaoSenha = confirmacaoSenha;
+    }
+
+    private String senha;
+
+    private String confirmacaoSenha;
+
     // Getters and Setters
 
     public Integer getId() {
@@ -96,4 +116,5 @@ public class Ciclista {
     public void setStatus(StatusCiclista status) {
         this.status = status;
     }
+
 }
