@@ -47,5 +47,6 @@ public class Constantes {
     public static final String TOTEM_COM_TRANCA = "Totem não pode ser removido, pois possui trancas associadas";
     public static final String TRANCA_NAO_DISPONIVEL = "Tranca não disponível";
     public static final String ACAO_INVALIDA = "Ação inválida";
+    public static final String ACAO_BEM_SUCEDIDA = "Ação bem sucedida";
 }
 

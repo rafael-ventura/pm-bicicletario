@@ -102,24 +102,27 @@ public class TrancaService {
         return tranca;
     }
 
-    public void trancarTranca(Integer idTranca, Integer bicicletaId) {
+    public Tranca trancarTranca(Integer idTranca, Integer bicicletaId) {
         Tranca tranca = obterTrancaPorId(idTranca);
-        associarBicicletaATranca(tranca, bicicletaId);
+        trancarBicicletaETranca(tranca, bicicletaId);
+        return tranca;
     }
 
-    public void destrancarTranca(Integer idTranca, Integer bicicletaId) {
+    public Tranca destrancarTranca(Integer idTranca, Integer bicicletaId) {
         Tranca tranca = obterTrancaPorId(idTranca);
         removerBicicletaDaTranca(tranca, bicicletaId);
+        return tranca;
     }
 
-    public void alterarStatusTranca(Integer idTranca, String acao) {
+    public Tranca alterarStatusTranca(Integer idTranca, String acao) {
         Tranca tranca = obterTrancaPorId(idTranca);
         atualizarStatusTranca(tranca, acao);
+        return tranca;
     }
 
     // Métodos auxiliares privados encapsulados
 
-    private void associarBicicletaATranca(Tranca tranca, Integer bicicletaId) {
+    private void trancarBicicletaETranca(Tranca tranca, Integer bicicletaId) {
         if (bicicletaId != null) {
             Bicicleta bicicleta = buscarBicicletaPorId(bicicletaId);
             tranca.setBicicleta(bicicleta);

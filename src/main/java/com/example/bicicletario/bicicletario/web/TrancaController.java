@@ -71,20 +71,26 @@ public class TrancaController {
     }
 
     @PostMapping("/{idTranca}/trancar")
-    public ResponseEntity<String> trancarTranca(@PathVariable Integer idTranca, @RequestBody(required = false) Integer bicicletaId) {
-        trancaService.trancarTranca(idTranca, bicicletaId);
-        return ResponseEntity.ok(DADOS_CADASTRADOS);
+    public ResponseEntity<Tranca> trancarTranca(@PathVariable Integer idTranca, @RequestBody(required = false) Integer bicicletaId) {
+        Tranca tranca = trancaService.trancarTranca(idTranca, bicicletaId);
+        return ResponseEntity.ok()
+                .header("Message", ACAO_BEM_SUCEDIDA)
+                .body(tranca);
     }
 
     @PostMapping("/{idTranca}/destrancar")
-    public ResponseEntity<String> destrancarTranca(@PathVariable Integer idTranca, @RequestBody(required = false) Integer bicicletaId) {
-        trancaService.destrancarTranca(idTranca, bicicletaId);
-        return ResponseEntity.ok(DADOS_CADASTRADOS);
+    public ResponseEntity<Tranca> destrancarTranca(@PathVariable Integer idTranca, @RequestBody(required = false) Integer bicicletaId) {
+        Tranca tranca = trancaService.destrancarTranca(idTranca, bicicletaId);
+        return ResponseEntity.ok()
+                .header("Message", ACAO_BEM_SUCEDIDA)
+                .body(tranca);
     }
 
     @PostMapping("/{idTranca}/status/{acao}")
     public ResponseEntity<String> alterarStatusTranca(@PathVariable Integer idTranca, @PathVariable String acao) {
-        trancaService.alterarStatusTranca(idTranca, acao);
-        return ResponseEntity.ok(DADOS_CADASTRADOS);
+        Tranca tranca = trancaService.alterarStatusTranca(idTranca, acao);
+        return ResponseEntity.ok()
+                .header("Message", ACAO_BEM_SUCEDIDA)
+                .body(tranca.getStatus().toString());
     }
 }
