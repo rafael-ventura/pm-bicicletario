@@ -1,6 +1,7 @@
 package com.example.bicicletario.bicicletario.application;
 
 import com.example.bicicletario.bicicletario.application.external.BicicletaService;
+import com.example.bicicletario.bicicletario.application.external.EmailService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
@@ -27,15 +28,17 @@ public class CiclistaService {
     private final AluguelRepository aluguelRepository;
     private final BicicletaService bicicletaService;
     private final CartaoDeCreditoService cartaoDeCreditoService;
+    private final EmailService emailService;
 
     private static final Logger logger = LoggerFactory.getLogger(CiclistaService.class);
 
-    public CiclistaService(CiclistaRepository ciclistaRepository, CiclistaMapper ciclistaMapper, AluguelRepository aluguelRepository, BicicletaService bicicletaService, CartaoDeCreditoService cartaoDeCreditoService) {
+    public CiclistaService(CiclistaRepository ciclistaRepository, CiclistaMapper ciclistaMapper, AluguelRepository aluguelRepository, BicicletaService bicicletaService, CartaoDeCreditoService cartaoDeCreditoService, EmailService emailService) {
         this.ciclistaRepository = ciclistaRepository;
         this.ciclistaMapper = ciclistaMapper;
         this.aluguelRepository = aluguelRepository;
         this.bicicletaService = bicicletaService;
         this.cartaoDeCreditoService = cartaoDeCreditoService;
+        this.emailService = emailService;
     }
 
     public Ciclista cadastrarCiclista(NovoCiclistaRequestDTO request) throws BadRequestException {
@@ -48,7 +51,7 @@ public class CiclistaService {
 
         cartaoDeCreditoService.save(request.getMeioDePagamento(), ciclista.getId());
 
-        enviarEmailConfirmacao(ciclista.getEmail());
+        emailService.enviarEmailConfirmacao(ciclista);
         logger.info("Ciclista cadastrado com sucesso!");
         return ciclista;
     }
@@ -139,10 +142,5 @@ public class CiclistaService {
         if (ciclistaRepository.existsByEmail(email)) {
             throw new InvalidDataException("Email já cadastrado.");
         }
-    }
-
-    private void enviarEmailConfirmacao(String email) {
-        logger.info("Email de confirmação enviado para: {}", email);
-        // Lógica para enviar email
     }
 }

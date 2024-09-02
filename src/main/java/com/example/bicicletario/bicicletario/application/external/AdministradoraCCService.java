@@ -5,7 +5,6 @@ import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
 import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,20 +15,30 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class AdministradoraCCService {
-    // será uma api externa, um outro microserviço, que será, mas nesse momento pode ser apenas um MOCK, com o metodo validarCartao que retorna true ou false
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AdministradoraCCService.class);
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    private String baseUrl = "http://ec2-3-91-187-43.compute-1.amazonaws.com:8060/api";
+    @Value("${externo.base-url}")
+    private String baseUrl;
 
-    public boolean validarCartao(NovoCartaoDeCreditoDTO cartaoDeCredito, boolean value) throws BadRequestException {
-        if (value && cartaoDeCredito.getNumero() != null) {
-            logger.info("Cartão válido");
-            return true;
-        } else {
-            logger.error("Cartão inválido");
-            throw new InvalidDataException("Cartão inválido");
+    public boolean validarCartao(NovoCartaoDeCreditoDTO cartaoDeCreditoDTO) {
+        String url = baseUrl + "/validaCartaoDeCredito";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<NovoCartaoDeCreditoDTO> request = new HttpEntity<>(cartaoDeCreditoDTO, headers);
+
+        try {
+            ResponseEntity<Void> response = restTemplate.postForEntity(url, request, Void.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return true;
+            } else {
+                throw new InvalidDataException("Cartão de crédito inválido.");
+            }
+        } catch (Exception e) {
+            logger.error("Erro ao validar o cartão de crédito: {}", cartaoDeCreditoDTO.getNumero(), e);
+            throw new InvalidDataException("Erro ao validar o cartão de crédito.");
         }
     }
 

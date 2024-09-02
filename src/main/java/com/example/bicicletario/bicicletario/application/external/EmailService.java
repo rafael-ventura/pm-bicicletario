@@ -1,21 +1,47 @@
 package com.example.bicicletario.bicicletario.application.external;
 
-import com.example.bicicletario.bicicletario.domain.Aluguel;
-import com.example.bicicletario.bicicletario.domain.Bicicleta;
-import com.example.bicicletario.bicicletario.domain.Devolucao;
-import com.example.bicicletario.bicicletario.domain.Tranca;
+import com.example.bicicletario.bicicletario.domain.*;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
-import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
+import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class EmailService {
+
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+    private final RestTemplate restTemplate;
+
+    @Value("${externo.base-url}")
+    private String baseUrl;
+
+    public EmailService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     public void enviarEmail(EmailDTO email) {
-        logger.info("Enviando email para {} com a mensagem: {} e o assunto: {}",
-                email.getEmail(), email.getMensagem(), email.getAssunto());
+        String url = baseUrl + "/enviarEmail";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<EmailDTO> request = new HttpEntity<>(email, headers);
+
+        try {
+            ResponseEntity<Void> response = restTemplate.postForEntity(url, request, Void.class);
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new BadRequestException("Erro ao enviar email.");
+            }
+        } catch (Exception e) {
+            logger.error("Erro ao enviar email para {}", email.getEmail(), e);
+            throw new BadRequestException("Erro ao enviar email.");
+        }
     }
 
     public void enviarEmailAluguel(int idCiclista, Aluguel aluguel, Bicicleta bicicleta, Tranca tranca) {
@@ -65,5 +91,8 @@ public class EmailService {
         email.setAssunto("Devolução de bicicleta");
         email.setMensagem("Você devolveu a bicicleta " + devolucao.getIdBicicleta() + " com sucesso!");
         enviarEmail(email);
+    }
+
+    public void enviarEmailConfirmacao(Ciclista ciclista) {
     }
 }

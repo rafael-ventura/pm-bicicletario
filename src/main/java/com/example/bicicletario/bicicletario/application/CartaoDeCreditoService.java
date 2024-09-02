@@ -25,14 +25,10 @@ public class CartaoDeCreditoService {
     private static final Logger logger = LoggerFactory.getLogger(CartaoDeCreditoService.class);
 
     private final CartaoDeCreditoRepository cartaoDeCreditoRepository;
-
     private final CiclistaRepository ciclistaRepository;
-
     private final EmailService emailService;
-
     private final CartaoDeCreditoMapper cartaoDeCreditoMapper;
-
-    private final AdministradoraCCService administradoraCCService; // Serviço para validação do cartão de crédito
+    private final AdministradoraCCService administradoraCCService;
 
     public CartaoDeCreditoService(CartaoDeCreditoRepository cartaoDeCreditoRepository, CiclistaRepository ciclistaRepository, EmailService emailService, CartaoDeCreditoMapper cartaoDeCreditoMapper, AdministradoraCCService administradoraCCService) {
         this.cartaoDeCreditoRepository = cartaoDeCreditoRepository;
@@ -43,28 +39,24 @@ public class CartaoDeCreditoService {
     }
 
     public CartaoDeCredito obterCartaoDeCredito(int idCiclista) {
-        return cartaoDeCreditoRepository.findByCiclistaId(idCiclista).orElseThrow(() -> new ResourceNotFoundException("Cartão de crédito não encontrado."));
+        return cartaoDeCreditoRepository.findByCiclistaId(idCiclista)
+                .orElseThrow(() -> new ResourceNotFoundException("Cartão de crédito não encontrado."));
     }
 
     public void alterarCartaoDeCredito(int idCiclista, NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO) {
-        // Primeiro, verificar se o cartão de crédito existe
         CartaoDeCredito cartaoDeCredito = cartaoDeCreditoRepository.findByCiclistaId(idCiclista)
                 .orElseThrow(() -> new ResourceNotFoundException("Cartão de crédito não encontrado."));
 
-        // Agora, validar os dados do cartão de crédito
         validarCartaoDeCredito(novoCartaoDeCreditoDTO);
 
-        // Atualizar os detalhes do cartão de crédito
         cartaoDeCredito.setNomeTitular(novoCartaoDeCreditoDTO.getNomeTitular());
         cartaoDeCredito.setNumero(novoCartaoDeCreditoDTO.getNumero());
         cartaoDeCredito.setValidade(novoCartaoDeCreditoDTO.getValidade());
         cartaoDeCredito.setCvv(novoCartaoDeCreditoDTO.getCvv());
         cartaoDeCreditoRepository.save(cartaoDeCredito);
 
-        // Enviar email de confirmação
         enviarEmailAlteracaoDeDados(idCiclista);
     }
-
 
     public void validarCartaoDeCredito(NovoCartaoDeCreditoDTO cartaoDeCreditoDTO) {
         if (cartaoDeCreditoDTO.getNomeTitular() == null || cartaoDeCreditoDTO.getNomeTitular().isEmpty()) {
@@ -80,7 +72,6 @@ public class CartaoDeCreditoService {
             throw new InvalidDataException("CVV do cartão de crédito inválido.");
         }
 
-        // Aqui deve ser onde a exceção está faltando
         boolean valid = administradoraCCService.validarCartao(cartaoDeCreditoDTO, true);
         if (!valid) {
             throw new InvalidDataException("Cartão de crédito inválido.");
@@ -99,7 +90,6 @@ public class CartaoDeCreditoService {
     public void enviarEmailAlteracaoDeDados(int idCiclista) {
         Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(() -> new ResourceNotFoundException("Ciclista não encontrado com o ID:"));
         logger.info("E-mail de confirmação enviado para: {}", ciclista.getEmail());
-        // Simulação de envio de e-mail
         EmailDTO email = new EmailDTO();
         email.setEmail(ciclista.getEmail());
         email.setAssunto("Alteração de dados");
