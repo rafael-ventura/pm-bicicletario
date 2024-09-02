@@ -84,7 +84,7 @@ public class TrancaService {
         Tranca tranca = obterTrancaPorId(idTranca);
         validarExclusaoDeTranca(tranca);
         tranca.setStatus(StatusTranca.EXCLUIDA);
-        trancaRepository.save(tranca);
+        trancaRepository.deleteById(idTranca);
     }
 
     public List<Tranca> listarTodasTrancas() {
@@ -93,13 +93,14 @@ public class TrancaService {
 
     public Tranca obterTrancaPorId(Integer idTranca) {
         return trancaRepository.findById(idTranca)
-                .orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
+                .orElseThrow(() -> new ResourceNotFoundException(Constantes.NAO_ENCONTRADO));
     }
 
-    public Tranca obterBicicletaNaTranca(Integer idTranca) {
-        Tranca tranca = obterTrancaPorId(idTranca);
+    public Bicicleta obterBicicletaNaTranca(Integer idTranca) {
+        Tranca tranca = trancaRepository.findById(idTranca)
+                .orElseThrow(() -> new ResourceNotFoundException("Id da tranca inválido"));
         verificarBicicletaNaTranca(tranca);
-        return tranca;
+        return tranca.getBicicleta();
     }
 
     public Tranca trancarTranca(Integer idTranca, Integer bicicletaId) {
@@ -129,7 +130,7 @@ public class TrancaService {
             tranca.setStatus(StatusTranca.OCUPADA);
             trancaRepository.save(tranca);
         } else {
-            throw new InvalidDataException(Constantes.BICICLETA_NAO_ENCONTRADA);
+            throw new InvalidDataException(Constantes.DADOS_INVALIDOS_TRANCAR);
         }
     }
 
@@ -139,7 +140,7 @@ public class TrancaService {
             tranca.setStatus(StatusTranca.LIVRE);
             trancaRepository.save(tranca);
         } else {
-            throw new InvalidDataException(Constantes.BICICLETA_NAO_ENCONTRADA);
+            throw new InvalidDataException(Constantes.DADOS_INVALIDOS);
         }
     }
 
@@ -152,7 +153,7 @@ public class TrancaService {
                 tranca.setStatus(StatusTranca.LIVRE);
                 break;
             default:
-                throw new InvalidDataException(Constantes.ERRO_ALTERAR_STATUS_TRANCA);
+                throw new InvalidDataException(Constantes.DADOS_INVALIDOS);
         }
         trancaRepository.save(tranca);
     }
@@ -183,7 +184,7 @@ public class TrancaService {
 
     private void validarExclusaoDeTranca(Tranca tranca) {
         if (trancaTemBicicleta(tranca)) {
-            throw new InvalidDataException(Constantes.TRANCA_PRENCHIDA);
+            throw new InvalidDataException(Constantes.DADOS_INVALIDOS);
         }
     }
 
@@ -228,7 +229,7 @@ public class TrancaService {
 
     private void validarFuncionarioParaReparo(Tranca tranca, Integer idFuncionario) {
         if (!tranca.getIdFuncionarioUltimaOperacao().equals(idFuncionario)) {
-            throw new InvalidDataException(Constantes.FUNCIONARIO_INVALIDO);
+            throw new InvalidDataException(Constantes.FUNCIONARIO_IGUAL);
         }
     }
 }

@@ -28,7 +28,7 @@ public class TotemRepository {
             return totem;
         }
 
-        for (Integer i = 0; i < totems.size(); i++) {
+        for (int i = 0; i < totems.size(); i++) {
             if (totems.get(i).getId().equals(totem.getId())) {
                 totems.set(i, totem);
             }
@@ -36,7 +36,6 @@ public class TotemRepository {
         return totem;
     }
 
-    //get
     public Totem get(Integer id) {
         return totems.stream().filter(t -> t.getId().equals(id)).findFirst().orElse(null);
     }

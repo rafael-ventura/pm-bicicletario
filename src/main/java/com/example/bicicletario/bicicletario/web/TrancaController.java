@@ -4,6 +4,7 @@ import com.example.bicicletario.bicicletario.application.services.TrancaService;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,9 @@ public class TrancaController {
     @GetMapping
     public ResponseEntity<List<Tranca>> listarTrancas() {
         List<Tranca> trancas = trancaService.listarTodasTrancas();
-        return ResponseEntity.ok(trancas);
+        return ResponseEntity.ok()
+                .header("Message", "OK")
+                .body(trancas);
     }
 
     @PostMapping
@@ -49,13 +52,17 @@ public class TrancaController {
     @GetMapping("/{idTranca}")
     public ResponseEntity<Tranca> obterTranca(@PathVariable Integer idTranca) {
         Tranca tranca = trancaService.obterTrancaPorId(idTranca);
-        return ResponseEntity.ok(tranca);
+        return ResponseEntity.ok()
+                .header("Message", TRANCA_ENCONTRADA)
+                .body(tranca);
     }
 
     @PutMapping("/{idTranca}")
     public ResponseEntity<Tranca> editarTranca(@PathVariable Integer idTranca, @RequestBody NovaTrancaDTO tranca) {
         Tranca trancaEditada = trancaService.atualizarTranca(idTranca, tranca);
-        return ResponseEntity.ok(trancaEditada);
+        return ResponseEntity.ok()
+                .header("Message", DADOS_CADASTRADOS)
+                .body(trancaEditada);
     }
 
     @DeleteMapping("/{idTranca}")
@@ -65,9 +72,11 @@ public class TrancaController {
     }
 
     @GetMapping("/{idTranca}/bicicleta")
-    public ResponseEntity<Tranca> obterBicicletaNaTranca(@PathVariable Integer idTranca) {
-        Tranca bicicleta = trancaService.obterBicicletaNaTranca(idTranca);
-        return ResponseEntity.ok(bicicleta);
+    public ResponseEntity<Bicicleta> obterBicicletaNaTranca(@PathVariable Integer idTranca) {
+        Bicicleta bicicleta = trancaService.obterBicicletaNaTranca(idTranca);
+        return ResponseEntity.ok()
+                .header("Message", TRANCA_ENCONTRADA)
+                .body(bicicleta);
     }
 
     @PostMapping("/{idTranca}/trancar")
@@ -87,10 +96,10 @@ public class TrancaController {
     }
 
     @PostMapping("/{idTranca}/status/{acao}")
-    public ResponseEntity<String> alterarStatusTranca(@PathVariable Integer idTranca, @PathVariable String acao) {
+    public ResponseEntity<Tranca> alterarStatusTranca(@PathVariable Integer idTranca, @PathVariable String acao) {
         Tranca tranca = trancaService.alterarStatusTranca(idTranca, acao);
         return ResponseEntity.ok()
                 .header("Message", ACAO_BEM_SUCEDIDA)
-                .body(tranca.getStatus().toString());
+                .body(tranca);
     }
 }

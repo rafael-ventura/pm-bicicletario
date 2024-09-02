@@ -44,7 +44,8 @@ public class TotemService {
     }
 
     public Totem atualizarTotem(Integer idTotem, NovoTotemDTO totemDTO) {
-        Totem totemExistente = buscarTotemPorId(idTotem);
+        Totem totemExistente = totemRepository.findById(idTotem)
+                .orElseThrow(() -> new ResourceNotFoundException("Totem não encontrado"));
         validarDadosTotem(totemDTO);
         atualizarDadosTotem(totemExistente, totemDTO);
         return totemRepository.save(totemExistente);
@@ -58,48 +59,57 @@ public class TotemService {
 
     public List<Tranca> listarTrancasPorTotem(Integer idTotem) {
         Totem totem = recuperarTotem(idTotem);
-        return trancaRepository.findByTotemLocalizacao(totem.getLocalizacao());
+        List<Tranca> trancas = new ArrayList<>();
+        try {
+            trancas = trancaRepository.findTrancaByLocalizacao(totem.getLocalizacao());
+        } catch (InvalidDataException e) {
+            throw new ResourceNotFoundException(Constantes.DADOS_INVALIDOS);
+        }
+        if (trancas.isEmpty()) {
+            throw new ResourceNotFoundException(Constantes.NAO_ENCONTRADO);
+        }
+        return trancas;
     }
 
     public List<Bicicleta> listarBicicletasPorTotem(Integer idTotem) {
         List<Bicicleta> bicicletas = new ArrayList<>();
         List<Tranca> trancas = listarTrancasPorTotem(idTotem);
-        if(trancas.isEmpty()) {
-            return List.of();
+        try {
+            trancas.forEach(tranca -> bicicletas.add(tranca.getBicicleta()));
+        } catch (InvalidDataException e) {
+            throw new ResourceNotFoundException(Constantes.DADOS_INVALIDOS);
         }
-        trancas.forEach(tranca -> bicicletas.add(tranca.getBicicleta()));
+        if (bicicletas.isEmpty()) {
+            throw new ResourceNotFoundException(Constantes.NAO_ENCONTRADO);
+        }
         return bicicletas;
     }
 
-    // Métodos auxiliares privados
-
     private Totem buscarTotemPorId(Integer idTotem) {
         return totemRepository.findById(idTotem)
-                .orElseThrow(() -> new ResourceNotFoundException(Constantes.TOTEM_NAO_ENCONTRADO));
+                .orElseThrow(() -> new ResourceNotFoundException(Constantes.NAO_ENCONTRADO));
     }
 
     private Totem recuperarTotem(Integer idTotem) {
         if (!totemRepository.existsById(idTotem)) {
-            throw new ResourceNotFoundException(Constantes.TOTEM_NAO_ENCONTRADO);
+            throw new ResourceNotFoundException(Constantes.NAO_ENCONTRADO);
         }
-       return totemRepository.get(idTotem);
+        return totemRepository.get(idTotem);
     }
 
     private void validarDadosTotem(NovoTotemDTO totemDTO) {
         if (totemDTO.getLocalizacao() == null || totemDTO.getDescricao() == null) {
             throw new InvalidDataException(Constantes.DADOS_INVALIDOS);
         }
-        // Aqui poderíamos adicionar validações para garantir que os dados não sejam editados após o cadastro (Regra R2)
     }
 
     private void atualizarDadosTotem(Totem totemExistente, NovoTotemDTO totemDTO) {
-        // Assumindo que somente localização e descrição são editáveis
         totemExistente.setLocalizacao(totemDTO.getLocalizacao());
         totemExistente.setDescricao(totemDTO.getDescricao());
     }
 
     private void validarExclusaoDeTotem(Totem totem) {
-        // Regra R3 - Apenas totens que não possuem nenhuma tranca podem ser excluídos
+
         List<Tranca> trancasAssociadas = listarTrancasPorTotem(totem.getId());
         if (!trancasAssociadas.isEmpty()) {
             throw new InvalidDataException(Constantes.TOTEM_NAO_ENCONTRADO);

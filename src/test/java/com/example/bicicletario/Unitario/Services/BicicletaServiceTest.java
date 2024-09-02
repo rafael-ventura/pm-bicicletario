@@ -248,7 +248,7 @@ class BicicletaServiceTest {
             bicicletaService.integrarBicicletaNaRede(dto);
         });
 
-        assertEquals(Constantes.TRANCA_NAO_ENCONTRADA, exception.getMessage());
+        assertEquals(Constantes.ID_TRANCA_INVALIDA, exception.getMessage());
     }
 
     @Test
@@ -271,7 +271,7 @@ class BicicletaServiceTest {
             bicicletaService.integrarBicicletaNaRede(dto);
         });
 
-        assertEquals(Constantes.FUNCIONARIO_INVALIDO, exception.getMessage());
+        assertEquals(Constantes.FUNCIONARIO_IGUAL, exception.getMessage());
     }
 
     @Test
@@ -402,7 +402,7 @@ class BicicletaServiceTest {
             bicicletaService.retirarBicicletaDaRede(dto);
         });
 
-        assertEquals(Constantes.TRANCA_NAO_ENCONTRADA, exception.getMessage());
+        assertEquals(Constantes.ID_TRANCA_INVALIDA, exception.getMessage());
     }
 
     @Test

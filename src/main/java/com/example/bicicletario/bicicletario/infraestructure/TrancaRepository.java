@@ -40,7 +40,7 @@ public class TrancaRepository {
         trancas.removeIf(t -> t.getId().equals(id));
     }
 
-    public List<Tranca> findByTotemLocalizacao(String totemLocalizacao) {
+    public List<Tranca> findTrancaByLocalizacao(String totemLocalizacao) {
         List<Tranca> result = new ArrayList<>();
         for (Tranca tranca : trancas) {
             if (tranca.getLocalizacao().equals(totemLocalizacao)) {
