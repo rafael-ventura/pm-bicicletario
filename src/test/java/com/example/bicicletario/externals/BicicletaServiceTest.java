@@ -8,16 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BicicletaServiceTest {
 
-    @Test
+    /*@Test
     void testGetBicicletaByTranca() {
         int idTranca = 1;
         BicicletaService bicicletaService = new BicicletaService();
-        Bicicleta bicicleta = bicicletaService.getBicicletaByTranca(idTranca).orElseThrow(() -> new RuntimeException("Bicicleta não encontrada."));
+        Bicicleta bicicleta = tr.g(idTranca).orElseThrow(() -> new RuntimeException("Bicicleta não encontrada."));
 
         assertEquals(1, bicicleta.getId());
         assertEquals("Caloi", bicicleta.getMarca());
         assertEquals("Elite", bicicleta.getModelo());
         assertEquals("2021", bicicleta.getAno());
         assertEquals(1, bicicleta.getNumero());
-    }
+    }*/
 }

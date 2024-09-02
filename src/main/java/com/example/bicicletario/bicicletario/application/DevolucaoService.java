@@ -49,9 +49,7 @@ public class DevolucaoService {
         int ciclista = devolucaoDTO.getCiclista();
 
         // 1. Validação da bicicleta
-        Bicicleta bicicleta = bicicletaService.getBicicletaByTranca(trancaFim)
-                .orElseThrow(() -> new ResourceNotFoundException("Bicicleta não encontrada."));
-
+        Bicicleta bicicleta = trancaService.getBicicletaByTranca(trancaFim);
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO); // Simula a bicicleta sendo usada
         if (!StatusBicicleta.EM_USO.equals(bicicleta.getStatusBicicleta())) {
             throw new InvalidDataException("Bicicleta não está em uso.");
@@ -97,7 +95,7 @@ public class DevolucaoService {
         bicicletaService.atualizarStatus(bicicleta, StatusBicicleta.DISPONIVEL);
 
         // 8. Atualização da tranca
-        trancaService.atualizarStatusTranca(trancaFim, "TRANCAR");
+        trancaService.trancarTranca(trancaFim, bicicleta.getId());
         trancaService.prenderBicicleta(Integer.parseInt(bicicleta.getId().toString()), trancaFim);
 
         // 9. Registro da devolução

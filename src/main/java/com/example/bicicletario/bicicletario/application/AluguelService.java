@@ -61,8 +61,11 @@ public class AluguelService {
         }
 
         // Lê a bicicleta presa na tranca
-        Bicicleta bicicleta = bicicletaService.getBicicletaByTranca(idTranca)
-                .orElseThrow(() -> new ResourceNotFoundException("Bicicleta não encontrada."));
+        if(tranca.getBicicleta() == null) {
+            log.error("Tranca sem bicicleta presa. ID Tranca: {}", idTranca);
+            throw new ResourceNotFoundException("Tranca sem bicicleta presa.");
+        }
+        Bicicleta bicicleta = tranca.getBicicleta();
         if (!StatusBicicleta.DISPONIVEL.equals(bicicleta.getStatusBicicleta())) {
             log.warn("Bicicleta com status inválido. ID Bicicleta: {}", bicicleta.getId());
             throw new BadRequestException("Bicicleta não está disponível.");
@@ -93,11 +96,11 @@ public class AluguelService {
         aluguel.setTrancaInicio(idTranca);
         aluguel.setHoraInicio(LocalDateTime.now().toString());
 
-        // Altera o status da bicicleta para "em uso"
-        bicicletaService.atualizarStatus(bicicleta, StatusBicicleta.EM_USO);
-
-        // Solicita abertura da tranca e altera status para "livre"
-        trancaService.atualizarStatusTranca(idTranca, "DESTRANCAR");
+         /*
+         * Altera o status da bicicleta para "em uso"
+         * Solicita abertura da tranca e altera status para "livre"
+         * */
+        trancaService.destrancarTranca(idTranca, bicicleta.getId());
 
         // Envia uma mensagem para o ciclista com os dados do aluguel (R4)
         emailService.enviarEmailAluguel(idCiclista, aluguel, bicicleta, tranca);

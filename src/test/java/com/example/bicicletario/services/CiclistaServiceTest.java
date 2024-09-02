@@ -3,6 +3,7 @@ package com.example.bicicletario.services;
 import com.example.bicicletario.bicicletario.application.CartaoDeCreditoService;
 import com.example.bicicletario.bicicletario.application.CiclistaService;
 import com.example.bicicletario.bicicletario.application.external.BicicletaService;
+import com.example.bicicletario.bicicletario.application.external.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
@@ -29,6 +30,9 @@ class CiclistaServiceTest {
 
     @InjectMocks
     private CiclistaService ciclistaService;
+
+    @Mock
+    private TrancaService trancaService;
 
     @Mock
     private CiclistaMapper ciclistaMapper;
@@ -223,13 +227,13 @@ class CiclistaServiceTest {
         Aluguel aluguel = new Aluguel();
         aluguel.setId(1);
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
+        bicicleta.setId(1);
         aluguel.setBicicleta(Integer.parseInt(bicicleta.getId().toString()));
 
         // Mock repository methods
         when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
         when(aluguelRepository.findByCiclistaAndHoraFimIsNull(1)).thenReturn(Optional.of(aluguel));
-        when(bicicletaService.getBicicletaByTranca(idTranca)).thenReturn(Optional.of(bicicleta));
+        when(trancaService.getBicicletaByTranca(idTranca)).thenReturn(bicicleta);
 
         // Call service method
         Optional<Bicicleta> bicicletaAlugada = ciclistaService.obterBicicletaAlugada(1);

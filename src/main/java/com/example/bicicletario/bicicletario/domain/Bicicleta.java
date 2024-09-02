@@ -4,7 +4,7 @@ import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 
 public class Bicicleta {
 
-    private Long id;
+    private Integer id;
     private String marca;
     private String modelo;
     private String ano;
@@ -17,11 +17,11 @@ public class Bicicleta {
 
     // Getters e Setters
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

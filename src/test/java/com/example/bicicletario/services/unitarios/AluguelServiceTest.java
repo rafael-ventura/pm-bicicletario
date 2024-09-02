@@ -127,7 +127,7 @@ class AluguelServiceTest {
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
         when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
-        when(bicicletaService.getBicicletaByTranca(idTranca)).thenReturn(Optional.empty());
+        when(trancaService.getBicicletaByTranca(idTranca)).thenThrow(new ResourceNotFoundException("Bicicleta não encontrada."));
 
         // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
@@ -140,16 +140,17 @@ class AluguelServiceTest {
         // Arrange
         int idCiclista = 1;
         int idTranca = 1;
+        Tranca tranca = new Tranca();
         NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
-        trancaDTO.setStatus(StatusTranca.OCUPADA);
+        tranca.setStatus(StatusTranca.OCUPADA);
         trancaDTO.setBicicleta(1);
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
-        when(trancaService.obterTranca(idTranca)).thenReturn(trancaDTO);
-        when(bicicletaService.getBicicletaByTranca(idTranca)).thenReturn(Optional.of(bicicleta));
+        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+        when(trancaService.getBicicletaByTranca(idTranca)).thenReturn(bicicleta);
 
         // Act & Assert
         BadRequestException exception = assertThrows(BadRequestException.class,
@@ -162,17 +163,17 @@ class AluguelServiceTest {
         // Arrange
         int idCiclista = 1;
         int idTranca = 1;
-        NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
-        trancaDTO.setStatus(StatusTranca.OCUPADA);
-        trancaDTO.setBicicleta(1);
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.OCUPADA);
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
+        tranca.setBicicleta(bicicleta);
 
         // Configurando o comportamento dos mocks
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
-        when(trancaService.obterTranca(idTranca)).thenReturn(trancaDTO);
-        when(bicicletaService.getBicicletaByTranca(idTranca)).thenReturn(Optional.of(bicicleta));
+        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+        when(trancaService.getBicicletaByTranca(idTranca)).thenReturn(bicicleta);
 
         // Act & Assert
         BadRequestException exception = assertThrows(BadRequestException.class,

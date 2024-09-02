@@ -57,7 +57,7 @@ class DevolucaoServiceTest {
         devolucaoDTO.setTrancaFim(2);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
+        bicicleta.setId(1);
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         Tranca tranca = new Tranca();
@@ -143,12 +143,13 @@ class DevolucaoServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
-        NovoTrancaDTO tranca = new NovoTrancaDTO();
-        tranca.setId(1);
-        tranca.setStatus(StatusTranca.LIVRE);
+        NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
+        Tranca tranca = new Tranca();
+        trancaDTO.setId(1);
+        trancaDTO.setStatus(StatusTranca.LIVRE);
 
-        when(bicicletaService.getBicicletaByTranca(tranca.getId())).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca(tranca.getId())).thenReturn(tranca);
+        when(bicicletaService.getBicicletaByTranca(trancaDTO.getId())).thenReturn(Optional.of(bicicleta));
+        when(trancaService.obterTranca(trancaDTO.getId())).thenReturn(tranca);
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.empty());
 
         // Act & Assert

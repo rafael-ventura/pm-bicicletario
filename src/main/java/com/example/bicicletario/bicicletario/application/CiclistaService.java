@@ -94,10 +94,7 @@ public class CiclistaService {
         Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(() -> new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista));
         Integer bicicletaId = aluguelRepository.findByCiclistaAndHoraFimIsNull(ciclista.getId()).map(Aluguel::getBicicleta).orElse(null);
         if (bicicletaId != null) {
-            return Optional.of(bicicletaService.getBicicletaByTranca(idCiclista).orElseThrow(
-                    // TODO: ID da TRANCA nao do CICLISTA!!!
-                    () -> new ResourceNotFoundException(Constants.BICICLETA_NAO_ENCONTRADA + bicicletaId)
-            ));
+            return Optional.of(bicicletaService.getBicicletaById(idCiclista));
         }
         return Optional.empty();
     }
