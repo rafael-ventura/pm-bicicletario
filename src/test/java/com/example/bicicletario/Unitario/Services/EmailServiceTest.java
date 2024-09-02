@@ -47,17 +47,17 @@ class EmailServiceTest {
         bicicleta.setAno("2022");
 
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
 
         // Mockando a chamada ao serviço de funcionário
-        when(funcionarioService.get(1L)).thenReturn(funcionario);
+        when(funcionarioService.get(1)).thenReturn(funcionario);
 
         // Mockando a chamada ao serviço de envio de e-mail
         doNothing().when(restTemplate).postForEntity(anyString(), any(), eq(Void.class));
 
-        emailService.enviarEmailParaBicicleta(1L, bicicleta, tranca, "Inclusão");
+        emailService.enviarEmailParaBicicleta(1, bicicleta, tranca, "Inclusão");
 
-        verify(funcionarioService, times(1)).get(1L);
+        verify(funcionarioService, times(1)).get(1);
         verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(Void.class));
     }
 
@@ -73,26 +73,26 @@ class EmailServiceTest {
         tranca.setLocalizacao("Rua Y, 123");
 
         // Mockando a chamada ao serviço de funcionário
-        when(funcionarioService.get(1L)).thenReturn(funcionario);
+        when(funcionarioService.get(1)).thenReturn(funcionario);
 
         // Mockando a chamada ao serviço de envio de e-mail
         doNothing().when(restTemplate).postForEntity(anyString(), any(), eq(Void.class));
 
-        emailService.enviarEmailParaTranca(1L, tranca, "Inclusão");
+        emailService.enviarEmailParaTranca(1, tranca, "Inclusão");
 
-        verify(funcionarioService, times(1)).get(1L);
+        verify(funcionarioService, times(1)).get(1);
         verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(Void.class));
     }
 
     @Test
     void enviarEmailParaBicicleta_FuncionarioNotFound() {
-        when(funcionarioService.get(1L)).thenThrow(new ResourceNotFoundException("Funcionário não encontrado"));
+        when(funcionarioService.get(1)).thenThrow(new ResourceNotFoundException("Funcionário não encontrado"));
 
         Bicicleta bicicleta = new Bicicleta();
         Tranca tranca = new Tranca();
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            emailService.enviarEmailParaBicicleta(1L, bicicleta, tranca, "Inclusão");
+            emailService.enviarEmailParaBicicleta(1, bicicleta, tranca, "Inclusão");
         });
 
         assertEquals("Funcionário não encontrado", exception.getMessage());
@@ -100,13 +100,13 @@ class EmailServiceTest {
 
     @Test
     void enviarEmailParaTranca_FuncionarioNotFound() {
-        when(funcionarioService.get(1L)).thenThrow(new ResourceNotFoundException("Funcionário não encontrado"));
+        when(funcionarioService.get(1)).thenThrow(new ResourceNotFoundException("Funcionário não encontrado"));
 
         Tranca tranca = new Tranca();
         tranca.setNumero(1);
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            emailService.enviarEmailParaTranca(1L, tranca, "Inclusão");
+            emailService.enviarEmailParaTranca(1, tranca, "Inclusão");
         });
 
         assertEquals("Funcionário não encontrado", exception.getMessage());

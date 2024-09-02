@@ -48,25 +48,25 @@ public class BicicletaController {
     }
 
     @GetMapping("/{idBicicleta}")
-    public ResponseEntity<Bicicleta> obterBicicleta(@PathVariable Long idBicicleta) {
+    public ResponseEntity<Bicicleta> obterBicicleta(@PathVariable Integer idBicicleta) {
         Bicicleta bicicleta = bicicletaService.obterBicicletaPorId(idBicicleta);
         return ResponseEntity.ok(bicicleta);
     }
 
     @PutMapping("/{idBicicleta}")
-    public ResponseEntity<Bicicleta> atualizarBicicleta(@PathVariable Long idBicicleta, @RequestBody NovaBicicletaDTO bicicletaDTO) {
+    public ResponseEntity<Bicicleta> atualizarBicicleta(@PathVariable Integer idBicicleta, @RequestBody NovaBicicletaDTO bicicletaDTO) {
         Bicicleta bicicletaEditada = bicicletaService.atualizarBicicleta(idBicicleta, bicicletaDTO);
         return ResponseEntity.ok(bicicletaEditada);
     }
 
     @DeleteMapping("/{idBicicleta}")
-    public ResponseEntity<String> removerBicicleta(@PathVariable Long idBicicleta) {
+    public ResponseEntity<String> removerBicicleta(@PathVariable Integer idBicicleta) {
         bicicletaService.excluirBicicleta(idBicicleta);
         return ResponseEntity.ok(BICICLETA_REMOVIDA);
     }
 
     @PostMapping("/{idBicicleta}/status/{acao}")
-    public ResponseEntity<Bicicleta> alterarStatusBicicleta(@PathVariable Long idBicicleta, @PathVariable String acao) {
+    public ResponseEntity<Bicicleta> alterarStatusBicicleta(@PathVariable Integer idBicicleta, @PathVariable String acao) {
         Bicicleta bicicleta = bicicletaService.alterarStatusBicicleta(idBicicleta, acao);
         return ResponseEntity.ok(bicicleta);
     }

@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class FuncionarioService {
 
-    public Funcionario get(long idFuncionario) {
+    public Funcionario get(Integer idFuncionario) {
         RestTemplate restTemplate = new RestTemplate();
         String baseUrl = "http://ec2-3-91-187-43.compute-1.amazonaws.com:8040/api";
         String url = baseUrl + "/funcionario/" + idFuncionario;
@@ -33,7 +33,7 @@ public class FuncionarioService {
         }
     }
 
-    public boolean isFuncionarioValido(long idFuncionario) {
+    public boolean isFuncionarioValido(Integer idFuncionario) {
         Funcionario funcionario = get(idFuncionario);
         return funcionario != null && funcionario.getId() == idFuncionario;
     }

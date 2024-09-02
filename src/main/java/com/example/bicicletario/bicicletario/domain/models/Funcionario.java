@@ -2,7 +2,7 @@ package com.example.bicicletario.bicicletario.domain.models;
 
 public class Funcionario {
 
-    private Long id;
+    private Integer id;
     private String nome;
     private String email;
     private String cpf;
@@ -16,11 +16,11 @@ public class Funcionario {
 
 
     // Getters e Setters
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -50,7 +50,7 @@ class TotemServiceTest {
     @Test
     void listarTotens() {
         Totem totem = new Totem();
-        totem.setId(1L);
+        totem.setId(1);
         totem.setLocalizacao("Localizacao");
         totem.setDescricao("Descricao");
 
@@ -67,7 +67,7 @@ class TotemServiceTest {
         novoTotem.setDescricao("Descricao");
 
         Totem totem = new Totem();
-        totem.setId(1L);
+        totem.setId(1);
         totem.setLocalizacao("Localizacao");
         totem.setDescricao("Descricao");
 
@@ -92,23 +92,23 @@ class TotemServiceTest {
     @Test
     void atualizarTotem() {
         Totem totem = new Totem();
-        totem.setId(1L);
+        totem.setId(1);
         totem.setLocalizacao("Localizacao");
         totem.setDescricao("Descricao");
 
         Totem updatedTotem = new Totem();
-        updatedTotem.setId(1L);
+        updatedTotem.setId(1);
         updatedTotem.setLocalizacao("Nova Localizacao");
         updatedTotem.setDescricao("Nova Descricao");
 
-        when(totemRepository.findById(any(Long.class))).thenReturn(Optional.of(totem));
+        when(totemRepository.findById(any(Integer.class))).thenReturn(Optional.of(totem));
         when(totemRepository.save(any(Totem.class))).thenReturn(updatedTotem);
 
         NovoTotemDTO totemDTO = new NovoTotemDTO();
         totemDTO.setLocalizacao("Nova Localizacao");
         totemDTO.setDescricao("Nova Descricao");
 
-        Totem result = totemService.atualizarTotem(1L, totemDTO);
+        Totem result = totemService.atualizarTotem(1, totemDTO);
 
         assertNotNull(result);
         assertEquals("Nova Localizacao", result.getLocalizacao());
@@ -117,14 +117,14 @@ class TotemServiceTest {
 
     @Test
     void atualizarTotem_ThrowsResourceNotFoundException() {
-        when(totemRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+        when(totemRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         NovoTotemDTO totemDTO = new NovoTotemDTO();
         totemDTO.setLocalizacao("Nova Localizacao");
         totemDTO.setDescricao("Nova Descricao");
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            totemService.atualizarTotem(1L, totemDTO);
+            totemService.atualizarTotem(1, totemDTO);
         });
 
         assertEquals(Constantes.TOTEM_NAO_ENCONTRADO, exception.getMessage());
@@ -133,14 +133,14 @@ class TotemServiceTest {
     @Test
     void atualizarTotem_ThrowsInvalidDataException() {
         Totem totem = new Totem();
-        totem.setId(1L);
+        totem.setId(1);
 
-        when(totemRepository.findById(any(Long.class))).thenReturn(Optional.of(totem));
+        when(totemRepository.findById(any(Integer.class))).thenReturn(Optional.of(totem));
 
         NovoTotemDTO totemDTO = new NovoTotemDTO();
 
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
-            totemService.atualizarTotem(1L, totemDTO);
+            totemService.atualizarTotem(1, totemDTO);
         });
 
         assertEquals(Constantes.DADOS_INVALIDOS, exception.getMessage());
@@ -149,23 +149,23 @@ class TotemServiceTest {
     /*@Test
     void excluirTotem() {
         Totem totem = new Totem();
-        totem.setId(1L);
+        totem.setId(1);
 
-        when(totemRepository.findById(1L)).thenReturn(Optional.of(totem));
-        when(totemRepository.existsById(1L)).thenReturn(true);
+        when(totemRepository.findById(1)).thenReturn(Optional.of(totem));
+        when(totemRepository.existsById(1)).thenReturn(true);
 
-        totemService.excluirTotem(1L);
+        totemService.excluirTotem(1);
 
-        verify(totemRepository, times(1)).deleteById(1L);
+        verify(totemRepository, times(1)).deleteById(1);
     }*/
 
 
     @Test
     void excluirTotem_ThrowsResourceNotFoundException() {
-        when(totemRepository.existsById(any(Long.class))).thenReturn(false);
+        when(totemRepository.existsById(any(Integer.class))).thenReturn(false);
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            totemService.excluirTotem(1L);
+            totemService.excluirTotem(1);
         });
 
         assertEquals(Constantes.TOTEM_NAO_ENCONTRADO, exception.getMessage());
@@ -174,21 +174,21 @@ class TotemServiceTest {
     /*@Test
     void listarTrancas() {
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
 
-        when(totemRepository.existsById(any(Long.class))).thenReturn(true);
+        when(totemRepository.existsById(any(Integer.class))).thenReturn(true);
         when(trancaRepository.findByTotemLocalizacao(any(String.class))).thenReturn(List.of(tranca));
 
-        List<Tranca> result = totemService.listarTrancasPorTotem(1L);
+        List<Tranca> result = totemService.listarTrancasPorTotem(1);
         assertEquals(1, result.size());
     }*/
 
     @Test
     void listarTrancas_ThrowsResourceNotFoundException() {
-        when(totemRepository.existsById(any(Long.class))).thenReturn(false);
+        when(totemRepository.existsById(any(Integer.class))).thenReturn(false);
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            totemService.listarTrancasPorTotem(1L);
+            totemService.listarTrancasPorTotem(1);
         });
 
         assertEquals(Constantes.TOTEM_NAO_ENCONTRADO, exception.getMessage());
@@ -197,21 +197,21 @@ class TotemServiceTest {
     /*@Test
     void listarBicicletas() {
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
+        bicicleta.setId(1);
 
-        when(totemRepository.existsById(any(Long.class))).thenReturn(true);
-        when(bicicletaRepository.findByTotemId(any(Long.class))).thenReturn(List.of(bicicleta));
+        when(totemRepository.existsById(any(Integer.class))).thenReturn(true);
+        when(bicicletaRepository.findByTotemId(any(Integer.class))).thenReturn(List.of(bicicleta));
 
-        List<Bicicleta> result = totemService.listarBicicletasPorTotem(1L);
+        List<Bicicleta> result = totemService.listarBicicletasPorTotem(1);
         assertEquals(1, result.size());
     }*/
 
     @Test
     void listarBicicletas_ThrowsResourceNotFoundException() {
-        when(totemRepository.existsById(any(Long.class))).thenReturn(false);
+        when(totemRepository.existsById(any(Integer.class))).thenReturn(false);
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            totemService.listarBicicletasPorTotem(1L);
+            totemService.listarBicicletasPorTotem(1);
         });
 
         assertEquals(Constantes.TOTEM_NAO_ENCONTRADO, exception.getMessage());

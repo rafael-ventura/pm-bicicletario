@@ -4,11 +4,11 @@ import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 
 public class Tranca {
 
-    private Long id;
+    private Integer id;
 
     private Bicicleta bicicleta;
 
-    private int numero;
+    private Integer numero;
 
     private String localizacao;
 
@@ -22,20 +22,18 @@ public class Tranca {
 
     private String dataRemocaoTotem;
 
-    private Long idFuncionarioUltimaOperacao;
-
-    private Totem totem; //TODO - REVISAR
+    private Integer idFuncionarioUltimaOperacao;
 
     public Tranca() {
     }
 
     // Getters e Setters
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -47,11 +45,11 @@ public class Tranca {
         this.status = status;
     }
 
-    public int getNumero() {
+    public Integer getNumero() {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(Integer numero) {
         this.numero = numero;
     }
 
@@ -79,14 +77,6 @@ public class Tranca {
         this.modelo = modelo;
     }
 
-    public Totem getTotem() {
-        return totem;
-    }
-
-    public void setTotem(Totem totem) {
-        this.totem = totem;
-    }
-
     public Bicicleta getBicicleta() {
         return bicicleta;
     }
@@ -103,11 +93,11 @@ public class Tranca {
         this.dataInsercaoTotem = dataInsercaoTotem;
     }
 
-    public Long getIdFuncionarioUltimaOperacao() {
+    public Integer getIdFuncionarioUltimaOperacao() {
         return idFuncionarioUltimaOperacao;
     }
 
-    public void setIdFuncionarioUltimaOperacao(Long idFuncionarioUltimaOperacao) {
+    public void setIdFuncionarioUltimaOperacao(Integer idFuncionarioUltimaOperacao) {
         this.idFuncionarioUltimaOperacao = idFuncionarioUltimaOperacao;
     }
 

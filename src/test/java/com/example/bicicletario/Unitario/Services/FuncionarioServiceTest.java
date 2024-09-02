@@ -23,30 +23,30 @@ class FuncionarioServiceTest {
    /* @Test
     void testGetFuncionario() {
         Funcionario funcionarioMock = new Funcionario();
-        funcionarioMock.setId(1L);
+        funcionarioMock.setId(1);
         funcionarioMock.setNome("Funcionario");
 
         // Mockando a resposta do RestTemplate
         when(restTemplate.getForEntity(anyString(), eq(Funcionario.class)))
                 .thenReturn(new ResponseEntity<>(funcionarioMock, HttpStatus.OK));
 
-        Funcionario funcionario = funcionarioService.get(1L);
+        Funcionario funcionario = funcionarioService.get(1);
 
         assertNotNull(funcionario);
-        assertEquals(1L, funcionario.getId());
+        assertEquals(1, funcionario.getId());
         assertEquals("Funcionario", funcionario.getNome());
     }
 
     @Test
     void testIsFuncionarioValido() {
         Funcionario funcionarioMock = new Funcionario();
-        funcionarioMock.setId(1L);
+        funcionarioMock.setId(1);
 
         // Mockando a resposta do RestTemplate
         when(restTemplate.getForEntity(anyString(), eq(Funcionario.class)))
                 .thenReturn(new ResponseEntity<>(funcionarioMock, HttpStatus.OK));
 
-        boolean isValido = funcionarioService.isFuncionarioValido(1L);
+        boolean isValido = funcionarioService.isFuncionarioValido(1);
 
         assertTrue(isValido);
     }
@@ -58,7 +58,7 @@ class FuncionarioServiceTest {
                 .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
         assertThrows(ResourceNotFoundException.class, () -> {
-            funcionarioService.get(1L);
+            funcionarioService.get(1);
         });
     }*/
 }

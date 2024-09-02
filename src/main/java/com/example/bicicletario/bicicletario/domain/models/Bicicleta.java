@@ -4,7 +4,7 @@ import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 
 public class Bicicleta {
 
-    private Long id;
+    private Integer id;
 
     private String marca;
 
@@ -12,7 +12,7 @@ public class Bicicleta {
 
     private String ano;
 
-    private int numero;
+    private Integer numero;
 
     private StatusBicicleta statusBicicleta;
 
@@ -20,14 +20,12 @@ public class Bicicleta {
 
     private String dataRemocaoTranca;
 
-    private Tranca tranca; //TODO - REVISAR
-
-    private Long idFuncionarioUltimaOperacao;
+    private Integer idFuncionarioUltimaOperacao;
 
     public Bicicleta() {
     }
 
-    public Bicicleta(String marca, String modelo, String ano, int numero, StatusBicicleta statusBicicleta) {
+    public Bicicleta(String marca, String modelo, String ano, Integer numero, StatusBicicleta statusBicicleta) {
         this.marca = marca;
         this.modelo = modelo;
         this.ano = ano;
@@ -37,11 +35,11 @@ public class Bicicleta {
 
     // Getters e Setters
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -69,11 +67,11 @@ public class Bicicleta {
         this.ano = ano;
     }
 
-    public int getNumero() {
+    public Integer getNumero() {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(Integer numero) {
         this.numero = numero;
     }
 
@@ -101,19 +99,11 @@ public class Bicicleta {
         this.dataRemocaoTranca = dataRemocaoTranca;
     }
 
-    public Tranca getTranca() {
-        return tranca;
-    }
-
-    public void setTranca(Tranca tranca) {
-        this.tranca = tranca;
-    }
-
-    public Long getIdFuncionarioUltimaOperacao() {
+    public Integer getIdFuncionarioUltimaOperacao() {
         return idFuncionarioUltimaOperacao;
     }
 
-    public void setIdFuncionarioUltimaOperacao(Long idFuncionarioUltimaOperacao) {
+    public void setIdFuncionarioUltimaOperacao(Integer idFuncionarioUltimaOperacao) {
         this.idFuncionarioUltimaOperacao = idFuncionarioUltimaOperacao;
     }
 }

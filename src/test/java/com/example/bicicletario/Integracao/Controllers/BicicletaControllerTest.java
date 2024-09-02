@@ -1,9 +1,9 @@
 package com.example.bicicletario.Integracao.Controllers;
 
-import com.example.bicicletario.bicicletario.application.services.BicicletaService;
 import com.example.bicicletario.bicicletario.application.exceptions.GlobalExceptionHandler;
 import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
 import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
+import com.example.bicicletario.bicicletario.application.services.BicicletaService;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaBicicletaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarBicicletaDaRedeDTO;
@@ -82,7 +82,7 @@ class BicicletaControllerTest {
         dto.setAno("2021");
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
+        bicicleta.setId(1);
         bicicleta.setMarca("marca");
         bicicleta.setModelo("modelo");
         bicicleta.setAno("2021");
@@ -123,11 +123,11 @@ class BicicletaControllerTest {
     @Test
     void obterBicicleta() throws Exception {
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
+        bicicleta.setId(1);
         bicicleta.setMarca("marca");
         bicicleta.setModelo("modelo");
 
-        when(bicicletaService.obterBicicletaPorId(1L)).thenReturn(bicicleta);
+        when(bicicletaService.obterBicicletaPorId(1)).thenReturn(bicicleta);
 
         mockMvc.perform(get("/api/bicicleta/1"))
                 .andExpect(status().isOk())
@@ -136,7 +136,7 @@ class BicicletaControllerTest {
 
     @Test
     void obterBicicleta_ThrowsResourceNotFoundException() throws Exception {
-        when(bicicletaService.obterBicicletaPorId(1L)).thenThrow(new ResourceNotFoundException("Bicicleta não encontrada"));
+        when(bicicletaService.obterBicicletaPorId(1)).thenThrow(new ResourceNotFoundException("Bicicleta não encontrada"));
 
         mockMvc.perform(get("/api/bicicleta/1"))
                 .andExpect(status().isNotFound())
@@ -145,7 +145,7 @@ class BicicletaControllerTest {
 
     @Test
     void obterBicicleta_ThrowsException() throws Exception {
-        when(bicicletaService.obterBicicletaPorId(1L)).thenThrow(new RuntimeException("Erro ao obter bicicleta"));
+        when(bicicletaService.obterBicicletaPorId(1)).thenThrow(new RuntimeException("Erro ao obter bicicleta"));
 
         mockMvc.perform(get("/api/bicicleta/1"))
                 .andExpect(status().isInternalServerError())
@@ -155,11 +155,11 @@ class BicicletaControllerTest {
     @Test
     void atualizarBicicleta() throws Exception {
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
+        bicicleta.setId(1);
         bicicleta.setMarca("marca");
         bicicleta.setModelo("modelo");
 
-        when(bicicletaService.atualizarBicicleta(any(Long.class), any(NovaBicicletaDTO.class))).thenReturn(bicicleta);
+        when(bicicletaService.atualizarBicicleta(any(Integer.class), any(NovaBicicletaDTO.class))).thenReturn(bicicleta);
 
         mockMvc.perform(put("/api/bicicleta/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -170,7 +170,7 @@ class BicicletaControllerTest {
 
     @Test
     void atualizarBicicleta_ThrowsInvalidDataException() throws Exception {
-        doThrow(new InvalidDataException("Dados inválidos")).when(bicicletaService).atualizarBicicleta(any(Long.class), any(NovaBicicletaDTO.class));
+        doThrow(new InvalidDataException("Dados inválidos")).when(bicicletaService).atualizarBicicleta(any(Integer.class), any(NovaBicicletaDTO.class));
 
         mockMvc.perform(put("/api/bicicleta/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -181,7 +181,7 @@ class BicicletaControllerTest {
 
     @Test
     void atualizarBicicleta_ThrowsResourceNotFoundException() throws Exception {
-        doThrow(new ResourceNotFoundException("Bicicleta não encontrada")).when(bicicletaService).atualizarBicicleta(any(Long.class), any(NovaBicicletaDTO.class));
+        doThrow(new ResourceNotFoundException("Bicicleta não encontrada")).when(bicicletaService).atualizarBicicleta(any(Integer.class), any(NovaBicicletaDTO.class));
 
         mockMvc.perform(put("/api/bicicleta/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -192,7 +192,7 @@ class BicicletaControllerTest {
 
     @Test
     void atualizarBicicleta_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Erro ao editar bicicleta")).when(bicicletaService).atualizarBicicleta(any(Long.class), any(NovaBicicletaDTO.class));
+        doThrow(new RuntimeException("Erro ao editar bicicleta")).when(bicicletaService).atualizarBicicleta(any(Integer.class), any(NovaBicicletaDTO.class));
 
         mockMvc.perform(put("/api/bicicleta/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -210,7 +210,7 @@ class BicicletaControllerTest {
 
     @Test
     void excluirBicicleta_ThrowsResourceNotFoundException() throws Exception {
-        doThrow(new ResourceNotFoundException("Bicicleta não encontrada")).when(bicicletaService).excluirBicicleta(any(Long.class));
+        doThrow(new ResourceNotFoundException("Bicicleta não encontrada")).when(bicicletaService).excluirBicicleta(any(Integer.class));
 
         mockMvc.perform(delete("/api/bicicleta/1"))
                 .andExpect(status().isNotFound())
@@ -219,7 +219,7 @@ class BicicletaControllerTest {
 
     @Test
     void excluirBicicleta_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Erro ao remover bicicleta")).when(bicicletaService).excluirBicicleta(any(Long.class));
+        doThrow(new RuntimeException("Erro ao remover bicicleta")).when(bicicletaService).excluirBicicleta(any(Integer.class));
 
         mockMvc.perform(delete("/api/bicicleta/1"))
                 .andExpect(status().isInternalServerError())
@@ -229,9 +229,9 @@ class BicicletaControllerTest {
     @Test
     void integrarBicicletaNaRede() throws Exception {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         mockMvc.perform(post("/api/bicicleta/integrarNaRede")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -265,9 +265,9 @@ class BicicletaControllerTest {
     @Test
     void retirarBicicletaDaRede() throws Exception {
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         mockMvc.perform(post("/api/bicicleta/retirarDaRede")
                         .contentType(MediaType.APPLICATION_JSON)

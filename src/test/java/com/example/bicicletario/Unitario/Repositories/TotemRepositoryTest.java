@@ -22,32 +22,32 @@ class TotemRepositoryTest {
     @Test
     void testSaveAndFindById() {
         Totem totem = new Totem();
-        totem.setId(1L);
+        totem.setId(1);
 
         Totem savedTotem = totemRepository.save(totem);
 
-        assertEquals(1L, savedTotem.getId());
-        Optional<Totem> retrievedTotem = totemRepository.findById(1L);
+        assertEquals(1, savedTotem.getId());
+        Optional<Totem> retrievedTotem = totemRepository.findById(1);
         assertTrue(retrievedTotem.isPresent());
-        assertEquals(1L, retrievedTotem.get().getId());
+        assertEquals(1, retrievedTotem.get().getId());
     }
 
     @Test
     void testDeleteById() {
         Totem totem = new Totem();
-        totem.setId(1L);
+        totem.setId(1);
 
         totemRepository.save(totem);
-        totemRepository.deleteById(1L);
+        totemRepository.deleteById(1);
 
-        Optional<Totem> retrievedTotem = totemRepository.findById(1L);
+        Optional<Totem> retrievedTotem = totemRepository.findById(1);
         assertFalse(retrievedTotem.isPresent());
     }
 
     @Test
     void testFindAll() {
         Totem totem1 = new Totem();
-        totem1.setId(1L);
+        totem1.setId(1);
         totemRepository.save(totem1);
 
         Totem totem2 = new Totem();

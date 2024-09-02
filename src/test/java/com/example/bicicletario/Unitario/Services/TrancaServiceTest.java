@@ -56,7 +56,7 @@ class TrancaServiceTest {
     @Test
     void integrarNaRedeTrancaNaoDisponivel() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdTranca(1L);
+        dto.setIdTranca(1);
 
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.OCUPADA);
@@ -64,7 +64,7 @@ class TrancaServiceTest {
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
 
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
-            trancaService.incluirTrancaEmTotem(dto);
+            trancaService.incluirTrancaNaRede(dto);
         });
 
         assertEquals("Tranca não disponível", exception.getMessage());
@@ -73,14 +73,14 @@ class TrancaServiceTest {
     @Test
     void integrarNaRedeTrancaDisponivel() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdTranca(1L);
+        dto.setIdTranca(1);
 
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.NOVA);
 
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
 
-        trancaService.incluirTrancaEmTotem(dto);
+        trancaService.incluirTrancaNaRede(dto);
 
         verify(trancaRepository, times(1)).save(tranca);
         verify(emailService, times(1)).enviarEmailParaTranca(eq(dto.getIdFuncionario()), eq(tranca), eq("Inclusão"));
@@ -89,8 +89,8 @@ class TrancaServiceTest {
     @Test
     void integrarNaRedeFuncionarioInvalido() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.EM_REPARO);
@@ -99,7 +99,7 @@ class TrancaServiceTest {
         when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(false);
 
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
-            trancaService.incluirTrancaEmTotem(dto);
+            trancaService.incluirTrancaNaRede(dto);
         });
 
         assertEquals("Funcionário inválido para esta operação", exception.getMessage());
@@ -108,8 +108,8 @@ class TrancaServiceTest {
     @Test
     void integrarNaRedeErroEnvioEmail() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.NOVA);
@@ -120,7 +120,7 @@ class TrancaServiceTest {
                 .when(emailService).enviarEmailParaTranca(eq(dto.getIdFuncionario()), eq(tranca), eq("Inclusão"));
 
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
-            trancaService.incluirTrancaEmTotem(dto);
+            trancaService.incluirTrancaNaRede(dto);
         });
 
         assertEquals(Constantes.ERROR_ENVIAR_EMAIL, exception.getMessage());
@@ -129,7 +129,7 @@ class TrancaServiceTest {
     @Test
     void retirarDaRedeTrancaValida() {
         RetirarTrancaDaRedeDTO dto = new RetirarTrancaDaRedeDTO();
-        dto.setIdTranca(1L);
+        dto.setIdTranca(1);
         dto.setStatusAcaoReparador(StatusAcaoReparador.EM_REPARO);
 
         Tranca tranca = new Tranca();
@@ -147,7 +147,7 @@ class TrancaServiceTest {
     @Test
     void retirarDaRedeTrancaComBicicleta() {
         RetirarTrancaDaRedeDTO dto = new RetirarTrancaDaRedeDTO();
-        dto.setIdTranca(1L);
+        dto.setIdTranca(1);
 
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.OCUPADA);
@@ -164,7 +164,7 @@ class TrancaServiceTest {
     @Test
     void retirarDaRedeStatusAcaoInvalido() {
         RetirarTrancaDaRedeDTO dto = new RetirarTrancaDaRedeDTO();
-        dto.setIdTranca(1L);
+        dto.setIdTranca(1);
         dto.setStatusAcaoReparador(null);
 
         Tranca tranca = new Tranca();
@@ -204,10 +204,10 @@ class TrancaServiceTest {
 
     @Test
     void obterTrancaInvalida() {
-        when(trancaRepository.findById(1L)).thenReturn(Optional.empty());
+        when(trancaRepository.findById(1)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            trancaService.obterTrancaPorId(1L);
+            trancaService.obterTrancaPorId(1);
         });
 
         assertEquals("Tranca não encontrada", exception.getMessage());
@@ -216,11 +216,11 @@ class TrancaServiceTest {
     @Test
     void obterTrancaValida() {
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
 
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
 
-        Tranca result = trancaService.obterTrancaPorId(1L);
+        Tranca result = trancaService.obterTrancaPorId(1);
 
         assertEquals(tranca, result);
     }
@@ -234,12 +234,12 @@ class TrancaServiceTest {
         trancaDTO.setStatus(StatusTranca.LIVRE);
 
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
 
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
         when(trancaRepository.save(tranca)).thenReturn(tranca);
 
-        trancaService.atualizarTranca(1L, trancaDTO);
+        trancaService.atualizarTranca(1, trancaDTO);
 
         assertEquals(StatusTranca.LIVRE, tranca.getStatus());
         verify(trancaRepository, times(1)).save(tranca);
@@ -249,12 +249,12 @@ class TrancaServiceTest {
     @Test
     void removerTranca() {
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
         tranca.setStatus(StatusTranca.LIVRE); // Suponha que a tranca está em um estado que permite remoção
 
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
 
-        trancaService.excluirTranca(1L);
+        trancaService.excluirTranca(1);
 
         verify(trancaRepository, times(1)).save(tranca);
     }
@@ -263,16 +263,16 @@ class TrancaServiceTest {
     @Test
     void obterBicicletaNaTranca() {
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
+        bicicleta.setId(1);
 
         tranca.setBicicleta(bicicleta); // Certifique-se de que a bicicleta está associada
 
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
 
-        Tranca result = trancaService.obterBicicletaNaTranca(1L);
+        Tranca result = trancaService.obterBicicletaNaTranca(1);
 
         assertEquals(tranca, result);
     }
@@ -281,16 +281,16 @@ class TrancaServiceTest {
     @Test
     void trancarTranca() {
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
         tranca.setStatus(StatusTranca.LIVRE);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
+        bicicleta.setId(1);
 
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
 
-        trancaService.trancarTranca(1L, 1L);
+        trancaService.trancarTranca(1, 1);
 
         assertEquals(StatusTranca.OCUPADA, tranca.getStatus());
         verify(trancaRepository, times(1)).save(tranca);
@@ -299,17 +299,17 @@ class TrancaServiceTest {
     @Test
     void destrancarTranca() {
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
         tranca.setStatus(StatusTranca.OCUPADA);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
+        bicicleta.setId(1);
         tranca.setBicicleta(bicicleta);
 
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
 
-        trancaService.destrancarTranca(1L, 1L);
+        trancaService.destrancarTranca(1, 1);
 
         assertEquals(StatusTranca.LIVRE, tranca.getStatus());
         verify(trancaRepository, times(1)).save(tranca);
@@ -318,12 +318,12 @@ class TrancaServiceTest {
     @Test
     void alterarStatusTranca() {
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
 
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
         when(trancaRepository.save(tranca)).thenReturn(tranca);
 
-        trancaService.alterarStatusTranca(1L, "TRANCAR");
+        trancaService.alterarStatusTranca(1, "TRANCAR");
 
         assertEquals(StatusTranca.LIVRE, tranca.getStatus());
         verify(trancaRepository, times(1)).save(tranca);

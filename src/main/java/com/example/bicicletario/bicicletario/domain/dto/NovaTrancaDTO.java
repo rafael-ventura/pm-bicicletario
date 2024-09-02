@@ -3,17 +3,17 @@ package com.example.bicicletario.bicicletario.domain.dto;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 
 public class NovaTrancaDTO {
-    private int numero;
+    private Integer numero;
     private String localizacao;
     private String anoDeFabricacao;
     private String modelo;
     private StatusTranca status;
 
-    public int getNumero() {
+    public Integer getNumero() {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(Integer numero) {
         this.numero = numero;
     }
 

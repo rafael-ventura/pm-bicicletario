@@ -51,7 +51,7 @@ public class EmailService {
         }
     }
 
-    public void enviarEmailParaReparador(Long idFuncionario, String assunto, String mensagem) {
+    public void enviarEmailParaReparador(Integer idFuncionario, String assunto, String mensagem) {
         Funcionario funcionario = funcionarioService.get(idFuncionario);
         if (funcionario == null) {
             throw new ResourceNotFoundException("Funcionário não encontrado");
@@ -59,7 +59,7 @@ public class EmailService {
         enviarEmail(funcionario.getEmail(), assunto, mensagem);
     }
 
-    public void enviarEmailParaBicicleta(Long idFuncionario, Bicicleta bicicleta, Tranca tranca, String acao) {
+    public void enviarEmailParaBicicleta(Integer idFuncionario, Bicicleta bicicleta, Tranca tranca, String acao) {
         String assunto = String.format("%s de Bicicleta na Rede", acao);
         String mensagem = String.format(
                 """
@@ -87,7 +87,7 @@ public class EmailService {
         enviarEmailParaReparador(idFuncionario, assunto, mensagem);
     }
 
-    public void enviarEmailParaTranca(Long idFuncionario, Tranca tranca, String acao) {
+    public void enviarEmailParaTranca(Integer idFuncionario, Tranca tranca, String acao) {
         String assunto = String.format("%s de Tranca no Totem", acao);
         String mensagem = String.format(
                 """

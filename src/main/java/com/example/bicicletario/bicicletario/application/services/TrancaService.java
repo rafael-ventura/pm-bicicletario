@@ -36,7 +36,7 @@ public class TrancaService {
         this.bicicletaRepository = bicicletaRepository;
     }
 
-    public void incluirTrancaEmTotem(IntegrarBicicletaNaRedeDTO dto) {
+    public void incluirTrancaNaRede(IntegrarBicicletaNaRedeDTO dto) {
         Tranca tranca = obterTrancaPorId(dto.getIdTranca());
 
         // Validações de status e funcionário
@@ -73,14 +73,14 @@ public class TrancaService {
         return trancaRepository.save(novaTranca);
     }
 
-    public Tranca atualizarTranca(Long idTranca, NovaTrancaDTO trancaDTO) {
+    public Tranca atualizarTranca(Integer idTranca, NovaTrancaDTO trancaDTO) {
         Tranca trancaExistente = obterTrancaPorId(idTranca);
         validarDadosTranca(trancaDTO);
         atualizarDadosTranca(trancaExistente, trancaDTO);
         return trancaRepository.save(trancaExistente);
     }
 
-    public void excluirTranca(Long idTranca) {
+    public void excluirTranca(Integer idTranca) {
         Tranca tranca = obterTrancaPorId(idTranca);
         validarExclusaoDeTranca(tranca);
         tranca.setStatus(StatusTranca.EXCLUIDA);
@@ -91,35 +91,35 @@ public class TrancaService {
         return trancaRepository.findAll();
     }
 
-    public Tranca obterTrancaPorId(Long idTranca) {
+    public Tranca obterTrancaPorId(Integer idTranca) {
         return trancaRepository.findById(idTranca)
                 .orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
     }
 
-    public Tranca obterBicicletaNaTranca(Long idTranca) {
+    public Tranca obterBicicletaNaTranca(Integer idTranca) {
         Tranca tranca = obterTrancaPorId(idTranca);
         verificarBicicletaNaTranca(tranca);
         return tranca;
     }
 
-    public void trancarTranca(Long idTranca, Long bicicletaId) {
+    public void trancarTranca(Integer idTranca, Integer bicicletaId) {
         Tranca tranca = obterTrancaPorId(idTranca);
         associarBicicletaATranca(tranca, bicicletaId);
     }
 
-    public void destrancarTranca(Long idTranca, Long bicicletaId) {
+    public void destrancarTranca(Integer idTranca, Integer bicicletaId) {
         Tranca tranca = obterTrancaPorId(idTranca);
         removerBicicletaDaTranca(tranca, bicicletaId);
     }
 
-    public void alterarStatusTranca(Long idTranca, String acao) {
+    public void alterarStatusTranca(Integer idTranca, String acao) {
         Tranca tranca = obterTrancaPorId(idTranca);
         atualizarStatusTranca(tranca, acao);
     }
 
     // Métodos auxiliares privados encapsulados
 
-    private void associarBicicletaATranca(Tranca tranca, Long bicicletaId) {
+    private void associarBicicletaATranca(Tranca tranca, Integer bicicletaId) {
         if (bicicletaId != null) {
             Bicicleta bicicleta = buscarBicicletaPorId(bicicletaId);
             tranca.setBicicleta(bicicleta);
@@ -130,7 +130,7 @@ public class TrancaService {
         }
     }
 
-    private void removerBicicletaDaTranca(Tranca tranca, Long bicicletaId) {
+    private void removerBicicletaDaTranca(Tranca tranca, Integer bicicletaId) {
         if (tranca.getBicicleta() != null && tranca.getBicicleta().getId().equals(bicicletaId)) {
             tranca.setBicicleta(null);
             tranca.setStatus(StatusTranca.LIVRE);
@@ -143,10 +143,10 @@ public class TrancaService {
     private void atualizarStatusTranca(Tranca tranca, String acao) {
         switch (acao.toLowerCase()) {
             case "trancar":
-                tranca.setStatus(StatusTranca.LIVRE);
+                tranca.setStatus(StatusTranca.OCUPADA);
                 break;
             case "destrancar":
-                tranca.setStatus(StatusTranca.OCUPADA);
+                tranca.setStatus(StatusTranca.LIVRE);
                 break;
             default:
                 throw new InvalidDataException(Constantes.ERRO_ALTERAR_STATUS_TRANCA);
@@ -154,7 +154,7 @@ public class TrancaService {
         trancaRepository.save(tranca);
     }
 
-    private Bicicleta buscarBicicletaPorId(Long bicicletaId) {
+    private Bicicleta buscarBicicletaPorId(Integer bicicletaId) {
         return bicicletaRepository.findById(bicicletaId)
                 .orElseThrow(() -> new ResourceNotFoundException(Constantes.BICICLETA_NAO_ENCONTRADA));
     }
@@ -188,15 +188,14 @@ public class TrancaService {
         return tranca.getStatus() == StatusTranca.OCUPADA;
     }
 
-    void atualizarTrancaParaInclusao(Tranca tranca, Long idFuncionario) {
+    void atualizarTrancaParaInclusao(Tranca tranca, Integer idFuncionario) {
         tranca.setStatus(StatusTranca.LIVRE);
         tranca.setDataInsercaoTotem(LocalDateTime.now().toString());
         tranca.setIdFuncionarioUltimaOperacao(idFuncionario);
-        tranca.setTotem(null); //TODO - REVISAR
         trancaRepository.save(tranca);
     }
 
-    private void atualizarTrancaParaRetirada(Tranca tranca, Long idFuncionario, StatusAcaoReparador statusAcaoReparador) {
+    private void atualizarTrancaParaRetirada(Tranca tranca, Integer idFuncionario, StatusAcaoReparador statusAcaoReparador) {
         tranca.setIdFuncionarioUltimaOperacao(idFuncionario);
         if (statusAcaoReparador.equals(StatusAcaoReparador.EM_REPARO)) {
             tranca.setStatus(StatusTranca.EM_REPARO);
@@ -206,7 +205,7 @@ public class TrancaService {
         trancaRepository.save(tranca);
     }
 
-    private void validarCondicoesParaInclusao(Tranca tranca, Long idFuncionario) {
+    private void validarCondicoesParaInclusao(Tranca tranca, Integer idFuncionario) {
         if (tranca.getStatus() != StatusTranca.NOVA && tranca.getStatus() != StatusTranca.EM_REPARO) {
             throw new InvalidDataException(Constantes.TRANCA_NAO_DISPONIVEL);
         }
@@ -224,7 +223,7 @@ public class TrancaService {
         }
     }
 
-    private void validarFuncionarioParaReparo(Tranca tranca, Long idFuncionario) {
+    private void validarFuncionarioParaReparo(Tranca tranca, Integer idFuncionario) {
         if (!tranca.getIdFuncionarioUltimaOperacao().equals(idFuncionario)) {
             throw new InvalidDataException(Constantes.FUNCIONARIO_INVALIDO);
         }

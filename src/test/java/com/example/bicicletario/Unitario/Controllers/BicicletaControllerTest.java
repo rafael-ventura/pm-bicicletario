@@ -37,7 +37,7 @@ class BicicletaControllerTest {
     void listarBicicletas_Success() {
         // Arrange
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
+        bicicleta.setId(1);
         when(bicicletaService.listarBicicletas()).thenReturn(List.of(bicicleta));
 
         // Act
@@ -55,7 +55,7 @@ class BicicletaControllerTest {
         // Arrange
         NovaBicicletaDTO novaBicicletaDTO = new NovaBicicletaDTO();
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
+        bicicleta.setId(1);
         when(bicicletaService.cadastrarBicicleta(novaBicicletaDTO)).thenReturn(bicicleta);
 
         // Act
@@ -98,7 +98,7 @@ class BicicletaControllerTest {
     @Test
     void obterBicicleta_Success() {
         // Arrange
-        Long idBicicleta = 1L;
+        Integer idBicicleta = 1;
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(idBicicleta);
         when(bicicletaService.obterBicicletaPorId(idBicicleta)).thenReturn(bicicleta);
@@ -115,7 +115,7 @@ class BicicletaControllerTest {
     @Test
     void atualizarBicicleta_Success() {
         // Arrange
-        Long idBicicleta = 1L;
+        Integer idBicicleta = 1;
         NovaBicicletaDTO novaBicicletaDTO = new NovaBicicletaDTO();
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(idBicicleta);
@@ -133,7 +133,7 @@ class BicicletaControllerTest {
     @Test
     void removerBicicleta_Success() {
         // Arrange
-        Long idBicicleta = 1L;
+        Integer idBicicleta = 1;
 
         // Act
         ResponseEntity<String> response = bicicletaController.removerBicicleta(idBicicleta);
@@ -147,7 +147,7 @@ class BicicletaControllerTest {
     @Test
     void alterarStatusBicicleta_Success() {
         // Arrange
-        Long idBicicleta = 1L;
+        Integer idBicicleta = 1;
         String acao = "ativar";
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(idBicicleta);

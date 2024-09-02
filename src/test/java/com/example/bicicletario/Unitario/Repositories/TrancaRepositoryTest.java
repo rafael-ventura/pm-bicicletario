@@ -24,35 +24,35 @@ class TrancaRepositoryTest {
     @Test
     void testSaveAndFindById() {
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
 
         Tranca savedTranca = trancaRepository.save(tranca);
 
-        assertEquals(1L, savedTranca.getId());
-        Optional<Tranca> retrievedTranca = trancaRepository.findById(1L);
+        assertEquals(1, savedTranca.getId());
+        Optional<Tranca> retrievedTranca = trancaRepository.findById(1);
         assertTrue(retrievedTranca.isPresent());
-        assertEquals(1L, retrievedTranca.get().getId());
+        assertEquals(1, retrievedTranca.get().getId());
     }
 
     @Test
     void testDeleteById() {
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
 
         trancaRepository.save(tranca);
-        trancaRepository.deleteById(1L);
+        trancaRepository.deleteById(1);
 
-        Optional<Tranca> retrievedTranca = trancaRepository.findById(1L);
+        Optional<Tranca> retrievedTranca = trancaRepository.findById(1);
         assertFalse(retrievedTranca.isPresent());
     }
 
     @Test
     void testFindByTotemId() {
         Totem totem = new Totem();
-        totem.setId(1L);
+        totem.setId(1);
 
         Tranca tranca1 = new Tranca();
-        tranca1.setId(1L);
+        tranca1.setId(1);
         tranca1.setTotem(totem);
         trancaRepository.save(tranca1);
 
@@ -61,21 +61,21 @@ class TrancaRepositoryTest {
         tranca2.setTotem(totem);
         trancaRepository.save(tranca2);
 
-        List<Tranca> trancas = trancaRepository.findByTotemId(1L);
+        List<Tranca> trancas = trancaRepository.findByTotemId(1);
         assertEquals(2, trancas.size());
     }
 
     @Test
     void testExistsByTotemId() {
         Totem totem = new Totem();
-        totem.setId(1L);
+        totem.setId(1);
 
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
         tranca.setTotem(totem);
         trancaRepository.save(tranca);
 
-        assertTrue(trancaRepository.existsByTotemId(1L));
+        assertTrue(trancaRepository.existsByTotemId(1));
     }
 }
 */

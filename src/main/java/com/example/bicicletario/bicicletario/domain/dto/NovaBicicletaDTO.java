@@ -6,7 +6,7 @@ public class NovaBicicletaDTO {
     private String marca;
     private String modelo;
     private String ano;
-    private int numero;
+    private Integer numero;
     private StatusBicicleta status;
 
     public String getMarca() {
@@ -33,11 +33,11 @@ public class NovaBicicletaDTO {
         this.ano = ano;
     }
 
-    public int getNumero() {
+    public Integer getNumero() {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(Integer numero) {
         this.numero = numero;
     }
 

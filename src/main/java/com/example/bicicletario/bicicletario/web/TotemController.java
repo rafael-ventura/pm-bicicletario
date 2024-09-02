@@ -35,25 +35,25 @@ public class TotemController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Totem> editarTotem(@PathVariable Long id, @RequestBody NovoTotemDTO totemDTO) {
+    public ResponseEntity<Totem> editarTotem(@PathVariable Integer id, @RequestBody NovoTotemDTO totemDTO) {
         Totem totemEditado = totemService.atualizarTotem(id, totemDTO);
         return ResponseEntity.ok(totemEditado);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> removerTotem(@PathVariable Long id) {
+    public ResponseEntity<String> removerTotem(@PathVariable Integer id) {
         totemService.excluirTotem(id);
         return ResponseEntity.ok(TOTEM_REMOVIDO);
     }
 
     @GetMapping("/{id}/trancas")
-    public ResponseEntity<List<Tranca>> listarTrancas(@PathVariable Long id) {
+    public ResponseEntity<List<Tranca>> listarTrancas(@PathVariable Integer id) {
         List<Tranca> trancas = totemService.listarTrancasPorTotem(id);
         return ResponseEntity.ok(trancas);
     }
 
     @GetMapping("/{id}/bicicletas")
-    public ResponseEntity<List<Bicicleta>> listarBicicletas(@PathVariable Long id) {
+    public ResponseEntity<List<Bicicleta>> listarBicicletas(@PathVariable Integer id) {
         List<Bicicleta> bicicletas = totemService.listarBicicletasPorTotem(id);
         return ResponseEntity.ok(bicicletas);
     }

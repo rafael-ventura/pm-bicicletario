@@ -2,17 +2,17 @@ package com.example.bicicletario.bicicletario.domain.models;
 
 public class Totem {
 
-    private Long id;
+    private Integer id;
 
     private String localizacao;
 
     private String descricao;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

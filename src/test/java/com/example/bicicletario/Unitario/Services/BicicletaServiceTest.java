@@ -94,18 +94,18 @@ class BicicletaServiceTest {
     @Test
     void obterBicicletaPorId() {
         Bicicleta bicicleta = new Bicicleta();
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
 
-        Bicicleta result = bicicletaService.obterBicicletaPorId(1L);
+        Bicicleta result = bicicletaService.obterBicicletaPorId(1);
         assertEquals(bicicleta, result);
     }
 
     @Test
     void obterBicicletaPorIdInvalida() {
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            bicicletaService.obterBicicletaPorId(1L);
+            bicicletaService.obterBicicletaPorId(1);
         });
 
         assertEquals(Constantes.BICICLETA_NAO_ENCONTRADA, exception.getMessage());
@@ -115,18 +115,18 @@ class BicicletaServiceTest {
     void removerBicicleta() {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.APOSENTADA);
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
 
-        bicicletaService.excluirBicicleta(1L);
-        verify(bicicletaRepository, times(1)).deleteById(1L);
+        bicicletaService.excluirBicicleta(1);
+        verify(bicicletaRepository, times(1)).deleteById(1);
     }
 
     @Test
     void removerBicicletaInvalida() {
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            bicicletaService.excluirBicicleta(1L);
+            bicicletaService.excluirBicicleta(1);
         });
 
         assertEquals(Constantes.BICICLETA_NAO_ENCONTRADA, exception.getMessage());
@@ -136,10 +136,10 @@ class BicicletaServiceTest {
     void removerBicicletaNaoAposentada() {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
 
         BadRequestException exception = assertThrows(BadRequestException.class, () -> {
-            bicicletaService.excluirBicicleta(1L);
+            bicicletaService.excluirBicicleta(1);
         });
 
         assertEquals(Constantes.BICICLETA_NAO_APOSENTADA, exception.getMessage());
@@ -162,7 +162,7 @@ class BicicletaServiceTest {
         bicicletaDTO.setNumero(2);
         bicicletaDTO.setStatus(StatusBicicleta.DISPONIVEL);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> {
             Bicicleta savedBicicleta = invocation.getArgument(0);
             savedBicicleta.setMarca(bicicletaDTO.getMarca());
@@ -172,7 +172,7 @@ class BicicletaServiceTest {
             return savedBicicleta;
         });
 
-        Bicicleta result = bicicletaService.atualizarBicicleta(1L, bicicletaDTO);
+        Bicicleta result = bicicletaService.atualizarBicicleta(1, bicicletaDTO);
 
         verify(bicicletaRepository, times(1)).save(bicicleta);
         assertEquals("nova marca", result.getMarca());
@@ -185,10 +185,10 @@ class BicicletaServiceTest {
     @Test
     void atualizarBicicletaInvalida() {
         NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            bicicletaService.atualizarBicicleta(1L, bicicletaDTO);
+            bicicletaService.atualizarBicicleta(1, bicicletaDTO);
         });
 
         assertEquals(Constantes.BICICLETA_NAO_ENCONTRADA, exception.getMessage());
@@ -197,17 +197,17 @@ class BicicletaServiceTest {
     @Test
     void integrarBicicletaNaRede() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.LIVRE);
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
         when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
 
         bicicletaService.integrarBicicletaNaRede(dto);
@@ -218,11 +218,11 @@ class BicicletaServiceTest {
     @Test
     void integrarBicicletaNaRedeBicicletaInvalida() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             bicicletaService.integrarBicicletaNaRede(dto);
@@ -234,15 +234,15 @@ class BicicletaServiceTest {
     @Test
     void integrarBicicletaNaRedeTrancaNaoEncontrada() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
 
-        when(trancaRepository.findById(1L)).thenReturn(Optional.empty());
+        when(trancaRepository.findById(1)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             bicicletaService.integrarBicicletaNaRede(dto);
@@ -254,17 +254,17 @@ class BicicletaServiceTest {
     @Test
     void integrarBicicletaNaRedeFuncionarioInvalido() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(2L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.LIVRE);
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
         when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(false);
 
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
@@ -277,17 +277,17 @@ class BicicletaServiceTest {
     @Test
     void integrarBicicletaNaRedeStatusBicicletaInvalido() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.LIVRE);
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
         when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
 
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
@@ -300,17 +300,17 @@ class BicicletaServiceTest {
     /*@Test
     void integrarBicicletaNaRedeErroEnvioEmail() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.LIVRE);
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
         when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
 
         doThrow(new BadRequestException(Constantes.ERROR_ENVIAR_EMAIL))
@@ -327,19 +327,19 @@ class BicicletaServiceTest {
     @Test
     void retirarBicicletaDaRede() {
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
         dto.setStatusAcaoReparador(StatusAcaoReparador.EM_REPARO);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
 
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.OCUPADA);
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
 
         bicicletaService.retirarBicicletaDaRede(dto);
         verify(bicicletaRepository, times(1)).save(bicicleta);
@@ -349,11 +349,11 @@ class BicicletaServiceTest {
     @Test
     void retirarBicicletaDaRedeBicicletaInvalida() {
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.empty());
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             bicicletaService.retirarBicicletaDaRede(dto);
@@ -365,18 +365,18 @@ class BicicletaServiceTest {
     @Test
     void retirarBicicletaDaRedeTrancaNaoOcupada() {
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
 
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.LIVRE);
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
 
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
             bicicletaService.retirarBicicletaDaRede(dto);
@@ -388,15 +388,15 @@ class BicicletaServiceTest {
     @Test
     void retirarBicicletaDaRedeTrancaNaoEncontrada() {
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
 
-        when(trancaRepository.findById(1L)).thenReturn(Optional.empty());
+        when(trancaRepository.findById(1)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             bicicletaService.retirarBicicletaDaRede(dto);
@@ -410,10 +410,10 @@ class BicicletaServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "disponivel");
+        Bicicleta result = bicicletaService.alterarStatusBicicleta(1, "disponivel");
         verify(bicicletaRepository, times(1)).save(bicicleta);
         assertEquals(StatusBicicleta.DISPONIVEL, result.getStatusBicicleta());
     }
@@ -423,10 +423,10 @@ class BicicletaServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "reparo solicitado");
+        Bicicleta result = bicicletaService.alterarStatusBicicleta(1, "reparo solicitado");
         verify(bicicletaRepository, times(1)).save(bicicleta);
         assertEquals(StatusBicicleta.REPARO_SOLICITADO, result.getStatusBicicleta());
     }
@@ -434,10 +434,10 @@ class BicicletaServiceTest {
     @Test
     void alterarStatusBicicletaInvalido() {
         Bicicleta bicicleta = new Bicicleta();
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
 
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
-            bicicletaService.alterarStatusBicicleta(1L, "invalido");
+            bicicletaService.alterarStatusBicicleta(1, "invalido");
         });
 
         assertEquals("Ação inválida", exception.getMessage());
@@ -446,17 +446,17 @@ class BicicletaServiceTest {
  /*   @Test
     void integrarBicicletaNaRedeBicicletaEmReparo() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.LIVRE);
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
         when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
 
         bicicletaService.integrarBicicletaNaRede(dto);
@@ -467,17 +467,17 @@ class BicicletaServiceTest {
     @Test
     void integrarBicicletaNaRedeTrancaOcupada() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.OCUPADA);
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
 
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
             bicicletaService.integrarBicicletaNaRede(dto);
@@ -489,18 +489,18 @@ class BicicletaServiceTest {
     @Test
     void retirarBicicletaDaRedeSemStatusReparador() {
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
         dto.setStatusAcaoReparador(null);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.OCUPADA);
-        when(trancaRepository.findById(1L)).thenReturn(Optional.of(tranca));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
 
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
             bicicletaService.retirarBicicletaDaRede(dto);
@@ -514,10 +514,10 @@ class BicicletaServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "nova");
+        Bicicleta result = bicicletaService.alterarStatusBicicleta(1, "nova");
         verify(bicicletaRepository, times(1)).save(bicicleta);
         assertEquals(StatusBicicleta.NOVA, result.getStatusBicicleta());
     }
@@ -527,10 +527,10 @@ class BicicletaServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "em uso");
+        Bicicleta result = bicicletaService.alterarStatusBicicleta(1, "em uso");
         verify(bicicletaRepository, times(1)).save(bicicleta);
         assertEquals(StatusBicicleta.EM_USO, result.getStatusBicicleta());
     }
@@ -540,10 +540,10 @@ class BicicletaServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
 
-        when(bicicletaRepository.findById(1L)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Bicicleta result = bicicletaService.alterarStatusBicicleta(1L, "aposentada");
+        Bicicleta result = bicicletaService.alterarStatusBicicleta(1, "aposentada");
         verify(bicicletaRepository, times(1)).save(bicicleta);
         assertEquals(StatusBicicleta.APOSENTADA, result.getStatusBicicleta());
     }

@@ -56,9 +56,9 @@ class TrancaControllerTest {
     @Test
     void integrarNaRede() throws Exception {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdBicicleta(1L);
-        dto.setIdTranca(1L);
-        dto.setIdFuncionario(1L);
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
 
         mockMvc.perform(post("/api/tranca/integrarNaRede")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -69,7 +69,7 @@ class TrancaControllerTest {
 
     @Test
     void integrarNaRede_ThrowsInvalidDataException() throws Exception {
-        doThrow(new InvalidDataException("Número da bicicleta inválido")).when(trancaService).incluirTrancaEmTotem(any(IntegrarBicicletaNaRedeDTO.class));
+        doThrow(new InvalidDataException("Número da bicicleta inválido")).when(trancaService).incluirTrancaNaRede(any(IntegrarBicicletaNaRedeDTO.class));
 
         mockMvc.perform(post("/api/tranca/integrarNaRede")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -80,7 +80,7 @@ class TrancaControllerTest {
 
     @Test
     void integrarNaRede_ThrowsRuntimeException() throws Exception {
-        doThrow(new RuntimeException("Erro no envio do email")).when(trancaService).incluirTrancaEmTotem(any(IntegrarBicicletaNaRedeDTO.class));
+        doThrow(new RuntimeException("Erro no envio do email")).when(trancaService).incluirTrancaNaRede(any(IntegrarBicicletaNaRedeDTO.class));
 
         mockMvc.perform(post("/api/tranca/integrarNaRede")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -92,7 +92,7 @@ class TrancaControllerTest {
     @Test
     void retirarDaRede() throws Exception {
         RetirarTrancaDaRedeDTO dto = new RetirarTrancaDaRedeDTO();
-        dto.setIdTranca(1L);
+        dto.setIdTranca(1);
         dto.setStatusAcaoReparador(StatusAcaoReparador.EM_REPARO);
 
         mockMvc.perform(post("/api/tranca/retirarDaRede")
@@ -127,7 +127,7 @@ class TrancaControllerTest {
     @Test
     void listarTrancas() throws Exception {
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
 
         when(trancaService.listarTodasTrancas()).thenReturn(List.of(tranca));
 
@@ -151,7 +151,7 @@ class TrancaControllerTest {
         trancaDTO.setLocalizacao("Localizacao");
 
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
         tranca.setLocalizacao("Localizacao");
 
         when(trancaService.cadastrarNovaTranca(any(NovaTrancaDTO.class))).thenReturn(tranca);
@@ -189,9 +189,9 @@ class TrancaControllerTest {
     @Test
     void obterTranca() throws Exception {
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
 
-        when(trancaService.obterTrancaPorId(1L)).thenReturn(tranca);
+        when(trancaService.obterTrancaPorId(1)).thenReturn(tranca);
 
         mockMvc.perform(get("/api/tranca/1"))
                 .andExpect(status().isOk())
@@ -200,7 +200,7 @@ class TrancaControllerTest {
 
     @Test
     void obterTranca_ThrowsResourceNotFoundException() throws Exception {
-        when(trancaService.obterTrancaPorId(1L)).thenThrow(new ResourceNotFoundException("Tranca não encontrada"));
+        when(trancaService.obterTrancaPorId(1)).thenThrow(new ResourceNotFoundException("Tranca não encontrada"));
 
         mockMvc.perform(get("/api/tranca/1"))
                 .andExpect(status().isNotFound())
@@ -209,7 +209,7 @@ class TrancaControllerTest {
 
     @Test
     void obterTranca_ThrowsException() throws Exception {
-        when(trancaService.obterTrancaPorId(1L)).thenThrow(new RuntimeException("Erro ao obter tranca"));
+        when(trancaService.obterTrancaPorId(1)).thenThrow(new RuntimeException("Erro ao obter tranca"));
 
         mockMvc.perform(get("/api/tranca/1"))
                 .andExpect(status().isInternalServerError())
@@ -222,10 +222,10 @@ class TrancaControllerTest {
         trancaDTO.setLocalizacao("Nova Localizacao");
 
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
         tranca.setLocalizacao("Nova Localizacao");
 
-        when(trancaService.atualizarTranca(any(Long.class), any(NovaTrancaDTO.class))).thenReturn(tranca);
+        when(trancaService.atualizarTranca(any(Integer.class), any(NovaTrancaDTO.class))).thenReturn(tranca);
 
         mockMvc.perform(put("/api/tranca/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -237,7 +237,7 @@ class TrancaControllerTest {
 
     @Test
     void editarTranca_ThrowsInvalidDataException() throws Exception {
-        doThrow(new InvalidDataException("Dados inválidos")).when(trancaService).atualizarTranca(any(Long.class), any(NovaTrancaDTO.class));
+        doThrow(new InvalidDataException("Dados inválidos")).when(trancaService).atualizarTranca(any(Integer.class), any(NovaTrancaDTO.class));
 
         mockMvc.perform(put("/api/tranca/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -248,7 +248,7 @@ class TrancaControllerTest {
 
     @Test
     void editarTranca_ThrowsResourceNotFoundException() throws Exception {
-        doThrow(new ResourceNotFoundException("Tranca não encontrada")).when(trancaService).atualizarTranca(any(Long.class), any(NovaTrancaDTO.class));
+        doThrow(new ResourceNotFoundException("Tranca não encontrada")).when(trancaService).atualizarTranca(any(Integer.class), any(NovaTrancaDTO.class));
 
         mockMvc.perform(put("/api/tranca/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -259,7 +259,7 @@ class TrancaControllerTest {
 
     @Test
     void editarTranca_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Erro ao editar tranca")).when(trancaService).atualizarTranca(any(Long.class), any(NovaTrancaDTO.class));
+        doThrow(new RuntimeException("Erro ao editar tranca")).when(trancaService).atualizarTranca(any(Integer.class), any(NovaTrancaDTO.class));
 
         mockMvc.perform(put("/api/tranca/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -277,7 +277,7 @@ class TrancaControllerTest {
 
     @Test
     void removerTranca_ThrowsResourceNotFoundException() throws Exception {
-        doThrow(new ResourceNotFoundException("Tranca não encontrada")).when(trancaService).excluirTranca(any(Long.class));
+        doThrow(new ResourceNotFoundException("Tranca não encontrada")).when(trancaService).excluirTranca(any(Integer.class));
 
         mockMvc.perform(delete("/api/tranca/1"))
                 .andExpect(status().isNotFound())
@@ -286,7 +286,7 @@ class TrancaControllerTest {
 
     @Test
     void removerTranca_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Erro ao remover tranca")).when(trancaService).excluirTranca(any(Long.class));
+        doThrow(new RuntimeException("Erro ao remover tranca")).when(trancaService).excluirTranca(any(Integer.class));
 
         mockMvc.perform(delete("/api/tranca/1"))
                 .andExpect(status().isInternalServerError())
@@ -296,9 +296,9 @@ class TrancaControllerTest {
     @Test
     void obterBicicletaNaTranca() throws Exception {
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
 
-        when(trancaService.obterBicicletaNaTranca(1L)).thenReturn(tranca);
+        when(trancaService.obterBicicletaNaTranca(1)).thenReturn(tranca);
 
         mockMvc.perform(get("/api/tranca/1/bicicleta"))
                 .andExpect(status().isOk())
@@ -307,7 +307,7 @@ class TrancaControllerTest {
 
     @Test
     void obterBicicletaNaTranca_ThrowsResourceNotFoundException() throws Exception {
-        when(trancaService.obterBicicletaNaTranca(any(Long.class))).thenThrow(new ResourceNotFoundException("Bicicleta não encontrada"));
+        when(trancaService.obterBicicletaNaTranca(any(Integer.class))).thenThrow(new ResourceNotFoundException("Bicicleta não encontrada"));
 
         mockMvc.perform(get("/api/tranca/1/bicicleta"))
                 .andExpect(status().isNotFound())
@@ -316,7 +316,7 @@ class TrancaControllerTest {
 
     @Test
     void obterBicicletaNaTranca_ThrowsInvalidDataException() throws Exception {
-        when(trancaService.obterBicicletaNaTranca(any(Long.class))).thenThrow(new InvalidDataException("Dados inválidos"));
+        when(trancaService.obterBicicletaNaTranca(any(Integer.class))).thenThrow(new InvalidDataException("Dados inválidos"));
 
         mockMvc.perform(get("/api/tranca/1/bicicleta"))
                 .andExpect(status().isUnprocessableEntity())
@@ -325,7 +325,7 @@ class TrancaControllerTest {
 
     @Test
     void obterBicicletaNaTranca_ThrowsException() throws Exception {
-        when(trancaService.obterBicicletaNaTranca(any(Long.class))).thenThrow(new RuntimeException("Erro ao obter bicicleta na tranca"));
+        when(trancaService.obterBicicletaNaTranca(any(Integer.class))).thenThrow(new RuntimeException("Erro ao obter bicicleta na tranca"));
 
         mockMvc.perform(get("/api/tranca/1/bicicleta"))
                 .andExpect(status().isInternalServerError())
@@ -336,29 +336,29 @@ class TrancaControllerTest {
     void trancarTranca() throws Exception {
         mockMvc.perform(post("/api/tranca/1/trancar")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(1L)))
+                        .content(objectMapper.writeValueAsString(1)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Dados cadastrados"));
     }
 
     @Test
     void trancarTranca_ThrowsInvalidDataException() throws Exception {
-        doThrow(new InvalidDataException("Dados inválidos")).when(trancaService).trancarTranca(any(Long.class), any(Long.class));
+        doThrow(new InvalidDataException("Dados inválidos")).when(trancaService).trancarTranca(any(Integer.class), any(Integer.class));
 
         mockMvc.perform(post("/api/tranca/1/trancar")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(1L)))
+                        .content(objectMapper.writeValueAsString(1)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().json("{\"codigo\":\"422\",\"mensagem\":\"Dados inválidos\"}"));
     }
 
     @Test
     void trancarTranca_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Erro ao trancar tranca")).when(trancaService).trancarTranca(any(Long.class), any(Long.class));
+        doThrow(new RuntimeException("Erro ao trancar tranca")).when(trancaService).trancarTranca(any(Integer.class), any(Integer.class));
 
         mockMvc.perform(post("/api/tranca/1/trancar")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(1L)))
+                        .content(objectMapper.writeValueAsString(1)))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().json("{\"codigo\":\"500\",\"mensagem\":\"Erro ao trancar tranca\"}"));
     }
@@ -367,29 +367,29 @@ class TrancaControllerTest {
     void destrancarTranca() throws Exception {
         mockMvc.perform(post("/api/tranca/1/destrancar")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(1L)))
+                        .content(objectMapper.writeValueAsString(1)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Dados cadastrados"));
     }
 
     @Test
     void destrancarTranca_ThrowsInvalidDataException() throws Exception {
-        doThrow(new InvalidDataException("Dados inválidos")).when(trancaService).destrancarTranca(any(Long.class), any(Long.class));
+        doThrow(new InvalidDataException("Dados inválidos")).when(trancaService).destrancarTranca(any(Integer.class), any(Integer.class));
 
         mockMvc.perform(post("/api/tranca/1/destrancar")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(1L)))
+                        .content(objectMapper.writeValueAsString(1)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().json("{\"codigo\":\"422\",\"mensagem\":\"Dados inválidos\"}"));
     }
 
     @Test
     void destrancarTranca_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Erro ao destrancar tranca")).when(trancaService).destrancarTranca(any(Long.class), any(Long.class));
+        doThrow(new RuntimeException("Erro ao destrancar tranca")).when(trancaService).destrancarTranca(any(Integer.class), any(Integer.class));
 
         mockMvc.perform(post("/api/tranca/1/destrancar")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(1L)))
+                        .content(objectMapper.writeValueAsString(1)))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().json("{\"codigo\":\"500\",\"mensagem\":\"Erro ao destrancar tranca\"}"));
     }
@@ -404,7 +404,7 @@ class TrancaControllerTest {
 
     @Test
     void alterarStatusTranca_ThrowsInvalidDataException() throws Exception {
-        doThrow(new InvalidDataException("Dados inválidos")).when(trancaService).alterarStatusTranca(any(Long.class), any(String.class));
+        doThrow(new InvalidDataException("Dados inválidos")).when(trancaService).alterarStatusTranca(any(Integer.class), any(String.class));
 
         mockMvc.perform(post("/api/tranca/1/status/acao")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -414,7 +414,7 @@ class TrancaControllerTest {
 
     @Test
     void alterarStatusTranca_ThrowsResourceNotFoundException() throws Exception {
-        doThrow(new ResourceNotFoundException("Tranca não encontrada")).when(trancaService).alterarStatusTranca(any(Long.class), any(String.class));
+        doThrow(new ResourceNotFoundException("Tranca não encontrada")).when(trancaService).alterarStatusTranca(any(Integer.class), any(String.class));
 
         mockMvc.perform(post("/api/tranca/1/status/acao")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -424,7 +424,7 @@ class TrancaControllerTest {
 
     @Test
     void alterarStatusTranca_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Erro ao alterar status da tranca")).when(trancaService).alterarStatusTranca(any(Long.class), any(String.class));
+        doThrow(new RuntimeException("Erro ao alterar status da tranca")).when(trancaService).alterarStatusTranca(any(Integer.class), any(String.class));
 
         mockMvc.perform(post("/api/tranca/1/status/acao")
                         .contentType(MediaType.APPLICATION_JSON))

@@ -36,7 +36,7 @@ class TotemControllerTest {
     void listarTotens_Success() {
         // Arrange
         Totem totem = new Totem();
-        totem.setId(1L);
+        totem.setId(1);
         when(totemService.listarTodosTotens()).thenReturn(List.of(totem));
 
         // Act
@@ -54,7 +54,7 @@ class TotemControllerTest {
         // Arrange
         NovoTotemDTO novoTotem = new NovoTotemDTO();
         Totem totem = new Totem();
-        totem.setId(1L);
+        totem.setId(1);
         when(totemService.cadastrarNovoTotem(novoTotem)).thenReturn(totem);
 
         // Act
@@ -69,7 +69,7 @@ class TotemControllerTest {
     @Test
     void editarTotem_Success() {
         // Arrange
-        Long totemId = 1L;
+        Integer totemId = 1;
         NovoTotemDTO novoTotem = new NovoTotemDTO();
         Totem totem = new Totem();
         totem.setId(totemId);
@@ -87,7 +87,7 @@ class TotemControllerTest {
     @Test
     void removerTotem_Success() {
         // Arrange
-        Long totemId = 1L;
+        Integer totemId = 1;
 
         // Act
         ResponseEntity<String> response = totemController.removerTotem(totemId);
@@ -100,9 +100,9 @@ class TotemControllerTest {
     @Test
     void listarTrancas_Success() {
         // Arrange
-        Long totemId = 1L;
+        Integer totemId = 1;
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
         when(totemService.listarTrancasPorTotem(totemId)).thenReturn(List.of(tranca));
 
         // Act
@@ -118,9 +118,9 @@ class TotemControllerTest {
     @Test
     void listarBicicletas_Success() {
         // Arrange
-        Long totemId = 1L;
+        Integer totemId = 1;
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1L);
+        bicicleta.setId(1);
         when(totemService.listarBicicletasPorTotem(totemId)).thenReturn(List.of(bicicleta));
 
         // Act

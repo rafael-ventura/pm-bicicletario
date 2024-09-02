@@ -6,18 +6,18 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class TrancaRepository {
     private final List<Tranca> trancas = new ArrayList<>();
-    private final AtomicLong counter = new AtomicLong();
+    private final AtomicInteger counter = new AtomicInteger();
 
     public List<Tranca> findAll() {
         return new ArrayList<>(trancas);
     }
 
-    public Optional<Tranca> findById(Long id) {
+    public Optional<Tranca> findById(Integer id) {
         return trancas.stream().filter(t -> t.getId().equals(id)).findFirst();
     }
 
@@ -36,7 +36,7 @@ public class TrancaRepository {
         return tranca;
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Integer id) {
         trancas.removeIf(t -> t.getId().equals(id));
     }
 
@@ -50,11 +50,7 @@ public class TrancaRepository {
         return result;
     }
 
-    public boolean existsByTotemId(Long idTotem) {
-        return trancas.stream().anyMatch(t -> t.getTotem().getId().equals(idTotem));
-    }
-
-    public boolean existsByBicicletaId(Long id) {
+    public boolean existsByBicicletaId(Integer id) {
         return trancas.stream().anyMatch(t -> t.getBicicleta().getId().equals(id));
     }
 }

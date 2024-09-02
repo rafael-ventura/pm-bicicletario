@@ -44,7 +44,7 @@ class TrancaControllerTest {
         // Assert
         assertEquals(200, response.getStatusCode().value());
         assertEquals("Dados cadastrados", response.getBody());
-        verify(trancaService).incluirTrancaEmTotem(dto);
+        verify(trancaService).incluirTrancaNaRede(dto);
     }
 
     @Test
@@ -65,7 +65,7 @@ class TrancaControllerTest {
     void listarTrancas_Success() {
         // Arrange
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
         when(trancaService.listarTodasTrancas()).thenReturn(List.of(tranca));
 
         // Act
@@ -83,7 +83,7 @@ class TrancaControllerTest {
         // Arrange
         NovaTrancaDTO novaTrancaDTO = new NovaTrancaDTO();
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
         when(trancaService.cadastrarNovaTranca(novaTrancaDTO)).thenReturn(tranca);
 
         // Act
@@ -98,7 +98,7 @@ class TrancaControllerTest {
     @Test
     void obterTranca_Success() {
         // Arrange
-        Long idTranca = 1L;
+        Integer idTranca = 1;
         Tranca tranca = new Tranca();
         tranca.setId(idTranca);
         when(trancaService.obterTrancaPorId(idTranca)).thenReturn(tranca);
@@ -115,7 +115,7 @@ class TrancaControllerTest {
     @Test
     void editarTranca_Success() {
         // Arrange
-        Long idTranca = 1L;
+        Integer idTranca = 1;
         NovaTrancaDTO novaTrancaDTO = new NovaTrancaDTO();
         Tranca tranca = new Tranca();
         tranca.setId(idTranca);
@@ -133,7 +133,7 @@ class TrancaControllerTest {
     @Test
     void removerTranca_Success() {
         // Arrange
-        Long idTranca = 1L;
+        Integer idTranca = 1;
 
         // Act
         ResponseEntity<String> response = trancaController.removerTranca(idTranca);
@@ -147,7 +147,7 @@ class TrancaControllerTest {
     @Test
     void obterBicicletaNaTranca_Success() {
         // Arrange
-        Long idTranca = 1L;
+        Integer idTranca = 1;
         Tranca tranca = new Tranca();
         tranca.setId(idTranca);
         when(trancaService.obterBicicletaNaTranca(idTranca)).thenReturn(tranca);
@@ -164,8 +164,8 @@ class TrancaControllerTest {
     @Test
     void trancarTranca_Success() {
         // Arrange
-        Long idTranca = 1L;
-        Long bicicletaId = 1L;
+        Integer idTranca = 1;
+        Integer bicicletaId = 1;
 
         // Act
         ResponseEntity<String> response = trancaController.trancarTranca(idTranca, bicicletaId);
@@ -179,8 +179,8 @@ class TrancaControllerTest {
     @Test
     void destrancarTranca_Success() {
         // Arrange
-        Long idTranca = 1L;
-        Long bicicletaId = 1L;
+        Integer idTranca = 1;
+        Integer bicicletaId = 1;
 
         // Act
         ResponseEntity<String> response = trancaController.destrancarTranca(idTranca, bicicletaId);
@@ -194,7 +194,7 @@ class TrancaControllerTest {
     @Test
     void alterarStatusTranca_Success() {
         // Arrange
-        Long idTranca = 1L;
+        Integer idTranca = 1;
         String acao = "ativar";
 
         // Act

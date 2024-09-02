@@ -9,7 +9,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: "1"
 servers:
-- url: https://virtserver.swaggerhub.com/BOBESPONJAHOKAGE_1/PM-MONITORIA/1
+- url: http://localhost:8020/api
   description: SwaggerHub API Auto Mocking
 tags:
 - name: Aluguel

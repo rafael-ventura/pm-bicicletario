@@ -6,18 +6,18 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class TotemRepository {
     private final List<Totem> totems = new ArrayList<>();
-    private final AtomicLong counter = new AtomicLong();
+    private final AtomicInteger counter = new AtomicInteger();
 
     public List<Totem> findAll() {
         return new ArrayList<>(totems);
     }
 
-    public Optional<Totem> findById(Long id) {
+    public Optional<Totem> findById(Integer id) {
         return totems.stream().filter(t -> t.getId().equals(id)).findFirst();
     }
 
@@ -28,7 +28,7 @@ public class TotemRepository {
             return totem;
         }
 
-        for (int i = 0; i < totems.size(); i++) {
+        for (Integer i = 0; i < totems.size(); i++) {
             if (totems.get(i).getId().equals(totem.getId())) {
                 totems.set(i, totem);
             }
@@ -37,15 +37,15 @@ public class TotemRepository {
     }
 
     //get
-    public Totem get(Long id) {
+    public Totem get(Integer id) {
         return totems.stream().filter(t -> t.getId().equals(id)).findFirst().orElse(null);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Integer id) {
         totems.removeIf(t -> t.getId().equals(id));
     }
 
-    public boolean existsById(Long idTotem) {
+    public boolean existsById(Integer idTotem) {
         return totems.stream().anyMatch(t -> t.getId().equals(idTotem));
     }
 }

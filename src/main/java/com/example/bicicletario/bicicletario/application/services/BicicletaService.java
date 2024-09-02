@@ -48,7 +48,7 @@ public class BicicletaService {
 
         if (bicicleta.getStatusBicicleta() == StatusBicicleta.EM_REPARO) {
             validarFuncionarioParaReparo(dto.getIdFuncionario());
-            if (!bicicleta.getIdFuncionarioUltimaOperacao().equals(dto.getIdFuncionario())) {
+            if (bicicleta.getIdFuncionarioUltimaOperacao() != dto.getIdFuncionario()) {
                 throw new InvalidDataException(Constantes.FUNCIONARIO_INVALIDO);
             }
         }
@@ -74,20 +74,29 @@ public class BicicletaService {
         emailService.enviarEmailParaBicicleta(dto.getIdFuncionario(), bicicleta, tranca, "Retirada");
     }
 
-    // UC10 - Manter Cadastro de Bicicletas
     public Bicicleta cadastrarBicicleta(NovaBicicletaDTO bicicletaDTO) {
+        validarBicicleta(bicicletaDTO);
         Bicicleta bicicleta = bicicletaMapper.toEntity(bicicletaDTO);
         bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
         return bicicletaRepository.save(bicicleta);
     }
 
-    public Bicicleta atualizarBicicleta(Long idBicicleta, NovaBicicletaDTO bicicletaDTO) {
+    private void validarBicicleta(NovaBicicletaDTO bicicletaDTO) {
+        if (bicicletaDTO.getMarca() == null || bicicletaDTO.getModelo() == null
+                || bicicletaDTO.getNumero() == null || bicicletaDTO.getAno() == null
+                || bicicletaDTO.getMarca().isEmpty() || bicicletaDTO.getModelo().isEmpty()
+                || bicicletaDTO.getAno().isEmpty()) {
+            throw new InvalidDataException(Constantes.DADOS_INVALIDOS);
+        }
+    }
+
+    public Bicicleta atualizarBicicleta(Integer idBicicleta, NovaBicicletaDTO bicicletaDTO) {
         Bicicleta bicicleta = buscarBicicletaPorId(idBicicleta);
         atualizarBicicletaComDTO(bicicleta, bicicletaDTO);
         return bicicletaRepository.save(bicicleta);
     }
 
-    public void excluirBicicleta(Long idBicicleta) {
+    public void excluirBicicleta(Integer idBicicleta) {
         Bicicleta bicicleta = buscarBicicletaPorId(idBicicleta);
         validarStatusParaExclusao(bicicleta);
         bicicletaRepository.deleteById(idBicicleta);
@@ -97,24 +106,28 @@ public class BicicletaService {
         return bicicletaRepository.findAll();
     }
 
-    // Métodos auxiliares privados
-
-    public Bicicleta obterBicicletaPorId(Long idBicicleta) {
+    public Bicicleta obterBicicletaPorId(Integer idBicicleta) {
         return buscarBicicletaPorId(idBicicleta);
     }
 
-    public Bicicleta alterarStatusBicicleta(Long id, String acao) {
+    public Bicicleta alterarStatusBicicleta(Integer id, String acao) {
         Bicicleta bicicleta = buscarBicicletaPorId(id);
         atualizarStatusBicicleta(bicicleta, acao);
         return bicicletaRepository.save(bicicleta);
     }
 
-    private Bicicleta buscarBicicletaPorId(Long idBicicleta) {
+    private Bicicleta buscarBicicletaPorId(Integer idBicicleta) {
         return bicicletaRepository.findById(idBicicleta)
                 .orElseThrow(() -> new ResourceNotFoundException(Constantes.BICICLETA_NAO_ENCONTRADA));
     }
 
-    private Tranca buscarTrancaPorId(Long idTranca) {
+    private void existsById(Integer idBicicleta) {
+        if (!bicicletaRepository.existsById(idBicicleta)) {
+            throw new ResourceNotFoundException(Constantes.BICICLETA_NAO_ENCONTRADA);
+        }
+    }
+
+    private Tranca buscarTrancaPorId(Integer idTranca) {
         return trancaRepository.findById(idTranca)
                 .orElseThrow(() -> new ResourceNotFoundException(Constantes.TRANCA_NAO_ENCONTRADA));
     }
@@ -123,7 +136,7 @@ public class BicicletaService {
         bicicleta.setMarca(bicicletaDTO.getMarca());
         bicicleta.setModelo(bicicletaDTO.getModelo());
         bicicleta.setAno(bicicletaDTO.getAno());
-        bicicleta.setStatusBicicleta(bicicletaDTO.getStatus());
+        bicicleta.setNumero(bicicletaDTO.getNumero());
     }
 
     private void validarStatusParaExclusao(Bicicleta bicicleta) {
@@ -144,7 +157,7 @@ public class BicicletaService {
         }
     }
 
-    private void validarFuncionarioParaReparo(Long idFuncionario) {
+    private void validarFuncionarioParaReparo(Integer idFuncionario) {
         if (!funcionarioService.isFuncionarioValido(idFuncionario)) {
             throw new InvalidDataException(Constantes.FUNCIONARIO_INVALIDO);
         }

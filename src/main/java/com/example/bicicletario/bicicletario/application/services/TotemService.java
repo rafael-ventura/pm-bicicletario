@@ -43,25 +43,25 @@ public class TotemService {
         return totemRepository.save(novoTotem);
     }
 
-    public Totem atualizarTotem(Long idTotem, NovoTotemDTO totemDTO) {
+    public Totem atualizarTotem(Integer idTotem, NovoTotemDTO totemDTO) {
         Totem totemExistente = buscarTotemPorId(idTotem);
         validarDadosTotem(totemDTO);
         atualizarDadosTotem(totemExistente, totemDTO);
         return totemRepository.save(totemExistente);
     }
 
-    public void excluirTotem(Long idTotem) {
+    public void excluirTotem(Integer idTotem) {
         Totem totem = buscarTotemPorId(idTotem);
         validarExclusaoDeTotem(totem);
         totemRepository.deleteById(idTotem);
     }
 
-    public List<Tranca> listarTrancasPorTotem(Long idTotem) {
+    public List<Tranca> listarTrancasPorTotem(Integer idTotem) {
         Totem totem = recuperarTotem(idTotem);
         return trancaRepository.findByTotemLocalizacao(totem.getLocalizacao());
     }
 
-    public List<Bicicleta> listarBicicletasPorTotem(Long idTotem) {
+    public List<Bicicleta> listarBicicletasPorTotem(Integer idTotem) {
         List<Bicicleta> bicicletas = new ArrayList<>();
         List<Tranca> trancas = listarTrancasPorTotem(idTotem);
         if(trancas.isEmpty()) {
@@ -73,12 +73,12 @@ public class TotemService {
 
     // Métodos auxiliares privados
 
-    private Totem buscarTotemPorId(Long idTotem) {
+    private Totem buscarTotemPorId(Integer idTotem) {
         return totemRepository.findById(idTotem)
                 .orElseThrow(() -> new ResourceNotFoundException(Constantes.TOTEM_NAO_ENCONTRADO));
     }
 
-    private Totem recuperarTotem(Long idTotem) {
+    private Totem recuperarTotem(Integer idTotem) {
         if (!totemRepository.existsById(idTotem)) {
             throw new ResourceNotFoundException(Constantes.TOTEM_NAO_ENCONTRADO);
         }

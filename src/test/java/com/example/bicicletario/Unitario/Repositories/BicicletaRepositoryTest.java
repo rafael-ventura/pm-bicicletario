@@ -1,13 +1,10 @@
 package com.example.bicicletario.Unitario.Repositories;
 
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
-import com.example.bicicletario.bicicletario.domain.models.Tranca;
-import com.example.bicicletario.bicicletario.domain.models.Totem;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,41 +43,6 @@ class BicicletaRepositoryTest {
         assertFalse(retrievedBicicleta.isPresent());
     }
 
-    @Test
-    void testFindByTrancaId() {
-        Tranca tranca = new Tranca();
-        tranca.setId(1L);
 
-        Bicicleta bicicleta1 = new Bicicleta();
-        bicicleta1.setTranca(tranca);
-        bicicletaRepository.save(bicicleta1);
-
-        Bicicleta bicicleta2 = new Bicicleta();
-        bicicleta2.setTranca(tranca);
-        bicicletaRepository.save(bicicleta2);
-
-        List<Bicicleta> bicicletas = bicicletaRepository.findByTrancaId(1L);
-        assertEquals(2, bicicletas.size());
-    }
-
-    @Test
-    void testFindByTotemId() {
-        Totem totem = new Totem();
-        totem.setId(1L);
-
-        Tranca tranca = new Tranca();
-        tranca.setId(1L);
-        tranca.setTotem(totem);
-
-        Bicicleta bicicleta1 = new Bicicleta();
-        bicicleta1.setTranca(tranca);
-        bicicletaRepository.save(bicicleta1);
-
-        Bicicleta bicicleta2 = new Bicicleta();
-        bicicleta2.setTranca(tranca);
-        bicicletaRepository.save(bicicleta2);
-
-        List<Bicicleta> bicicletas = bicicletaRepository.findByTotemId(1L);
-        assertEquals(2, bicicletas.size());
-    }
 }
+
