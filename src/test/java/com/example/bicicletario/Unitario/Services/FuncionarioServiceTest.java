@@ -5,7 +5,6 @@ import com.example.bicicletario.bicicletario.application.services.FuncionarioSer
 import com.example.bicicletario.bicicletario.domain.models.Funcionario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
@@ -15,20 +14,27 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class FuncionarioServiceTest {
 
     @Mock
     private RestTemplate restTemplate;
 
-    @InjectMocks
     private FuncionarioService funcionarioService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        funcionarioService = new FuncionarioService();
+        // Utiliza reflexão para definir o mock de RestTemplate na classe FuncionarioService
+        try {
+            var field = FuncionarioService.class.getDeclaredField("restTemplate");
+            field.setAccessible(true);
+            field.set(funcionarioService, restTemplate);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -106,5 +112,4 @@ class FuncionarioServiceTest {
         // Assert
         assertFalse(resultado); // Espera-se que retorne false porque o ID é diferente
     }
-
 }

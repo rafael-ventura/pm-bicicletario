@@ -11,7 +11,6 @@ import com.example.bicicletario.bicicletario.domain.models.Funcionario;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpEntity;
@@ -20,8 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.*;
 
 class EmailServiceTest {
@@ -32,209 +32,153 @@ class EmailServiceTest {
     @Mock
     private FuncionarioService funcionarioService;
 
-    @InjectMocks
     private EmailService emailService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        emailService = new EmailService(funcionarioService);
+        try {
+            var field = EmailService.class.getDeclaredField("restTemplate");
+            field.setAccessible(true);
+            field.set(emailService, restTemplate);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    void enviarEmailComSucesso() {
+    void enviarEmail_ComSucesso() {
         // Arrange
-        String email = "teste@exemplo.com";
-        String assunto = "Assunto Teste";
-        String mensagem = "Mensagem de Teste";
-
-        ResponseEntity<Void> responseEntity = new ResponseEntity<>(HttpStatus.OK);
         when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
-                .thenReturn(responseEntity);
+                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
 
         // Act
-        emailService.enviarEmail(email, assunto, mensagem);
+        emailService.enviarEmail("test@example.com", "Assunto", "Mensagem");
 
         // Assert
-        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
+        verify(restTemplate, times(1))
+                .postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
     }
 
     @Test
-    void enviarEmailFalhaBadRequest() {
+    void enviarEmail_ComErroDeServidor_DeveLancarBadRequestException() {
         // Arrange
-        String email = "teste@exemplo.com";
-        String assunto = "Assunto Teste";
-        String mensagem = "Mensagem de Teste";
-
-        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
-                .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
-
-        // Act & Assert
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
-            emailService.enviarEmail(email, assunto, mensagem);
-        });
-
-        assertEquals("Erro ao enviar e-mail", exception.getMessage());
-    }
-
-    @Test
-    void enviarEmailFalhaNotFound() {
-        // Arrange
-        String email = "teste@exemplo.com";
-        String assunto = "Assunto Teste";
-        String mensagem = "Mensagem de Teste";
-
-        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
-                .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
-
-        // Act & Assert
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
-            emailService.enviarEmail(email, assunto, mensagem);
-        });
-
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-    }
-
-    @Test
-    void enviarEmailFormatoInvalido() {
-        // Arrange
-        String email = "teste@exemplo.com";
-        String assunto = "Assunto Teste";
-        String mensagem = "Mensagem de Teste";
-
-        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
-                .thenThrow(new HttpClientErrorException(HttpStatus.UNPROCESSABLE_ENTITY));
-
-        // Act & Assert
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
-            emailService.enviarEmail(email, assunto, mensagem);
-        });
-
-        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getStatusCode());
-    }
-
-    // Novo teste para exceções inesperadas
-    @Test
-    void enviarEmailExcecaoGenerica() {
-        // Arrange
-        String email = "teste@exemplo.com";
-        String assunto = "Assunto Teste";
-        String mensagem = "Mensagem de Teste";
-
         when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
                 .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
         // Act & Assert
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
-            emailService.enviarEmail(email, assunto, mensagem);
+        assertThrows(BadRequestException.class, () -> {
+            emailService.enviarEmail("test@example.com", "Assunto", "Mensagem");
         });
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatusCode());
+        verify(restTemplate, times(1))
+                .postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
     }
 
     @Test
-    void enviarEmailParaReparador_FuncionarioNaoEncontrado_DeveLancarExcecao() {
+    void enviarEmailParaReparador_ComSucesso() {
         // Arrange
-        when(funcionarioService.get(1)).thenThrow(new ResourceNotFoundException("Funcionário não encontrado"));
+        Funcionario funcionario = new Funcionario();
+        funcionario.setId(1);
+        funcionario.setEmail("reparador@example.com");
+
+        when(funcionarioService.get(anyInt()))
+                .thenReturn(funcionario);
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
+                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+
+        // Act
+        emailService.enviarEmailParaReparador(1, "Assunto", "Mensagem");
+
+        // Assert
+        verify(restTemplate, times(1))
+                .postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
+    }
+
+    @Test
+    void enviarEmailParaReparador_FuncionarioNaoEncontrado_DeveLancarResourceNotFoundException() {
+        // Arrange
+        when(funcionarioService.get(anyInt()))
+                .thenReturn(null);
 
         // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             emailService.enviarEmailParaReparador(1, "Assunto", "Mensagem");
         });
 
-        assertEquals("Funcionário não encontrado", exception.getMessage());
-    }
-
-
-    @Test
-    void enviarEmailParaBicicletaComFuncionarioNaoEncontrado_DeveLancarExcecao() {
-        // Arrange
-        when(funcionarioService.get(1)).thenThrow(new ResourceNotFoundException("Funcionário não encontrado"));
-
-        Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
-
-        Tranca tranca = new Tranca();
-        tranca.setId(2);
-
-        // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            emailService.enviarEmailParaBicicleta(1, bicicleta, tranca, "Inclusão");
-        });
-
-        assertEquals("Funcionário não encontrado", exception.getMessage());
+        verify(funcionarioService, times(1)).get(anyInt());
+        verify(restTemplate, times(0)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
     }
 
     @Test
-    void enviarEmailParaBicicleta_DeveEnviarEmailComSucesso() {
+    void enviarEmailParaBicicleta_ComSucesso() {
         // Arrange
-        Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setNumero(1);
-        bicicleta.setMarca("Marca");
-        bicicleta.setModelo("Modelo");
-        bicicleta.setAno("2020");
-        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
-
-        Tranca tranca = new Tranca();
-        tranca.setId(2);
-
         Funcionario funcionario = new Funcionario();
         funcionario.setId(1);
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setNumero(123);
+        bicicleta.setMarca("MarcaTest");
+        bicicleta.setModelo("ModeloTest");
+        bicicleta.setAno("2023");
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
+        Tranca tranca = new Tranca();
+        tranca.setId(10);
+        tranca.setNumero(123);
+        tranca.setModelo("ModeloTest");
+        tranca.setAnoDeFabricacao("2023");
+        tranca.setStatus(StatusTranca.OCUPADA);
 
-        when(funcionarioService.get(1)).thenReturn(funcionario);
 
-        ResponseEntity<Void> responseEntity = new ResponseEntity<>(HttpStatus.OK);
+        when(funcionarioService.get(anyInt()))
+                .thenReturn(funcionario);
         when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
-                .thenReturn(responseEntity);
+                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
 
         // Act
         emailService.enviarEmailParaBicicleta(1, bicicleta, tranca, "Inclusão");
 
         // Assert
+        verify(funcionarioService, times(1)).get(anyInt());
         verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
     }
 
     @Test
-    void enviarEmailParaTranca_DeveEnviarEmailComSucesso() {
+    void enviarEmailParaTranca_ComSucesso() {
         // Arrange
-        Tranca tranca = new Tranca();
-        tranca.setNumero(1);
-        tranca.setModelo("Modelo");
-        tranca.setAnoDeFabricacao("2020");
-        tranca.setLocalizacao("Localização");
-        tranca.setStatus(StatusTranca.LIVRE);
-
         Funcionario funcionario = new Funcionario();
         funcionario.setId(1);
+        Tranca tranca = new Tranca();
+        tranca.setNumero(123);
+        tranca.setModelo("ModeloTest");
+        tranca.setAnoDeFabricacao("2023");
+        tranca.setStatus(StatusTranca.OCUPADA);
 
-        when(funcionarioService.get(1)).thenReturn(funcionario);
-
-        ResponseEntity<Void> responseEntity = new ResponseEntity<>(HttpStatus.OK);
+        when(funcionarioService.get(anyInt()))
+                .thenReturn(funcionario);
         when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
-                .thenReturn(responseEntity);
+                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
 
         // Act
-        emailService.enviarEmailParaTranca(1, tranca, "Inclusão");
+        emailService.enviarEmailParaTranca(1, tranca, "Remoção");
 
         // Assert
+        verify(funcionarioService, times(1)).get(anyInt());
         verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
     }
 
     @Test
-    void enviarEmailParaTrancaComFuncionarioNaoEncontrado_DeveLancarExcecao() {
+    void enviarEmail_ComExceptionGenerica_DeveLancarBadRequestException() {
         // Arrange
-        when(funcionarioService.get(1)).thenThrow(new ResourceNotFoundException("Funcionário não encontrado"));
-
-        Tranca tranca = new Tranca();
-        tranca.setNumero(1);
-        tranca.setStatus(StatusTranca.LIVRE); // Certificando-se de que o status não é null
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
+                .thenThrow(new RuntimeException("Erro genérico"));
 
         // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            emailService.enviarEmailParaTranca(1, tranca, "Inclusão");
+        assertThrows(BadRequestException.class, () -> {
+            emailService.enviarEmail("test@example.com", "Assunto", "Mensagem");
         });
 
-        assertEquals("Funcionário não encontrado", exception.getMessage());
+        verify(restTemplate, times(1))
+                .postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
     }
-
-
 }

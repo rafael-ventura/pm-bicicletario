@@ -6,7 +6,10 @@ import com.example.bicicletario.bicicletario.domain.dto.EmailDto;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Funcionario;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -37,10 +40,10 @@ public class EmailService {
                 throw new BadRequestException("Erro ao enviar e-mail");
             }
         } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
-                throw new BadRequestException("Erro ao enviar e-mail");
-            }
-            throw e;
+            // Certifique-se de que todas as exceções sejam retransformadas em BadRequestException
+            throw new BadRequestException("Erro ao enviar e-mail");
+        } catch (Exception e) {
+            throw new BadRequestException("Erro ao enviar e-mail");
         }
     }
 
