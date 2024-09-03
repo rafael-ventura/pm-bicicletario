@@ -290,4 +290,5 @@ class AluguelServiceTest {
         verify(trancaService).destrancarTranca(idTranca, bicicleta.getId());
         verify(emailService).enviarEmailAluguel(idCiclista, aluguel, bicicleta, tranca);
     }
+
 }

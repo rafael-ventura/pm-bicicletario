@@ -323,7 +323,7 @@ class CiclistaServiceTest {
         requestDTO.setCiclista(ciclista);
 
         BadRequestException exception = assertThrows(BadRequestException.class, () -> ciclistaService.cadastrarCiclista(requestDTO));
-        assertEquals("CPF inválido. O CPF deve conter 11 dígitos e apenas números.", exception.getMessage());
+        assertEquals("Todos os campos são obrigatórios.", exception.getMessage());
     }
 
     // Verificação de passaporte para estrangeiros
@@ -333,29 +333,105 @@ class CiclistaServiceTest {
         ciclista.setNome("Joao Silva");
         ciclista.setEmail("joao.silva@example.com");
         ciclista.setNacionalidade(Nacionalidade.ESTRANGEIRO);
+        ciclista.setId(1);
+        ciclista.setCpf("12345678900");
+        ciclista.setNascimento("2000-01-01");
+        ciclista.setConfirmacaoSenha("minhaSenhaSecreta");
+        ciclista.setSenha("minhaSenhaSecreta");
+        ciclista.setStatus(StatusCiclista.INATIVO);
+        ciclista.setUrlFotoDocumento("http://example.com/foto.jpg");
         ciclista.setPassaporte(null);  // Passaporte nulo
 
         NovoCiclistaRequestDTO requestDTO = new NovoCiclistaRequestDTO();
         requestDTO.setCiclista(ciclista);
 
-        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> ciclistaService.cadastrarCiclista(requestDTO));
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> ciclistaService.cadastrarCiclista(requestDTO));
         assertEquals("Passaporte é obrigatório para estrangeiros.", exception.getMessage());
     }
 
     // Verificar envio de email
     @Test
     void testVerificarEnvioEmailConfirmacao() {
-        Ciclista ciclista = new Ciclista();
-        ciclista.setNome("Joao Silva");
-        ciclista.setEmail("joao.silva@example.com");
-        ciclista.setCpf("12345678900");
+        var ciclista = mock(Ciclista.class);
 
         NovoCiclistaRequestDTO requestDTO = new NovoCiclistaRequestDTO();
         requestDTO.setCiclista(ciclista);
 
         // Mock para garantir que o email é enviado
         ciclistaService.cadastrarCiclista(requestDTO);
-        verify(emailService, times(1)).enviarEmailConfirmacao(any(Ciclista.class));
+        verify(emailService, times(1)).enviarEmailConfirmacao(any());
+    }
+
+
+    @Test
+    void ativarCiclista_JaAtivo() {
+        // Arrange
+        Ciclista ciclista = new Ciclista();
+        ciclista.setId(1);
+        ciclista.setStatus(StatusCiclista.ATIVO);
+
+        when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
+
+        // Act & Assert
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
+            ciclistaService.ativarCiclista(1);
+        });
+
+        assertEquals("Ciclista já está ativo.", exception.getMessage());
+    }
+
+    @Test
+    void cadastrarCiclista_CpfInvalido() {
+        // Arrange
+        NovoCiclistaRequestDTO requestDTO = new NovoCiclistaRequestDTO();
+        Ciclista ciclista = new Ciclista();
+        ciclista.setCpf("123"); // CPF inválido
+        ciclista.setNome("Joao Silva");
+        ciclista.setEmail("vito@gmail.com");
+        ciclista.setNascimento("2000-01-01");
+        ciclista.setNacionalidade(Nacionalidade.BRASILEIRO);
+        ciclista.setUrlFotoDocumento("http://example.com/foto.jpg");
+        ciclista.setSenha("minhaSenhaSecreta");
+        ciclista.setConfirmacaoSenha("minhaSenhaSecreta");
+        requestDTO.setCiclista(ciclista);
+
+        // Act & Assert
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            ciclistaService.cadastrarCiclista(requestDTO);
+        });
+
+        assertEquals("CPF inválido. O CPF deve conter 11 dígitos e apenas números.", exception.getMessage());
+    }
+
+    @Test
+    void cadastrarCiclista_Success() {
+        // Arrange
+        var requestDTO = mock(NovoCiclistaRequestDTO.class);
+        var ciclista = mock(Ciclista.class);
+
+        when(ciclistaRepository.save(any(Ciclista.class))).thenReturn(ciclista);
+        // Act
+        Ciclista result = ciclistaService.cadastrarCiclista(requestDTO);
+
+        // Assert
+        assertNotNull(result);
+        verify(ciclistaRepository, times(1)).save(any(Ciclista.class));
+        assertEquals(ciclista, result);
+    }
+
+    @Test
+    void permiteAluguel_CiclistaInativo() {
+        // Arrange
+        Ciclista ciclista = new Ciclista();
+        ciclista.setStatus(StatusCiclista.INATIVO);
+
+        when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
+
+        // Act
+        boolean result = ciclistaService.permiteAluguel(1);
+
+        // Assert
+        assertFalse(result);
     }
 
 }

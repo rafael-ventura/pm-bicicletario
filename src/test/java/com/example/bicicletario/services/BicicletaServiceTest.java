@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -95,4 +96,46 @@ class BicicletaServiceTest {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> bicicletaService.atualizarStatus(bicicleta, StatusBicicleta.DISPONIVEL));
     }
+
+    @Test
+    void atualizarStatus_Falha() {
+        // Arrange
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
+
+        doThrow(new RuntimeException()).when(restTemplate).exchange(anyString(), eq(HttpMethod.PUT), any(HttpEntity.class), eq(Void.class));
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> {
+            bicicletaService.atualizarStatus(bicicleta, StatusBicicleta.DISPONIVEL);
+        });
+    }
+
+    @Test
+    void getBicicletaById_NaoEncontrada() {
+        // Arrange
+        when(restTemplate.getForEntity(anyString(), eq(Bicicleta.class)))
+                .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> {
+            bicicletaService.getBicicletaById(1);
+        });
+    }
+
+    @Test
+    void atualizarStatus_Success() {
+        // Arrange
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
+
+        doNothing().when(restTemplate).exchange(anyString(), eq(HttpMethod.PUT), any(HttpEntity.class), eq(Void.class));
+
+        // Act
+        bicicletaService.atualizarStatus(bicicleta, StatusBicicleta.DISPONIVEL);
+
+        // Assert
+        verify(restTemplate, times(1)).exchange(anyString(), eq(HttpMethod.PUT), any(HttpEntity.class), eq(Void.class));
+    }
+
 }

@@ -175,4 +175,24 @@ class EmailServiceTest {
         // Assert
         verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
     }
+
+    @Test
+    void enviarEmailDevolucao_Success() {
+        // Arrange
+        var idCiclista = 1;
+        var aluguel = mock(Aluguel.class);
+        var bicicleta = mock(Bicicleta.class);
+        var tranca = mock(Tranca.class);
+
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
+                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+
+        // Act
+        emailService.enviarEmailDevolucao(idCiclista, aluguel, bicicleta, tranca, 10.0, "1234", "Pago", "12:00");
+
+        // Assert
+        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
+    }
+
+
 }

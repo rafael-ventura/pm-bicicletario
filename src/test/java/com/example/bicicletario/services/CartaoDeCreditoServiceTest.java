@@ -147,20 +147,6 @@ class CartaoDeCreditoServiceTest {
     }
 
     @Test
-    void save_Success() {
-        // Arrange
-        NovoCartaoDeCreditoDTO novoCartaoDTO = new NovoCartaoDeCreditoDTO();
-        CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
-        when(cartaoDeCreditoMapper.toEntity(novoCartaoDTO)).thenReturn(cartaoDeCredito);
-
-        // Act
-        cartaoDeCreditoService.save(novoCartaoDTO, 1);
-
-        // Assert
-        verify(cartaoDeCreditoRepository).save(cartaoDeCredito);
-    }
-
-    @Test
     void enviarEmailAlteracaoDeDados_Success() {
         // Arrange
         Ciclista ciclista = new Ciclista();
@@ -187,4 +173,30 @@ class CartaoDeCreditoServiceTest {
 
         assertEquals("Ciclista não encontrado com o ID:", exception.getMessage());
     }
+
+    @Test
+    void obterCartaoDeCredito_NaoEncontrado() {
+        // Arrange
+        when(cartaoDeCreditoRepository.findByCiclistaId(1)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> {
+            cartaoDeCreditoService.obterCartaoDeCredito(1);
+        });
+    }
+
+    @Test
+    void save_Success() {
+        // Arrange
+        NovoCartaoDeCreditoDTO novoCartaoDTO = new NovoCartaoDeCreditoDTO();
+        CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
+        when(cartaoDeCreditoMapper.toEntity(novoCartaoDTO)).thenReturn(cartaoDeCredito);
+
+        // Act
+        cartaoDeCreditoService.save(novoCartaoDTO, 1);
+
+        // Assert
+        verify(cartaoDeCreditoRepository).save(cartaoDeCredito);
+    }
+
 }

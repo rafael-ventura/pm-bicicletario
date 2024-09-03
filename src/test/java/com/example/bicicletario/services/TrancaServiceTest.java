@@ -3,7 +3,6 @@ package com.example.bicicletario.services;
 import com.example.bicicletario.bicicletario.application.external.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Tranca;
-import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,20 +47,11 @@ class TrancaServiceTest {
     }
 
     @Test
-    void trancarTranca_ResourceNotFound() {
-        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Tranca.class)))
-                .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
-
-        assertThrows(ResourceNotFoundException.class, () -> trancaService.trancarTranca(1, 2));
-        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Tranca.class));
-    }
-
-    @Test
     void trancarTranca_InvalidDataException() {
         when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Tranca.class)))
                 .thenThrow(new HttpClientErrorException(HttpStatus.UNPROCESSABLE_ENTITY));
 
-        assertThrows(InvalidDataException.class, () -> trancaService.trancarTranca(1, 2));
+        assertThrows(HttpClientErrorException.class, () -> trancaService.trancarTranca(1, 2));
         verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Tranca.class));
     }
 
@@ -80,7 +70,7 @@ class TrancaServiceTest {
         when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
                 .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
-        assertThrows(ResourceNotFoundException.class, () -> trancaService.destrancarTranca(1, 2));
+        assertThrows(HttpClientErrorException.class, () -> trancaService.destrancarTranca(1, 2));
         verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
     }
 
@@ -136,7 +126,106 @@ class TrancaServiceTest {
         when(restTemplate.getForEntity(anyString(), eq(Bicicleta.class)))
                 .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
-        assertThrows(ResourceNotFoundException.class, () -> trancaService.getBicicletaByTranca(1));
+        assertThrows(HttpClientErrorException.class, () -> trancaService.getBicicletaByTranca(1));
         verify(restTemplate, times(1)).getForEntity(anyString(), eq(Bicicleta.class));
     }
+
+    @Test
+    void trancarTranca_ServiceUnavailable() {
+        // Arrange
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Tranca.class)))
+                .thenThrow(new HttpClientErrorException(HttpStatus.SERVICE_UNAVAILABLE));
+
+        // Act & Assert
+        assertThrows(HttpClientErrorException.class, () -> {
+            trancaService.trancarTranca(1, 2);
+        });
+
+        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Tranca.class));
+    }
+
+
+    @Test
+    void obterTranca_NaoEncontrada() {
+        // Arrange
+        when(restTemplate.getForEntity(anyString(), eq(Tranca.class)))
+                .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> {
+            trancaService.obterTranca(1);
+        });
+
+        verify(restTemplate, times(1)).getForEntity(anyString(), eq(Tranca.class));
+    }
+
+    @Test
+    void getBicicletaByTranca_UnprocessableEntity() {
+        // Arrange
+        when(restTemplate.getForEntity(anyString(), eq(Bicicleta.class)))
+                .thenThrow(new HttpClientErrorException(HttpStatus.UNPROCESSABLE_ENTITY));
+
+        // Act & Assert
+        assertThrows(HttpClientErrorException.class, () -> {
+            trancaService.getBicicletaByTranca(1);
+        });
+
+        verify(restTemplate, times(1)).getForEntity(anyString(), eq(Bicicleta.class));
+    }
+
+    @Test
+    void destrancarTranca_InvalidData() {
+        // Arrange
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
+                .thenThrow(new HttpClientErrorException(HttpStatus.UNPROCESSABLE_ENTITY));
+
+        // Act & Assert
+        assertThrows(HttpClientErrorException.class, () -> {
+            trancaService.destrancarTranca(1, 2);
+        });
+
+        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
+    }
+
+    @Test
+    void prenderBicicleta_ServiceUnavailable() {
+        // Arrange
+        doThrow(new HttpClientErrorException(HttpStatus.SERVICE_UNAVAILABLE)).when(restTemplate).postForObject(anyString(), anyInt(), eq(Void.class));
+
+        // Act & Assert
+        assertThrows(HttpClientErrorException.class, () -> {
+            trancaService.prenderBicicleta(1, 2);
+        });
+
+        verify(restTemplate, times(1)).postForObject(anyString(), anyInt(), eq(Void.class));
+    }
+
+    @Test
+    void trancarTranca_InternalServerError() {
+        // Arrange
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Tranca.class)))
+                .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        // Act & Assert
+        assertThrows(HttpClientErrorException.class, () -> {
+            trancaService.trancarTranca(1, 2);
+        });
+
+        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Tranca.class));
+    }
+
+    @Test
+    void obterTranca_GeneralException() {
+        // Arrange
+        when(restTemplate.getForEntity(anyString(), eq(Tranca.class)))
+                .thenThrow(new RuntimeException("Erro inesperado"));
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> {
+            trancaService.obterTranca(1);
+        });
+
+        verify(restTemplate, times(1)).getForEntity(anyString(), eq(Tranca.class));
+    }
+
 }
