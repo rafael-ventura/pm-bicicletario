@@ -14,6 +14,7 @@ public class AdministradoraCCService {
 
     private static final Logger logger = LoggerFactory.getLogger(AdministradoraCCService.class);
 
+
     public boolean enviarParaAdministradoraCC(CartaoDeCredito cartaoDeCredito, BigDecimal valor) {
         try {
             // Criar o mapa de dados para a requisição
