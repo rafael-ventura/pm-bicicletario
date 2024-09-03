@@ -2,22 +2,22 @@ package com.example.bicicletario.bicicletario.domain.dto;
 
 public class NovoDevolucaoDTO {
 
-    private int ciclista;
-    private int trancaFim;
+    private int idTranca;
+    private int idBicicleta;
 
-    public int getCiclista() {
-        return ciclista;
+    public int getIdTranca() {
+        return idTranca;
     }
 
-    public void setCiclista(int ciclista) {
-        this.ciclista = ciclista;
+    public void setIdTranca(int idTranca) {
+        this.idTranca = idTranca;
     }
 
-    public int getTrancaFim() {
-        return trancaFim;
+    public int getIdBicicleta() {
+        return idBicicleta;
     }
 
-    public void setTrancaFim(int trancaFim) {
-        this.trancaFim = trancaFim;
+    public void setIdBicicleta(int idBicicleta) {
+        this.idBicicleta = idBicicleta;
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -22,7 +23,7 @@ public class AdministradoraCCService {
     @Value("${externo.base-url}")
     private String baseUrl;
 
-    public boolean validarCartao(NovoCartaoDeCreditoDTO cartaoDeCreditoDTO) {
+    public void validarCartao(NovoCartaoDeCreditoDTO cartaoDeCreditoDTO) {
         String url = baseUrl + "/validaCartaoDeCredito";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -30,12 +31,7 @@ public class AdministradoraCCService {
         HttpEntity<NovoCartaoDeCreditoDTO> request = new HttpEntity<>(cartaoDeCreditoDTO, headers);
 
         try {
-            ResponseEntity<Void> response = restTemplate.postForEntity(url, request, Void.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return true;
-            } else {
-                throw new InvalidDataException("Cartão de crédito inválido.");
-            }
+            restTemplate.postForEntity(url, request, Void.class);
         } catch (Exception e) {
             logger.error("Erro ao validar o cartão de crédito: {}", cartaoDeCreditoDTO.getNumero(), e);
             throw new InvalidDataException("Erro ao validar o cartão de crédito.");

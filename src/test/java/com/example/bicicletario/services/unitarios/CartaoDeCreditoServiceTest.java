@@ -91,7 +91,7 @@ class CartaoDeCreditoServiceTest {
         when(cartaoDeCreditoRepository.findByCiclistaId(1)).thenReturn(Optional.of(cartaoDeCredito));
 
         // Mockando a resposta do serviço de validação do cartão
-        when(administradoraCCService.validarCartao(any(NovoCartaoDeCreditoDTO.class), eq(true))).thenReturn(true);
+        doNothing().when(administradoraCCService).validarCartao(any(NovoCartaoDeCreditoDTO.class));
 
         // Mockando a resposta do repositório de Ciclista
         when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
@@ -134,7 +134,7 @@ class CartaoDeCreditoServiceTest {
         novoCartaoDTO.setValidade("2025-12-31");
         novoCartaoDTO.setCvv("123");
 
-        when(administradoraCCService.validarCartao(novoCartaoDTO, true)).thenReturn(true);
+        doNothing().when(administradoraCCService).validarCartao(novoCartaoDTO);
 
         // Act
         assertDoesNotThrow(() -> cartaoDeCreditoService.validarCartaoDeCredito(novoCartaoDTO));

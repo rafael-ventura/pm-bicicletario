@@ -73,10 +73,7 @@ public class CartaoDeCreditoService {
             throw new InvalidDataException("CVV do cartão de crédito inválido.");
         }
 
-        boolean valid = administradoraCCService.validarCartao(cartaoDeCreditoDTO);
-        if (!valid) {
-            throw new InvalidDataException("Cartão de crédito inválido.");
-        }
+        administradoraCCService.validarCartao(cartaoDeCreditoDTO);
     }
 
     private boolean isValidDateFormat(String dateStr) {

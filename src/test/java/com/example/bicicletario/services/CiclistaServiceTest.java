@@ -131,14 +131,13 @@ class CiclistaServiceTest {
 
     @Test
     void testAlterarCiclista_Success() {
-        NovoCiclistaRequestDTO novoCiclistaDTO = new NovoCiclistaRequestDTO();
-        NovoCiclistaDTO novoCiclista = new NovoCiclistaDTO();
-        novoCiclistaDTO.setCiclista(novoCiclista);
-        novoCiclistaDTO.getCiclista().setNome("Updated Name");
-        novoCiclistaDTO.getCiclista().setEmail("updated.email@example.com");
-        novoCiclistaDTO.getCiclista().setNascimento("2000-01-01");
-        novoCiclistaDTO.getCiclista().setNacionalidade(Nacionalidade.BRASILEIRO);
-        novoCiclistaDTO.getCiclista().setCpf("12345678900");
+        NovoCiclistaDTO novoCiclistaDTO = new NovoCiclistaDTO();
+        novoCiclistaDTO.setNome("Updated Name");
+        novoCiclistaDTO.setEmail("updated.email@example.com");
+        novoCiclistaDTO.setNascimento("2000-01-01");
+        novoCiclistaDTO.setNacionalidade(Nacionalidade.BRASILEIRO);
+        novoCiclistaDTO.setCpf("12345678900");
+        novoCiclistaDTO.setUrlFotoDocumento("http://example.com/foto.jpg");
 
         Ciclista ciclista = new Ciclista();
         ciclista.setId(1);
@@ -157,11 +156,15 @@ class CiclistaServiceTest {
 
     @Test
     void testAlterarCiclista_NotFound() {
-        NovoCiclistaRequestDTO novoCiclistaDTO = new NovoCiclistaRequestDTO();
+        Ciclista ciclista = new Ciclista();
+        ciclista.setId(1);
+        ciclista.setNome("Name");
+        NovoCiclistaDTO ciclistaDTO = new NovoCiclistaDTO();
+        ciclistaDTO.setNome("Updated Name");
 
         when(ciclistaRepository.existsById(anyInt())).thenReturn(false);
 
-        assertThrows(ResourceNotFoundException.class, () -> ciclistaService.alterarCiclista(1, novoCiclistaDTO));
+        assertThrows(ResourceNotFoundException.class, () -> ciclistaService.alterarCiclista(1, ciclistaDTO));
     }
 
     @Test

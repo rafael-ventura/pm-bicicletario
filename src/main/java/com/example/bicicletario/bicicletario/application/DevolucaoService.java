@@ -4,7 +4,6 @@ import com.example.bicicletario.bicicletario.application.external.*;
 import com.example.bicicletario.bicicletario.domain.*;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoDevolucaoDTO;
-import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
@@ -45,13 +44,13 @@ public class DevolucaoService {
     public static final String STATUS_FALHA = "FALHA";
 
     public Devolucao realizarDevolucao(NovoDevolucaoDTO devolucaoDTO) {
-        int trancaFim = devolucaoDTO.getTrancaFim();
-        int ciclista = devolucaoDTO.getCiclista();
+        int trancaFim = devolucaoDTO.getIdTranca();
+        int bicicletaId = devolucaoDTO.getIdBicicleta();
 
         // 1. Validação da bicicleta
-        Bicicleta bicicleta = trancaService.getBicicletaByTranca(trancaFim);
-        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO); // Simula a bicicleta sendo usada
-        if (!StatusBicicleta.EM_USO.equals(bicicleta.getStatusBicicleta())) {
+        Bicicleta bicicleta = bicicletaService.getBicicletaById(bicicletaId);
+        bicicleta.setStatus(StatusBicicleta.EM_USO); // Simula a bicicleta sendo usada
+        if (!StatusBicicleta.EM_USO.equals(bicicleta.getStatus())) {
             throw new InvalidDataException("Bicicleta não está em uso.");
         }
 
@@ -115,7 +114,7 @@ public class DevolucaoService {
         devolucaoRepository.save(devolucao);
 
         // 10. Envio de e-mail ao ciclista
-        emailService.enviarEmailDevolucao(aluguel.getCiclista(), devolucao);
+        emailService.enviarEmailDevolucao(aluguel.getCiclista(), aluguel, bicicleta, tranca, valorExtra, devolucao.getCartaoUsado(), devolucao.getStatusPagamento(), devolucao.getDataHoraCobranca());
 
         return devolucao;
     }

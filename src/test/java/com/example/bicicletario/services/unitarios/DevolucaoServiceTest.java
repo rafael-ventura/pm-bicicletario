@@ -14,14 +14,15 @@ import com.example.bicicletario.bicicletario.domain.dto.NovoDevolucaoDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
-import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
 import com.example.bicicletario.bicicletario.infraestructure.DevolucaoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -52,16 +53,15 @@ class DevolucaoServiceTest {
         // Arrange
         NovoCobrancaDTO novoCobranca = new NovoCobrancaDTO();
         NovoDevolucaoDTO devolucaoDTO = new NovoDevolucaoDTO();
-        Devolucao devolucao = new Devolucao();
-        devolucaoDTO.setCiclista(1);
-        devolucaoDTO.setTrancaFim(2);
+        devolucaoDTO.setIdBicicleta(1);
+        devolucaoDTO.setIdTranca(1);
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
-        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
+        bicicleta.setStatus(StatusBicicleta.EM_USO);
 
         Tranca tranca = new Tranca();
-        tranca.setId(1L);
+        tranca.setId(1);
         tranca.setStatus(StatusTranca.LIVRE);
 
         Aluguel aluguel = new Aluguel();
@@ -69,8 +69,8 @@ class DevolucaoServiceTest {
         aluguel.setHoraInicio(LocalDateTime.now().minusHours(2).toString());
         aluguel.setCiclista(1);
 
-        when(bicicletaService.getBicicletaByTranca(devolucaoDTO.getTrancaFim())).thenReturn(Optional.of(bicicleta));
-        when(trancaService.obterTranca(devolucaoDTO.getTrancaFim())).thenReturn(tranca);
+        when(bicicletaService.getBicicletaById(devolucaoDTO.getIdBicicleta())).thenReturn(bicicleta);
+        when(trancaService.obterTranca(devolucaoDTO.getIdTranca())).thenReturn(tranca);
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.of(aluguel));
         when(administradoraCCService.enviarCobranca(novoCobranca)).thenReturn(true);
 
@@ -84,24 +84,24 @@ class DevolucaoServiceTest {
         assertEquals("SUCESSO", devolucao1.getStatusPagamento());
 
         verify(devolucaoRepository).save(any(Devolucao.class));
-        verify(emailService).enviarEmailDevolucao(anyInt(), any(Devolucao.class));
+        verify(emailService).enviarEmailDevolucao(any(), any(), any(), any(), any(), any(), any(), any());
     }
 
     @Test
     void realizarDevolucao_BicicletaNaoEmUso() {
         // Arrange
         NovoDevolucaoDTO devolucaoDTO = new NovoDevolucaoDTO();
-        devolucaoDTO.setCiclista(1);
-        devolucaoDTO.setTrancaFim(1);
+        devolucaoDTO.setIdBicicleta(1);
+        devolucaoDTO.setIdTranca(1);
 
         NovoTrancaDTO tranca = new NovoTrancaDTO();
         tranca.setId(1);
         tranca.setStatus(StatusTranca.LIVRE);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
+        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
 
-        when(bicicletaService.getBicicletaByTranca(tranca.getId())).thenReturn(Optional.of(bicicleta));
+        when(bicicletaService.getBicicletaById(devolucaoDTO.getIdBicicleta())).thenReturn(bicicleta);
 
         // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
@@ -113,18 +113,17 @@ class DevolucaoServiceTest {
     void realizarDevolucao_TrancaNaoDisponivel() {
         // Arrange
         NovoDevolucaoDTO devolucaoDTO = new NovoDevolucaoDTO();
-        devolucaoDTO.setCiclista(1);
-        devolucaoDTO.setTrancaFim(1);
+        devolucaoDTO.setIdTranca(1);
+        devolucaoDTO.setIdBicicleta(1);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
+        bicicleta.setStatus(StatusBicicleta.EM_USO);
 
         Tranca tranca = new Tranca();
-        NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
-        tranca.setId(1L);
+        tranca.setId(1);
         tranca.setStatus(StatusTranca.OCUPADA);
 
-        when(bicicletaService.getBicicletaByTranca(tranca.getId())).thenReturn(Optional.of(bicicleta));
+        when(bicicletaService.getBicicletaById(bicicleta.getId())).thenReturn(bicicleta);
         when(trancaService.obterTranca(tranca.getId())).thenReturn(tranca);
 
         // Act & Assert
@@ -137,18 +136,18 @@ class DevolucaoServiceTest {
     void realizarDevolucao_AluguelNaoEncontrado() {
         // Arrange
         NovoDevolucaoDTO devolucaoDTO = new NovoDevolucaoDTO();
-        devolucaoDTO.setCiclista(1);
-        devolucaoDTO.setTrancaFim(1);
+        devolucaoDTO.setIdBicicleta(1);
+        devolucaoDTO.setIdTranca(1);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
+        bicicleta.setStatus(StatusBicicleta.EM_USO);
 
         NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
         Tranca tranca = new Tranca();
         trancaDTO.setId(1);
         trancaDTO.setStatus(StatusTranca.LIVRE);
 
-        when(bicicletaService.getBicicletaByTranca(trancaDTO.getId())).thenReturn(Optional.of(bicicleta));
+        when(bicicletaService.getBicicletaById(trancaDTO.getId())).thenReturn((bicicleta));
         when(trancaService.obterTranca(trancaDTO.getId())).thenReturn(tranca);
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.empty());
 
@@ -158,7 +157,7 @@ class DevolucaoServiceTest {
         assertEquals("Aluguel ativo não encontrado para esta bicicleta.", exception.getMessage());
     }
 
-    /*@Test
+    @Test
     void realizarDevolucao_ComPagamentoExtra() {
         // Arrange
         NovoCobrancaDTO novoCobranca = new NovoCobrancaDTO();
@@ -166,13 +165,13 @@ class DevolucaoServiceTest {
 
         Devolucao devolucao = new Devolucao();
         NovoDevolucaoDTO devolucaoDTO = new NovoDevolucaoDTO();
-        devolucaoDTO.setTrancaFim(1);
-        devolucaoDTO.setCiclista(1);
+        devolucaoDTO.setIdTranca(1);
+        devolucaoDTO.setIdBicicleta(1);
 
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
+        bicicleta.setStatus(StatusBicicleta.EM_USO);
 
-        NovoTrancaDTO tranca = new NovoTrancaDTO();
+        Tranca tranca = new Tranca();
         tranca.setId(1);
         tranca.setStatus(StatusTranca.LIVRE);
 
@@ -181,22 +180,20 @@ class DevolucaoServiceTest {
         aluguel.setHoraInicio(LocalDateTime.now().minusHours(3).toString()); // Mais de 2 horas de uso
         aluguel.setCiclista(1);
 
-        when(bicicletaService.getBicicletaByTranca(tranca.getId())).thenReturn(Optional.of(bicicleta));
-        when(devolucaoService.realizarDevolucao(devolucaoDTO)).thenReturn(devolucao);
-        when(trancaService.obterTranca(tranca.getId())).thenReturn(Optional.of(tranca));
-        when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.of(aluguel));
+        when(bicicletaService.getBicicletaById(devolucaoDTO.getIdBicicleta())).thenReturn(bicicleta);
+        when(trancaService.obterTranca(devolucaoDTO.getIdTranca())).thenReturn(tranca);
+        when(aluguelRepository.findByBicicletaAndHoraFimIsNull(devolucaoDTO.getIdBicicleta())).thenReturn(Optional.of(aluguel));
         when(administradoraCCService.enviarCobranca(novoCobranca)).thenReturn(true);
-        when(administradoraCCService.registrarCobrancaPendente(idCiclista));
-
+        doNothing().when(administradoraCCService).registrarCobrancaPendente(idCiclista);
 
         // Act
-        Devolucao devolucao = devolucaoService.realizarDevolucao(devolucaoDTO);
+        Devolucao devolucaoResult = devolucaoService.realizarDevolucao(devolucaoDTO);
 
         // Assert
-        assertNotNull(devolucao);
-        assertTrue(devolucao.getValorExtra() > 0);
-        assertEquals("SUCESSO", devolucao.getStatusPagamento());
+        assertNotNull(devolucaoResult);
+        assertTrue(devolucaoResult.getValorExtra() > 0);
+        assertEquals("SUCESSO", devolucaoResult.getStatusPagamento());
 
         verify(administradoraCCService).enviarCobranca(novoCobranca);
-    }*/
+    }
 }

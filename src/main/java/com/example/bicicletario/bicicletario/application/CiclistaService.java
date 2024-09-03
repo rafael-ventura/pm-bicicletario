@@ -15,6 +15,7 @@ import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
 import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
 import com.example.bicicletario.bicicletario.mapper.CiclistaMapper;
+import com.example.bicicletario.bicicletario.mapper.PassaporteMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,14 +32,16 @@ public class CiclistaService {
     private final BicicletaService bicicletaService;
     private final CartaoDeCreditoService cartaoDeCreditoService;
     private final EmailService emailService;
+    private final PassaporteMapper passaporteMapper;
 
-    public CiclistaService(CiclistaRepository ciclistaRepository, CiclistaMapper ciclistaMapper, AluguelRepository aluguelRepository, BicicletaService bicicletaService, CartaoDeCreditoService cartaoDeCreditoService, EmailService emailService) {
+    public CiclistaService(CiclistaRepository ciclistaRepository, CiclistaMapper ciclistaMapper, AluguelRepository aluguelRepository, BicicletaService bicicletaService, CartaoDeCreditoService cartaoDeCreditoService, EmailService emailService, PassaporteMapper passaporteMapper) {
         this.ciclistaRepository = ciclistaRepository;
         this.ciclistaMapper = ciclistaMapper;
         this.aluguelRepository = aluguelRepository;
         this.bicicletaService = bicicletaService;
         this.cartaoDeCreditoService = cartaoDeCreditoService;
         this.emailService = emailService;
+        this.passaporteMapper = passaporteMapper;
     }
 
     public Ciclista cadastrarCiclista(NovoCiclistaRequestDTO request) throws BadRequestException {
@@ -95,13 +98,22 @@ public class CiclistaService {
         }
     }
 
-    public Ciclista alterarCiclista(int idCiclista, Ciclista ciclista) throws BadRequestException {
-        if (!ciclistaRepository.existsById(idCiclista)) {
-            throw new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista);
-        }
+    public Ciclista alterarCiclista(int idCiclista, NovoCiclistaDTO novoCiclista) throws BadRequestException {
+        Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(
+                () -> new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista)
+        );
         validarCiclistaParaAlterar(ciclista);
         validarSenhasIdenticas(ciclista.getSenha(), ciclista.getConfirmacaoSenha());
         ciclista.setId(idCiclista);
+
+        // atualizar ciclista com os dados do novoCiclista
+        ciclista.setNome(novoCiclista.getNome());
+        ciclista.setNascimento(novoCiclista.getNascimento());
+        ciclista.setNacionalidade(novoCiclista.getNacionalidade());
+        ciclista.setEmail(novoCiclista.getEmail());
+        ciclista.setUrlFotoDocumento(novoCiclista.getUrlFotoDocumento());
+        ciclista.setCpf(novoCiclista.getCpf());
+        ciclista.setPassaporte(passaporteMapper.toEntity(novoCiclista.getPassaporte()));
 
         ciclistaRepository.save(ciclista);
         return ciclista;

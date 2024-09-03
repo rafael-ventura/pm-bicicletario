@@ -66,13 +66,13 @@ public class AluguelService {
             throw new ResourceNotFoundException("Tranca sem bicicleta presa.");
         }
         Bicicleta bicicleta = tranca.getBicicleta();
-        if (!StatusBicicleta.DISPONIVEL.equals(bicicleta.getStatusBicicleta())) {
+        if (!StatusBicicleta.DISPONIVEL.equals(bicicleta.getStatus())) {
             log.warn("Bicicleta com status inválido. ID Bicicleta: {}", bicicleta.getId());
             throw new BadRequestException("Bicicleta não está disponível.");
         }
 
         // Verifica se a bicicleta não está em reparo
-        if (StatusBicicleta.EM_REPARO.equals(bicicleta.getStatusBicicleta())) {
+        if (StatusBicicleta.EM_REPARO.equals(bicicleta.getStatus())) {
             log.warn("Bicicleta em reparo. ID Bicicleta: {}", bicicleta.getId());
             throw new BadRequestException("Bicicleta não pode ser alugada.");
         }

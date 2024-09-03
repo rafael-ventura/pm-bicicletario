@@ -6,22 +6,26 @@ import com.example.bicicletario.bicicletario.domain.enums.StatusCiclista;
 public class Ciclista {
 
     private Integer id;
-
     private String nome;
-
     private String email;
-
     private String cpf;
-
     private String nascimento;
-
     private Nacionalidade nacionalidade;
-
     private Passaporte passaporte;
-
     private String urlFotoDocumento;
-
     private StatusCiclista status;
+    private String senha;
+    private String confirmacaoSenha;
+
+    // Getters and Setters
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getSenha() {
         return senha;
@@ -37,20 +41,6 @@ public class Ciclista {
 
     public void setConfirmacaoSenha(String confirmacaoSenha) {
         this.confirmacaoSenha = confirmacaoSenha;
-    }
-
-    private String senha;
-
-    private String confirmacaoSenha;
-
-    // Getters and Setters
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getNome() {

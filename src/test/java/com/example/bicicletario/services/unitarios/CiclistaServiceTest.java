@@ -158,7 +158,7 @@ class CiclistaServiceTest {
         when(ciclistaRepository.save(any(Ciclista.class))).thenReturn(ciclista);
 
         // Act
-        Ciclista result = ciclistaService.alterarCiclista(idCiclista, novoCiclistaDTO);
+        Ciclista result = ciclistaService.alterarCiclista(idCiclista, novoCiclista);
 
         // Assert
         assertNotNull(result);
@@ -170,7 +170,7 @@ class CiclistaServiceTest {
     void alterarCiclista_NotFound() {
         // Arrange
         int idCiclista = 1;
-        NovoCiclistaRequestDTO novoCiclistaDTO = new NovoCiclistaRequestDTO();
+        NovoCiclistaDTO novoCiclistaDTO = new NovoCiclistaDTO();
         when(ciclistaRepository.existsById(idCiclista)).thenReturn(false);
 
         // Act & Assert
@@ -268,7 +268,7 @@ class CiclistaServiceTest {
         // Mockando os repositórios e serviços
         when(ciclistaRepository.findById(idCiclista)).thenReturn(Optional.of(ciclista));
         when(aluguelRepository.findByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(Optional.of(aluguel));
-        when(bicicletaService.getBicicletaByTranca(idTranca)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaService.getBicicletaById(idTranca)).thenReturn(bicicleta);
 
         // Act
         Optional<Bicicleta> result = ciclistaService.obterBicicletaAlugada(idCiclista);

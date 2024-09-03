@@ -20,14 +20,11 @@ import org.springframework.web.client.RestTemplate;
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
-    private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
+
 
     @Value("${externo.base-url}")
     private String baseUrl;
-
-    public EmailService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
 
     public boolean enviarEmail(EmailDTO email) {
         String url = baseUrl + "/enviarEmail";
@@ -86,6 +83,40 @@ public class EmailService {
                 .append(aluguel.getHoraInicio())
                 .append("\nTotem de Bicicletas (Tranca): ")
                 .append(aluguel.getTrancaInicio());
+
+        email.setMensagem(mensagem.toString());
+        enviarEmail(email);
+    }
+
+    //email de devolucao
+    public void enviarEmailDevolucao(int idCiclista, Aluguel aluguel, Bicicleta bicicleta, Tranca tranca, double valorExtra, String cartaoUsado, String statusPagamento, String dataHoraCobranca) {
+        EmailDTO email = new EmailDTO();
+        email.setEmail("ciclista" + idCiclista + "@bicicletario.com");
+        email.setAssunto("Devolução de bicicleta");
+
+        StringBuilder mensagem = new StringBuilder();
+        mensagem.append("Você devolveu a bicicleta ")
+                .append(bicicleta.getNumero())
+                .append(" (")
+                .append(bicicleta.getMarca())
+                .append(" ")
+                .append(bicicleta.getModelo())
+                .append(") com sucesso!\n")
+                .append("Data/Hora da Devolução: ")
+                .append(aluguel.getHoraFim())
+                .append("\nTotem de Bicicletas (Tranca): ")
+                .append(tranca.getId())
+                .append("\nValor Cobrado: R$ ")
+                .append(valorExtra > 0 ? valorExtra : "0,00 (sem cobrança extra)")
+                .append("\nCartão Usado: ")
+                .append(cartaoUsado)
+                .append("\nStatus do Pagamento: ")
+                .append(statusPagamento);
+
+        if (valorExtra > 0 && dataHoraCobranca != null) {
+            mensagem.append("\nData/Hora da Cobrança: ")
+                    .append(dataHoraCobranca);
+        }
 
         email.setMensagem(mensagem.toString());
         enviarEmail(email);

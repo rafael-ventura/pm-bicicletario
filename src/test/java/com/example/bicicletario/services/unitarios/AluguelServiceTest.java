@@ -3,10 +3,8 @@ package com.example.bicicletario.services.unitarios;
 import com.example.bicicletario.bicicletario.application.AluguelService;
 import com.example.bicicletario.bicicletario.application.external.EmailService;
 import com.example.bicicletario.bicicletario.application.external.TrancaService;
-import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Tranca;
-import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
@@ -21,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -146,7 +144,7 @@ class AluguelServiceTest {
         trancaDTO.setBicicleta(1);
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
-        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
+        bicicleta.setStatus(StatusBicicleta.EM_USO);
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
         when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
@@ -167,7 +165,7 @@ class AluguelServiceTest {
         tranca.setStatus(StatusTranca.OCUPADA);
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
-        bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
+        bicicleta.setStatus(StatusBicicleta.EM_REPARO);
         tranca.setBicicleta(bicicleta);
 
         // Configurando o comportamento dos mocks

@@ -4,6 +4,7 @@ import com.example.bicicletario.bicicletario.application.CiclistaService;
 import com.example.bicicletario.bicicletario.application.Constants;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
+import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class CiclistaController {
     }
 
     @PutMapping("/{idCiclista}")
-    public ResponseEntity<Ciclista> alterarCiclista(@PathVariable int idCiclista, @RequestBody NovoCiclistaRequestDTO novoCiclistaDTO) {
+    public ResponseEntity<Ciclista> alterarCiclista(@PathVariable int idCiclista, @RequestBody NovoCiclistaDTO novoCiclistaDTO) {
         Ciclista ciclista = ciclistaService.alterarCiclista(idCiclista, novoCiclistaDTO);
         return ResponseEntity.ok(ciclista);
     }

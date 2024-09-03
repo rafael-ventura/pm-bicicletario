@@ -4,11 +4,11 @@ import com.example.bicicletario.bicicletario.domain.enums.Nacionalidade;
 
 public class NovoCiclistaDTO {
     private String nome;
-    private String email;
-    private String cpf;
     private String nascimento;
-    private Nacionalidade nacionalidade;
+    private String cpf;
     private PassaporteDTO passaporte;
+    private Nacionalidade nacionalidade;
+    private String email;
     private String urlFotoDocumento;
 
     // getters and setters

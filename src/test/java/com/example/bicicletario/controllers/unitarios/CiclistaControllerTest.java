@@ -3,6 +3,7 @@ package com.example.bicicletario.controllers.unitarios;
 import com.example.bicicletario.bicicletario.application.CiclistaService;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
+import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.web.CiclistaController;
@@ -85,7 +86,7 @@ class CiclistaControllerTest {
     void alterarCiclista_Success() {
         // Arrange
         int idCiclista = 1;
-        NovoCiclistaRequestDTO novoCiclistaDTO = new NovoCiclistaRequestDTO();
+        NovoCiclistaDTO novoCiclistaDTO = new NovoCiclistaDTO();
         Ciclista ciclista = new Ciclista();
         ciclista.setId(idCiclista);
         when(ciclistaService.alterarCiclista(idCiclista, novoCiclistaDTO)).thenReturn(ciclista);
