@@ -99,6 +99,8 @@ class AluguelServiceTest {
         Tranca tranca = new Tranca();
         NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
         trancaDTO.setId(1);
+        trancaDTO.setBicicleta(1);
+        trancaDTO.setLocalizacao("Localização");
         trancaDTO.setStatus(StatusTranca.LIVRE);
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
