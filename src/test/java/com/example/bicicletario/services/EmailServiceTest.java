@@ -1,6 +1,9 @@
 package com.example.bicicletario.services;
 
 import com.example.bicicletario.bicicletario.application.external.EmailService;
+import com.example.bicicletario.bicicletario.domain.Aluguel;
+import com.example.bicicletario.bicicletario.domain.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
 import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +33,13 @@ class EmailServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        try {
+            var field = EmailService.class.getDeclaredField("restTemplate");
+            field.setAccessible(true);
+            field.set(emailService, restTemplate);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -87,8 +97,7 @@ class EmailServiceTest {
         HttpEntity<EmailDTO> request = new HttpEntity<>(email, headers);
 
         // Simulando uma exceção ao chamar o endpoint
-        when(restTemplate.postForEntity(eq(baseUrl + "/enviarEmail"), eq(request), eq(Void.class)))
-                .thenThrow(new RuntimeException("Simulated Exception"));
+        doThrow(new RuntimeException("Simulated Exception")).when(restTemplate).postForEntity(eq(baseUrl + "/enviarEmail"), eq(request), eq(Void.class));
 
         // Act & Assert
         BadRequestException exception = assertThrows(BadRequestException.class, () -> {
@@ -97,5 +106,73 @@ class EmailServiceTest {
 
         assertEquals("Erro ao enviar email.", exception.getMessage());
         verify(restTemplate, times(1)).postForEntity(eq(baseUrl + "/enviarEmail"), eq(request), eq(Void.class));
+    }
+
+    @Test
+    void enviarEmailAluguel_ComSucesso() {
+        // Arrange
+        var idCiclista = 1;
+        var aluguel = mock(Aluguel.class);
+        var bicicleta = mock(Bicicleta.class);
+        var tranca = mock(Tranca.class);
+
+        when(bicicleta.getNumero()).thenReturn(1);
+        when(bicicleta.getMarca()).thenReturn("MarcaX");
+        when(bicicleta.getModelo()).thenReturn("ModeloY");
+        when(tranca.getId()).thenReturn(2);
+
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
+                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+
+        // Act
+        emailService.enviarEmailAluguel(idCiclista, aluguel, bicicleta, tranca);
+
+        // Assert
+        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
+    }
+
+    /*@Test
+    void enviarEmailAluguelExistente_ComSucesso() {
+        // Arrange
+        var idCiclista = 1;
+        var bicicleta = mock(Bicicleta.class);
+        var aluguel = mock(Aluguel.class);
+
+        when(aluguel.getBicicleta()).thenReturn(bicicleta.getId());
+        when(aluguel.getHoraInicio()).thenReturn("10:00");
+        when(aluguel.getTrancaInicio()).thenReturn(1);
+
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
+                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+
+        // Act
+        emailService.enviarEmailAluguelExistente(idCiclista, aluguel);
+
+        // Assert
+        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
+    }*/
+
+    @Test
+    void enviarEmailDevolucao_ComSucesso() {
+        // Arrange
+        var idCiclista = 1;
+        var aluguel = mock(Aluguel.class);
+        var bicicleta = mock(Bicicleta.class);
+        var tranca = mock(Tranca.class);
+
+        when(aluguel.getHoraFim()).thenReturn("11:00");
+        when(bicicleta.getNumero()).thenReturn(1);
+        when(bicicleta.getMarca()).thenReturn("MarcaX");
+        when(bicicleta.getModelo()).thenReturn("ModeloY");
+        when(tranca.getId()).thenReturn(2);
+
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
+                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+
+        // Act
+        emailService.enviarEmailDevolucao(idCiclista, aluguel, bicicleta, tranca, 10.0, "1234", "Pago", "12:00");
+
+        // Assert
+        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
     }
 }

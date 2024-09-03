@@ -21,7 +21,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -140,17 +142,22 @@ class CiclistaServiceTest {
         novoCiclista.setNascimento("1990-01-01");
         novoCiclista.setNacionalidade(Nacionalidade.BRASILEIRO);
 
+
         // Simular o objeto Ciclista
         Ciclista ciclista = new Ciclista();
         ciclista.setId(idCiclista);
         ciclista.setEmail(novoCiclista.getEmail());
         ciclista.setNome(novoCiclista.getNome());
         ciclista.setCpf(novoCiclista.getCpf());
+        ciclista.setNascimento(novoCiclista.getNascimento());
+        ciclista.setNacionalidade(novoCiclista.getNacionalidade());
+        ciclista.setStatus(StatusCiclista.AGUARDANDO_CONFIRMACAO);
 
         // Simulando o comportamento dos mocks
         when(ciclistaRepository.existsById(idCiclista)).thenReturn(true);
         when(ciclistaMapper.toEntity(novoCiclista)).thenReturn(ciclista);
         when(ciclistaRepository.save(any(Ciclista.class))).thenReturn(ciclista);
+        when(ciclistaRepository.findById(idCiclista)).thenReturn(Optional.of(ciclista));
 
         // Act
         Ciclista result = ciclistaService.alterarCiclista(idCiclista, novoCiclista);
@@ -158,6 +165,7 @@ class CiclistaServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(ciclista.getId(), result.getId());
+        assertEquals(ciclista.getEmail(), result.getEmail());
         verify(ciclistaRepository).save(ciclista);
     }
 
