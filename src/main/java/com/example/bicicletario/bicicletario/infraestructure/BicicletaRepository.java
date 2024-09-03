@@ -39,7 +39,7 @@ public class BicicletaRepository {
     }
 
     public void deleteById(Integer id) {
-        bicicletas.removeIf(b -> b.getId() == id);
+        bicicletas.removeIf(b -> Objects.equals(b.getId(), id));
     }
 
     public boolean existsById(Integer idBicicleta) {
