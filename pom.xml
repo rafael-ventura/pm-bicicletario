@@ -87,6 +87,11 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/domain/**</exclude> <!-- Exclui tudo na pasta domain -->
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
