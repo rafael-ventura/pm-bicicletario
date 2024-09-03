@@ -7,6 +7,7 @@ import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeD
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
+import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.domain.mapper.TrancaMapper;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
@@ -126,8 +127,10 @@ public class TrancaService {
     private void trancarBicicletaETranca(Tranca tranca, Integer bicicletaId) {
         if (bicicletaId != null) {
             Bicicleta bicicleta = buscarBicicletaPorId(bicicletaId);
+            bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
             tranca.setBicicleta(bicicleta);
             tranca.setStatus(StatusTranca.OCUPADA);
+            bicicletaRepository.save(bicicleta);
             trancaRepository.save(tranca);
         } else {
             throw new InvalidDataException(Constantes.DADOS_INVALIDOS_TRANCAR);
@@ -136,8 +139,11 @@ public class TrancaService {
 
     private void removerBicicletaDaTranca(Tranca tranca, Integer bicicletaId) {
         if (tranca.getBicicleta() != null && tranca.getBicicleta().getId().equals(bicicletaId)) {
+            Bicicleta bicicleta = tranca.getBicicleta();
+            bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
             tranca.setBicicleta(null);
             tranca.setStatus(StatusTranca.LIVRE);
+            bicicletaRepository.save(bicicleta);
             trancaRepository.save(tranca);
         } else {
             throw new InvalidDataException(Constantes.DADOS_INVALIDOS);
