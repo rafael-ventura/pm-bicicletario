@@ -14,11 +14,10 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class EmailService {
     private final FuncionarioService funcionarioService;
-    private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
 
-    public EmailService(FuncionarioService funcionarioService, RestTemplate restTemplate) {
+    public EmailService(FuncionarioService funcionarioService) {
         this.funcionarioService = funcionarioService;
-        this.restTemplate = restTemplate;
     }
 
     public void enviarEmail(String email, String assunto, String mensagem) {

@@ -11,11 +11,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class FuncionarioService {
 
-    private final RestTemplate restTemplate;
-
-    public FuncionarioService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public Funcionario get(Integer idFuncionario) {
         String baseUrl = "http://ec2-3-91-187-43.compute-1.amazonaws.com:8040/api";
