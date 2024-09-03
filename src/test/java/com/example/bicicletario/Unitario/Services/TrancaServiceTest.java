@@ -102,7 +102,7 @@ class TrancaServiceTest {
             trancaService.incluirTrancaNaRede(dto);
         });
 
-        assertEquals("Funcionário inválido para esta operação", exception.getMessage());
+        assertEquals(Constantes.FUNCIONARIO_INVALIDO, exception.getMessage());
     }
 
     @Test
@@ -210,7 +210,7 @@ class TrancaServiceTest {
             trancaService.obterTrancaPorId(1);
         });
 
-        assertEquals("Tranca não encontrada", exception.getMessage());
+        assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
 
     @Test
@@ -256,7 +256,7 @@ class TrancaServiceTest {
 
         trancaService.excluirTranca(1);
 
-        verify(trancaRepository, times(1)).save(tranca);
+        verify(trancaRepository, times(1)).deleteById(1);
     }
 
 
@@ -272,9 +272,11 @@ class TrancaServiceTest {
 
         when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
 
-        Tranca result = trancaService.obterBicicletaNaTranca(1);
+        Bicicleta result = trancaService.obterBicicletaNaTranca(1);
 
-        assertEquals(tranca, result);
+        assertEquals(bicicleta, result);
+        assertEquals(1, result.getId());
+        assertEquals(1, result.getId());
     }
 
 
@@ -325,7 +327,7 @@ class TrancaServiceTest {
 
         trancaService.alterarStatusTranca(1, "TRANCAR");
 
-        assertEquals(StatusTranca.LIVRE, tranca.getStatus());
+        assertEquals(StatusTranca.OCUPADA, tranca.getStatus());
         verify(trancaRepository, times(1)).save(tranca);
     }
 

@@ -4,6 +4,8 @@ import com.example.bicicletario.bicicletario.application.services.TrancaService;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
+import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.web.TrancaController;
 import org.junit.jupiter.api.BeforeEach;
@@ -147,13 +149,42 @@ class TrancaControllerTest {
     @Test
     void obterBicicletaNaTranca_Success() {
         // Arrange
-        Integer idTranca = 1;
         Tranca tranca = new Tranca();
-        tranca.setId(idTranca);
-        when(trancaService.obterBicicletaNaTranca(idTranca)).thenReturn(tranca);
+        tranca.setId(1);
+        tranca.setStatus(StatusTranca.OCUPADA);
+        tranca.setLocalizacao("Localização 1");
+        tranca.setModelo("Modelo 1");
+        tranca.setNumero(1);
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
+        bicicleta.setMarca("Marca 1");
+        bicicleta.setModelo("Modelo 1");
+        tranca.setBicicleta(bicicleta);
+
+        when(trancaService.obterBicicletaNaTranca(1)).thenReturn(tranca.getBicicleta());
 
         // Act
-        ResponseEntity<Tranca> response = trancaController.obterBicicletaNaTranca(idTranca);
+        ResponseEntity<Bicicleta> response = trancaController.obterBicicletaNaTranca(1);
+
+        // Assert
+
+        assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().getId());
+    }
+
+    @Test
+    void trancarTranca_Success() {
+        // Arrange
+        Integer idTranca = 1;
+        Integer bicicletaId = 1;
+        Tranca tranca = new Tranca();
+        tranca.setId(idTranca);
+        tranca.setStatus(StatusTranca.OCUPADA);
+        when(trancaService.trancarTranca(idTranca, bicicletaId)).thenReturn(tranca);
+
+        // Act
+        ResponseEntity<Tranca> response = trancaController.trancarTranca(idTranca, bicicletaId);
 
         // Assert
         assertEquals(200, response.getStatusCode().value());
@@ -162,47 +193,41 @@ class TrancaControllerTest {
     }
 
     @Test
-    void trancarTranca_Success() {
-        // Arrange
-        Integer idTranca = 1;
-        Integer bicicletaId = 1;
-
-        // Act
-        ResponseEntity<String> response = trancaController.trancarTranca(idTranca, bicicletaId);
-
-        // Assert
-        assertEquals(200, response.getStatusCode().value());
-        assertEquals("Dados cadastrados", response.getBody());
-        verify(trancaService).trancarTranca(idTranca, bicicletaId);
-    }
-
-    @Test
     void destrancarTranca_Success() {
         // Arrange
         Integer idTranca = 1;
         Integer bicicletaId = 1;
+        Tranca tranca = new Tranca();
+        tranca.setId(idTranca);
+        tranca.setStatus(StatusTranca.LIVRE);
+        when(trancaService.destrancarTranca(idTranca, bicicletaId)).thenReturn(tranca);
 
         // Act
-        ResponseEntity<String> response = trancaController.destrancarTranca(idTranca, bicicletaId);
+        ResponseEntity<Tranca> response = trancaController.destrancarTranca(idTranca, bicicletaId);
 
         // Assert
         assertEquals(200, response.getStatusCode().value());
-        assertEquals("Dados cadastrados", response.getBody());
-        verify(trancaService).destrancarTranca(idTranca, bicicletaId);
+        assertNotNull(response.getBody());
+        assertEquals(idTranca, response.getBody().getId());
     }
 
     @Test
     void alterarStatusTranca_Success() {
         // Arrange
         Integer idTranca = 1;
-        String acao = "ativar";
+        String acao = "trancar";
+        Tranca tranca = new Tranca();
+        tranca.setId(idTranca);
+        tranca.setStatus(StatusTranca.OCUPADA);
+        when(trancaService.alterarStatusTranca(idTranca, acao)).thenReturn(tranca);
 
         // Act
-        ResponseEntity<String> response = trancaController.alterarStatusTranca(idTranca, acao);
+        ResponseEntity<Tranca> response = trancaController.alterarStatusTranca(idTranca, acao);
 
         // Assert
         assertEquals(200, response.getStatusCode().value());
-        assertEquals("Dados cadastrados", response.getBody());
-        verify(trancaService).alterarStatusTranca(idTranca, acao);
+        assertNotNull(response.getBody());
+        assertEquals(idTranca, response.getBody().getId());
     }
 }
+

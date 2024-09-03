@@ -140,7 +140,7 @@ class BicicletaControllerTest {
 
         // Assert
         assertEquals(200, response.getStatusCode().value());
-        assertEquals("Bicicleta removida", response.getBody());
+        assertEquals("Dados removidos", response.getBody());
         verify(bicicletaService).excluirBicicleta(idBicicleta);
     }
 

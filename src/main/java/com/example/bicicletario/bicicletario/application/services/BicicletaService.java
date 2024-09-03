@@ -48,9 +48,11 @@ public class BicicletaService {
         validarStatusTrancaParaIntegracao(tranca);
 
         if (bicicleta.getStatusBicicleta() == StatusBicicleta.EM_REPARO) {
-            validarFuncionarioParaReparo(dto.getIdFuncionario());
-            if (!Objects.equals(bicicleta.getIdFuncionarioUltimaOperacao(), dto.getIdFuncionario())) {
+            if (!funcionarioService.isFuncionarioValido((dto.getIdFuncionario()))) {
                 throw new InvalidDataException(Constantes.FUNCIONARIO_INVALIDO);
+            }
+            if (!Objects.equals(bicicleta.getIdFuncionarioUltimaOperacao(), dto.getIdFuncionario())) {
+                throw new InvalidDataException(Constantes.FUNCIONARIO_IGUAL);
             }
         }
 
@@ -153,9 +155,7 @@ public class BicicletaService {
     }
 
     private void validarFuncionarioParaReparo(Integer idFuncionario) {
-        if (!funcionarioService.isFuncionarioValido(idFuncionario)) {
-            throw new InvalidDataException(Constantes.FUNCIONARIO_INVALIDO);
-        }
+
     }
 
     private void associarBicicletaETranca(Bicicleta bicicleta, Tranca tranca) {

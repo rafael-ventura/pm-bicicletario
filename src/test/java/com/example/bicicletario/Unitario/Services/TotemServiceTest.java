@@ -1,23 +1,26 @@
 package com.example.bicicletario.Unitario.Services;
 
-import com.example.bicicletario.bicicletario.application.services.TotemService;
 import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
 import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
+import com.example.bicicletario.bicicletario.application.services.TotemService;
 import com.example.bicicletario.bicicletario.domain.constants.Constantes;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTotemDTO;
+import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
+import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
+import com.example.bicicletario.bicicletario.domain.mapper.TotemMapper;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Totem;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TotemRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
-import com.example.bicicletario.bicicletario.domain.mapper.TotemMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -146,19 +149,26 @@ class TotemServiceTest {
         assertEquals(Constantes.DADOS_INVALIDOS, exception.getMessage());
     }
 
-    /*@Test
+    @Test
     void excluirTotem() {
         Totem totem = new Totem();
         totem.setId(1);
+        totem.setLocalizacao("Localizacao");
 
         when(totemRepository.findById(1)).thenReturn(Optional.of(totem));
         when(totemRepository.existsById(1)).thenReturn(true);
 
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        tranca.setLocalizacao("Localizacao");
+
+        when(trancaRepository.findTrancaByLocalizacao("Localizacao")).thenReturn(Collections.singletonList(tranca));
+        doNothing().when(totemRepository).deleteById(1);
+
         totemService.excluirTotem(1);
 
         verify(totemRepository, times(1)).deleteById(1);
-    }*/
-
+    }
 
     @Test
     void excluirTotem_ThrowsResourceNotFoundException() {
@@ -168,52 +178,87 @@ class TotemServiceTest {
             totemService.excluirTotem(1);
         });
 
-        assertEquals(Constantes.TOTEM_NAO_ENCONTRADO, exception.getMessage());
+        assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
 
-    /*@Test
+    @Test
     void listarTrancas() {
+        Totem totem = new Totem();
+        totem.setId(1);
+        totem.setLocalizacao("Localizacao");
+
         Tranca tranca = new Tranca();
         tranca.setId(1);
+        tranca.setLocalizacao("Localizacao");
 
-        when(totemRepository.existsById(any(Integer.class))).thenReturn(true);
-        when(trancaRepository.findByTotemLocalizacao(any(String.class))).thenReturn(List.of(tranca));
+        when(totemRepository.findById(1)).thenReturn(Optional.of(totem));
+        when(trancaRepository.findTrancaByLocalizacao("Localizacao")).thenReturn(List.of(tranca));
 
         List<Tranca> result = totemService.listarTrancasPorTotem(1);
+
         assertEquals(1, result.size());
-    }*/
+    }
+
 
     @Test
     void listarTrancas_ThrowsResourceNotFoundException() {
-        when(totemRepository.existsById(any(Integer.class))).thenReturn(false);
+        // Arrange
+        when(totemRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
+        // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             totemService.listarTrancasPorTotem(1);
         });
 
-        assertEquals(Constantes.TOTEM_NAO_ENCONTRADO, exception.getMessage());
+        assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
 
-    /*@Test
+    @Test
     void listarBicicletas() {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
+        bicicleta.setMarca("Marca");
+        bicicleta.setModelo("Modelo");
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
 
-        when(totemRepository.existsById(any(Integer.class))).thenReturn(true);
-        when(bicicletaRepository.findByTotemId(any(Integer.class))).thenReturn(List.of(bicicleta));
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        tranca.setLocalizacao("Localizacao");
+        tranca.setBicicleta(bicicleta);
+        tranca.setModelo("Modelo");
+        tranca.setNumero(1);
+        tranca.setStatus(StatusTranca.OCUPADA);
+
+        List<Tranca> trancas = List.of(tranca);
+        List<Bicicleta> bicicletas = List.of(bicicleta);
+
+        Totem totem = new Totem();
+        totem.setId(1);
+        totem.setLocalizacao("Localizacao");
+        totem.setDescricao("Descricao");
+
+        when(totemRepository.findById(any(Integer.class))).thenReturn(Optional.of(totem));
+        when(trancaRepository.findTrancaByLocalizacao(any(String.class))).thenReturn(trancas);
+
 
         List<Bicicleta> result = totemService.listarBicicletasPorTotem(1);
+
         assertEquals(1, result.size());
-    }*/
+        assertEquals(bicicleta.getMarca(), result.get(0).getMarca());
+        assertEquals(bicicleta.getModelo(), result.get(0).getModelo());
+        assertEquals(bicicleta.getId(), result.get(0).getId());
+    }
 
     @Test
     void listarBicicletas_ThrowsResourceNotFoundException() {
-        when(totemRepository.existsById(any(Integer.class))).thenReturn(false);
+        // Arrange
+        when(totemRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
+        // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             totemService.listarBicicletasPorTotem(1);
         });
 
-        assertEquals(Constantes.TOTEM_NAO_ENCONTRADO, exception.getMessage());
+        assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
 }

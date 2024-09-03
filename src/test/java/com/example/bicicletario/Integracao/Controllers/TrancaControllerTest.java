@@ -5,6 +5,7 @@ import com.example.bicicletario.bicicletario.application.services.TrancaService;
 import com.example.bicicletario.bicicletario.application.exceptions.GlobalExceptionHandler;
 import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
 import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
+import com.example.bicicletario.bicicletario.domain.constants.Constantes;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
@@ -298,7 +299,7 @@ class TrancaControllerTest {
         Tranca tranca = new Tranca();
         tranca.setId(1);
 
-        when(trancaService.obterBicicletaNaTranca(1)).thenReturn(tranca);
+        when(trancaService.obterBicicletaNaTranca(1)).thenReturn(tranca.getBicicleta());
 
         mockMvc.perform(get("/api/tranca/1/bicicleta"))
                 .andExpect(status().isOk())
@@ -338,7 +339,7 @@ class TrancaControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(1)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Dados cadastrados"));
+                .andExpect(content().string(Constantes.DADOS_CADASTRADOS));
     }
 
     @Test
@@ -369,7 +370,7 @@ class TrancaControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(1)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Dados cadastrados"));
+                .andExpect(content().string(Constantes.DADOS_CADASTRADOS));
     }
 
     @Test
@@ -399,7 +400,7 @@ class TrancaControllerTest {
         mockMvc.perform(post("/api/tranca/1/status/acao")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Dados cadastrados"));
+                .andExpect(content().string(Constantes.DADOS_CADASTRADOS));
     }
 
     @Test

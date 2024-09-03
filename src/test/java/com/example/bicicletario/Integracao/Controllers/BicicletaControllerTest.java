@@ -205,7 +205,7 @@ class BicicletaControllerTest {
     void excluirBicicleta() throws Exception {
         mockMvc.perform(delete("/api/bicicleta/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Bicicleta removida"));
+                .andExpect(content().string("Dados removidos"));
     }
 
     @Test

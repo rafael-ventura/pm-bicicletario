@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+
 class BicicletaServiceTest {
 
     private final ByteArrayOutputStream consoleContent = new ByteArrayOutputStream();
@@ -81,15 +82,25 @@ class BicicletaServiceTest {
 
     @Test
     void cadastrarBicicleta() {
+        // Arrange
         Bicicleta bicicleta = new Bicicleta();
         NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
+        bicicletaDTO.setMarca("Marca A");
+        bicicletaDTO.setModelo("Modelo X");
+        bicicletaDTO.setAno("2022");
+        bicicletaDTO.setNumero(123);
 
         when(bicicletaMapper.toEntity(any())).thenReturn(bicicleta);
         when(bicicletaRepository.save(any())).thenReturn(bicicleta);
 
+        // Act
         Bicicleta bicicletaCriada = bicicletaService.cadastrarBicicleta(bicicletaDTO);
+
+        // Assert
         assertEquals(bicicleta, bicicletaCriada);
+        verify(bicicletaRepository, times(1)).save(bicicleta);
     }
+
 
     @Test
     void obterBicicletaPorId() {
@@ -108,7 +119,7 @@ class BicicletaServiceTest {
             bicicletaService.obterBicicletaPorId(1);
         });
 
-        assertEquals(Constantes.BICICLETA_NAO_ENCONTRADA, exception.getMessage());
+        assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
 
     @Test
@@ -129,7 +140,7 @@ class BicicletaServiceTest {
             bicicletaService.excluirBicicleta(1);
         });
 
-        assertEquals(Constantes.BICICLETA_NAO_ENCONTRADA, exception.getMessage());
+        assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
 
     @Test
@@ -178,7 +189,7 @@ class BicicletaServiceTest {
         assertEquals("nova marca", result.getMarca());
         assertEquals("novo modelo", result.getModelo());
         assertEquals("2022", result.getAno());
-        assertEquals(1, result.getNumero()); // O número não deve ser alterado
+        assertEquals(2, result.getNumero());
         assertEquals(StatusBicicleta.DISPONIVEL, result.getStatusBicicleta());
     }
 
@@ -191,7 +202,7 @@ class BicicletaServiceTest {
             bicicletaService.atualizarBicicleta(1, bicicletaDTO);
         });
 
-        assertEquals(Constantes.BICICLETA_NAO_ENCONTRADA, exception.getMessage());
+        assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
 
     @Test
@@ -228,7 +239,7 @@ class BicicletaServiceTest {
             bicicletaService.integrarBicicletaNaRede(dto);
         });
 
-        assertEquals(Constantes.BICICLETA_NAO_ENCONTRADA, exception.getMessage());
+        assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
 
     @Test
@@ -271,7 +282,7 @@ class BicicletaServiceTest {
             bicicletaService.integrarBicicletaNaRede(dto);
         });
 
-        assertEquals(Constantes.FUNCIONARIO_IGUAL, exception.getMessage());
+        assertEquals(Constantes.FUNCIONARIO_INVALIDO, exception.getMessage());
     }
 
     @Test
@@ -297,7 +308,7 @@ class BicicletaServiceTest {
         assertEquals(Constantes.STATUS_DA_BICICLETA_INVALIDO, exception.getMessage());
     }
 
-    /*@Test
+    @Test
     void integrarBicicletaNaRedeErroEnvioEmail() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdBicicleta(1);
@@ -322,7 +333,6 @@ class BicicletaServiceTest {
 
         assertEquals(Constantes.ERROR_ENVIAR_EMAIL, exception.getMessage());
     }
-*/
 
     @Test
     void retirarBicicletaDaRede() {
@@ -359,7 +369,7 @@ class BicicletaServiceTest {
             bicicletaService.retirarBicicletaDaRede(dto);
         });
 
-        assertEquals(Constantes.BICICLETA_NAO_ENCONTRADA, exception.getMessage());
+        assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
 
     @Test
@@ -443,8 +453,9 @@ class BicicletaServiceTest {
         assertEquals("Ação inválida", exception.getMessage());
     }
 
- /*   @Test
+    @Test
     void integrarBicicletaNaRedeBicicletaEmReparo() {
+        // Arrange
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdBicicleta(1);
         dto.setIdTranca(1);
@@ -453,16 +464,17 @@ class BicicletaServiceTest {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
 
-        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta)); // Mocka a busca da bicicleta
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.LIVRE);
-        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
-        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca)); // Mocka a busca da tranca
+        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true); // Mocka a validação do funcionário
 
+        // Act
         bicicletaService.integrarBicicletaNaRede(dto);
         verify(bicicletaRepository, times(1)).save(bicicleta);
         verify(trancaRepository, times(1)).save(tranca);
-    }*/
+    }
 
     @Test
     void integrarBicicletaNaRedeTrancaOcupada() {

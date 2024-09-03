@@ -1,7 +1,6 @@
-/*
 package com.example.bicicletario.Unitario.Repositories;
 
-import com.example.bicicletario.bicicletario.domain.models.Totem;
+import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,14 +24,15 @@ class TrancaRepositoryTest {
     void testSaveAndFindById() {
         Tranca tranca = new Tranca();
         tranca.setId(1);
+        tranca.setLocalizacao("Localizacao");
 
-        Tranca savedTranca = trancaRepository.save(tranca);
+        trancaRepository.save(tranca);
 
-        assertEquals(1, savedTranca.getId());
-        Optional<Tranca> retrievedTranca = trancaRepository.findById(1);
-        assertTrue(retrievedTranca.isPresent());
-        assertEquals(1, retrievedTranca.get().getId());
+        Optional<Tranca> foundTranca = trancaRepository.findById(1);
+        assertTrue(foundTranca.isPresent());
+        assertEquals(1, foundTranca.get().getId());
     }
+
 
     @Test
     void testDeleteById() {
@@ -47,35 +47,52 @@ class TrancaRepositoryTest {
     }
 
     @Test
-    void testFindByTotemId() {
-        Totem totem = new Totem();
-        totem.setId(1);
-
+    void testFindAll() {
         Tranca tranca1 = new Tranca();
         tranca1.setId(1);
-        tranca1.setTotem(totem);
-        trancaRepository.save(tranca1);
+        tranca1.setLocalizacao("Localizacao 1");
 
         Tranca tranca2 = new Tranca();
-        tranca2.setId(2L);
-        tranca2.setTotem(totem);
+        tranca2.setId(2);
+        tranca2.setLocalizacao("Localizacao 2");
+
+        trancaRepository.save(tranca1);
         trancaRepository.save(tranca2);
 
-        List<Tranca> trancas = trancaRepository.findByTotemId(1);
-        assertEquals(2, trancas.size());
+        List<Tranca> result = trancaRepository.findAll();
+        assertEquals(2, result.size());
+        assertEquals(1, result.get(0).getId());
     }
 
+
+
     @Test
-    void testExistsByTotemId() {
-        Totem totem = new Totem();
-        totem.setId(1);
+    void testExistsById() {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
 
         Tranca tranca = new Tranca();
         tranca.setId(1);
-        tranca.setTotem(totem);
+        tranca.setBicicleta(bicicleta);
+
         trancaRepository.save(tranca);
 
-        assertTrue(trancaRepository.existsByTotemId(1));
+        assertTrue(trancaRepository.existsByBicicletaId(1));
     }
+
+
+    @Test
+    void testFindTrancaByLocalizacao() {
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        tranca.setLocalizacao("Localizacao");
+
+        trancaRepository.save(tranca);
+
+        List<Tranca> trancas = trancaRepository.findTrancaByLocalizacao("Localizacao");
+        assertEquals(1, trancas.size());
+        assertEquals("Localizacao", trancas.get(0).getLocalizacao());
+    }
+
 }
-*/
+
