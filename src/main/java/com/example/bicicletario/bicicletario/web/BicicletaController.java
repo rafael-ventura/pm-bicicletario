@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.example.bicicletario.bicicletario.domain.constants.Constantes.ACAO_BEM_SUCEDIDA;
-import static com.example.bicicletario.bicicletario.domain.constants.Constantes.DADOS_CADASTRADOS;
+import static com.example.bicicletario.bicicletario.domain.constants.Constantes.*;
 
 @RestController
 @RequestMapping("/api/bicicleta")
@@ -33,7 +32,7 @@ public class BicicletaController {
     public ResponseEntity<Bicicleta> cadastrarBicicleta(@RequestBody NovaBicicletaDTO bicicleta) {
         Bicicleta bicicletaCadastrada = bicicletaService.cadastrarBicicleta(bicicleta);
         return ResponseEntity.ok()
-                .header("Message", DADOS_CADASTRADOS)
+                .header(MESSAGE, DADOS_CADASTRADOS)
                 .body(bicicletaCadastrada);
     }
 
@@ -53,7 +52,7 @@ public class BicicletaController {
     public ResponseEntity<Bicicleta> obterBicicleta(@PathVariable Integer idBicicleta) {
         Bicicleta bicicleta = bicicletaService.obterBicicletaPorId(idBicicleta);
         return ResponseEntity.ok()
-                .header("Message", DADOS_CADASTRADOS)
+                .header(MESSAGE, DADOS_CADASTRADOS)
                 .body(bicicleta);
     }
 
@@ -61,7 +60,7 @@ public class BicicletaController {
     public ResponseEntity<Bicicleta> atualizarBicicleta(@PathVariable Integer idBicicleta, @RequestBody NovaBicicletaDTO bicicletaDTO) {
         Bicicleta bicicletaEditada = bicicletaService.atualizarBicicleta(idBicicleta, bicicletaDTO);
         return ResponseEntity.ok()
-                .header("Message", DADOS_CADASTRADOS)
+                .header(MESSAGE, DADOS_CADASTRADOS)
                 .body(bicicletaEditada);
     }
 
@@ -75,7 +74,7 @@ public class BicicletaController {
     public ResponseEntity<Bicicleta> alterarStatusBicicleta(@PathVariable Integer idBicicleta, @PathVariable String acao) {
         Bicicleta bicicleta = bicicletaService.alterarStatusBicicleta(idBicicleta, acao);
         return ResponseEntity.ok()
-                .header("Message", ACAO_BEM_SUCEDIDA)
+                .header(MESSAGE, ACAO_BEM_SUCEDIDA)
                 .body(bicicleta);
     }
 }

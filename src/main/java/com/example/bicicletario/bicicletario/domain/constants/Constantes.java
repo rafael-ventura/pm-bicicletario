@@ -12,7 +12,7 @@ public class Constantes {
     public static final String STATUS_DA_BICICLETA_INVALIDO = "Status da bicicleta inválido";
     public static final String DADOS_INVALIDOS = "Dados inválidos";
     public static final String DADOS_CADASTRADOS = "Dados cadastrados";
-    public static final String BICICLETA_REMOVIDA = "Bicicleta removida";
+    public static final String MESSAGE = "Message";
     public static final String TOTEM_NAO_ENCONTRADO = "Totem não encontrado";
     public static final String TOTEM_REMOVIDO = "Totem removido";
     public static final String TRANCA_REMOVIDA = "Tranca removida";

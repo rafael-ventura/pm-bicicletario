@@ -154,10 +154,6 @@ public class BicicletaService {
         }
     }
 
-    private void validarFuncionarioParaReparo(Integer idFuncionario) {
-
-    }
-
     private void associarBicicletaETranca(Bicicleta bicicleta, Tranca tranca) {
         bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
         bicicletaRepository.save(bicicleta);

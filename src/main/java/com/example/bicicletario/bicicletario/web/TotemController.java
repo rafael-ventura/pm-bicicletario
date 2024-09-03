@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.example.bicicletario.bicicletario.domain.constants.Constantes.DADOS_CADASTRADOS;
-import static com.example.bicicletario.bicicletario.domain.constants.Constantes.TOTEM_REMOVIDO;
+import static com.example.bicicletario.bicicletario.domain.constants.Constantes.*;
 
 @RestController
 @RequestMapping("/api/totem")
@@ -33,7 +32,7 @@ public class TotemController {
     public ResponseEntity<Totem> criarTotem(@RequestBody NovoTotemDTO totem) {
         Totem totemCadastrado = totemService.cadastrarNovoTotem(totem);
         return ResponseEntity.ok()
-                .header("Message", DADOS_CADASTRADOS)
+                .header(MESSAGE, DADOS_CADASTRADOS)
                 .body(totemCadastrado);
     }
 
@@ -41,7 +40,7 @@ public class TotemController {
     public ResponseEntity<Totem> editarTotem(@PathVariable Integer id, @RequestBody NovoTotemDTO totemDTO) {
         Totem totemEditado = totemService.atualizarTotem(id, totemDTO);
         return ResponseEntity.ok()
-                .header("Message", DADOS_CADASTRADOS)
+                .header(MESSAGE, DADOS_CADASTRADOS)
                 .body(totemEditado);
     }
 

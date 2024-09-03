@@ -1,5 +1,6 @@
 package com.example.bicicletario.Unitario.Services;
 
+import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.application.services.FuncionarioService;
 import com.example.bicicletario.bicicletario.domain.models.Funcionario;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,45 +32,92 @@ class FuncionarioServiceTest {
     }
 
     @Test
-    void testGetFuncionario() {
-        Funcionario funcionarioMock = new Funcionario();
-        funcionarioMock.setId(1);
-        funcionarioMock.setNome("Funcionario");
+    void getFuncionarioComSucesso() {
+        // Arrange
+        Funcionario funcionario = new Funcionario();
+        funcionario.setId(1);
 
-        // Mockando a resposta do RestTemplate
-        when(restTemplate.getForEntity(anyString(), eq(Funcionario.class)))
-                .thenReturn(new ResponseEntity<>(funcionarioMock, HttpStatus.OK));
+        ResponseEntity<Funcionario> responseEntity = new ResponseEntity<>(funcionario, HttpStatus.OK);
+        when(restTemplate.getForEntity(anyString(), eq(Funcionario.class))).thenReturn(responseEntity);
 
-        Funcionario funcionario = funcionarioService.get(1);
+        // Act
+        Funcionario resultado = funcionarioService.get(1);
 
-        assertNotNull(funcionario);
+        // Assert
+        assertEquals(1, resultado.getId());
     }
 
     @Test
-    void testIsFuncionarioValido() {
-        Funcionario funcionarioMock = new Funcionario();
-        funcionarioMock.setNome("Funcionario");
-        funcionarioMock.setCpf("12345678900");
-        funcionarioMock.setId(1);
-
-        // Mockando a resposta do RestTemplate
+    void getFuncionarioNaoEncontrado_DeveLancarExcecao() {
+        // Arrange
         when(restTemplate.getForEntity(anyString(), eq(Funcionario.class)))
-                .thenReturn(new ResponseEntity<>(funcionarioMock, HttpStatus.OK));
+                .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
-        boolean isValido = funcionarioService.isFuncionarioValido(1);
+        // Act & Assert
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            funcionarioService.get(1);
+        });
 
-        assertFalse(isValido);
+        assertEquals("Funcionário não encontrado", exception.getMessage());
+    }
+
+    @Test
+    void getFuncionarioErroGenerico_DeveLancarExcecao() {
+        // Arrange
+        when(restTemplate.getForEntity(anyString(), eq(Funcionario.class)))
+                .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        // Act & Assert
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            funcionarioService.get(1);
+        });
+
+        assertEquals("Erro ao buscar funcionário: 500 INTERNAL_SERVER_ERROR", exception.getMessage());
+    }
+
+    @Test
+    void isFuncionarioValido_DeveRetornarTrueSeFuncionarioValido() {
+        // Arrange
+        Funcionario funcionario = new Funcionario();
+        funcionario.setId(1);
+
+        when(restTemplate.getForEntity(anyString(), eq(Funcionario.class)))
+                .thenReturn(new ResponseEntity<>(funcionario, HttpStatus.OK));
+
+        // Act
+        boolean resultado = funcionarioService.isFuncionarioValido(1);
+
+        // Assert
+        assertTrue(resultado);
+    }
+
+    @Test
+    void isFuncionarioValido_DeveRetornarFalseSeFuncionarioNaoValido() {
+        // Arrange
+        Funcionario funcionario = new Funcionario();
+        funcionario.setId(2); // id diferente do que foi passado no método
+
+        when(restTemplate.getForEntity(anyString(), eq(Funcionario.class)))
+                .thenReturn(new ResponseEntity<>(funcionario, HttpStatus.OK));
+
+        // Act
+        boolean resultado = funcionarioService.isFuncionarioValido(1);
+
+        // Assert
+        assertFalse(resultado); // Espera-se que retorne false porque o ID é diferente
     }
 
     @Test
     void testGetFuncionario_NotFound() {
-        // Mockando uma exceção 404 do RestTemplate
+        // Arrange
         when(restTemplate.getForEntity(anyString(), eq(Funcionario.class)))
                 .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
-        Funcionario funcionario = funcionarioService.get(1);
+        // Act & Assert
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            funcionarioService.get(1);
+        });
 
-        assertNotNull(funcionario);
+        assertEquals("Funcionário não encontrado", exception.getMessage());
     }
 }
-

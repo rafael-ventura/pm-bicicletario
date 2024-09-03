@@ -39,7 +39,7 @@ public class TrancaController {
     public ResponseEntity<List<Tranca>> listarTrancas() {
         List<Tranca> trancas = trancaService.listarTodasTrancas();
         return ResponseEntity.ok()
-                .header("Message", "OK")
+                .header(MESSAGE, "OK")
                 .body(trancas);
     }
 
@@ -53,7 +53,7 @@ public class TrancaController {
     public ResponseEntity<Tranca> obterTranca(@PathVariable Integer idTranca) {
         Tranca tranca = trancaService.obterTrancaPorId(idTranca);
         return ResponseEntity.ok()
-                .header("Message", TRANCA_ENCONTRADA)
+                .header(MESSAGE, TRANCA_ENCONTRADA)
                 .body(tranca);
     }
 
@@ -61,7 +61,7 @@ public class TrancaController {
     public ResponseEntity<Tranca> editarTranca(@PathVariable Integer idTranca, @RequestBody NovaTrancaDTO tranca) {
         Tranca trancaEditada = trancaService.atualizarTranca(idTranca, tranca);
         return ResponseEntity.ok()
-                .header("Message", DADOS_CADASTRADOS)
+                .header(MESSAGE, DADOS_CADASTRADOS)
                 .body(trancaEditada);
     }
 
@@ -75,7 +75,7 @@ public class TrancaController {
     public ResponseEntity<Bicicleta> obterBicicletaNaTranca(@PathVariable Integer idTranca) {
         Bicicleta bicicleta = trancaService.obterBicicletaNaTranca(idTranca);
         return ResponseEntity.ok()
-                .header("Message", TRANCA_ENCONTRADA)
+                .header(MESSAGE, TRANCA_ENCONTRADA)
                 .body(bicicleta);
     }
 
@@ -83,7 +83,7 @@ public class TrancaController {
     public ResponseEntity<Tranca> trancarTranca(@PathVariable Integer idTranca, @RequestBody(required = false) Integer bicicletaId) {
         Tranca tranca = trancaService.trancarTranca(idTranca, bicicletaId);
         return ResponseEntity.ok()
-                .header("Message", ACAO_BEM_SUCEDIDA)
+                .header(MESSAGE, ACAO_BEM_SUCEDIDA)
                 .body(tranca);
     }
 
@@ -91,7 +91,7 @@ public class TrancaController {
     public ResponseEntity<Tranca> destrancarTranca(@PathVariable Integer idTranca, @RequestBody(required = false) Integer bicicletaId) {
         Tranca tranca = trancaService.destrancarTranca(idTranca, bicicletaId);
         return ResponseEntity.ok()
-                .header("Message", ACAO_BEM_SUCEDIDA)
+                .header(MESSAGE, ACAO_BEM_SUCEDIDA)
                 .body(tranca);
     }
 
@@ -99,7 +99,7 @@ public class TrancaController {
     public ResponseEntity<Tranca> alterarStatusTranca(@PathVariable Integer idTranca, @PathVariable String acao) {
         Tranca tranca = trancaService.alterarStatusTranca(idTranca, acao);
         return ResponseEntity.ok()
-                .header("Message", ACAO_BEM_SUCEDIDA)
+                .header(MESSAGE, ACAO_BEM_SUCEDIDA)
                 .body(tranca);
     }
 }
