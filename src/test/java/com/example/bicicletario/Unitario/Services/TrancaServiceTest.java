@@ -83,7 +83,7 @@ class TrancaServiceTest {
         trancaService.incluirTrancaNaRede(dto);
 
         verify(trancaRepository, times(1)).save(tranca);
-        verify(emailService, times(1)).enviarEmailParaTranca(eq(dto.getIdFuncionario()), eq(tranca), eq("Inclusão"));
+        verify(emailService, times(1)).enviarEmailParaTranca((dto.getIdFuncionario()), (tranca), ("Inclusão"));
     }
 
     @Test
@@ -117,7 +117,7 @@ class TrancaServiceTest {
         when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
         when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
         doThrow(new InvalidDataException(Constantes.ERROR_ENVIAR_EMAIL))
-                .when(emailService).enviarEmailParaTranca(eq(dto.getIdFuncionario()), eq(tranca), eq("Inclusão"));
+                .when(emailService).enviarEmailParaTranca((dto.getIdFuncionario()), (tranca), ("Inclusão"));
 
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
             trancaService.incluirTrancaNaRede(dto);
@@ -141,7 +141,7 @@ class TrancaServiceTest {
 
         assertEquals(StatusTranca.EM_REPARO, tranca.getStatus());
         verify(trancaRepository, times(1)).save(tranca);
-        verify(emailService, times(1)).enviarEmailParaTranca(eq(dto.getIdFuncionario()), eq(tranca), eq("Retirada"));
+        verify(emailService, times(1)).enviarEmailParaTranca((dto.getIdFuncionario()), (tranca), ("Retirada"));
     }
 
     @Test

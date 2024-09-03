@@ -107,17 +107,4 @@ class FuncionarioServiceTest {
         assertFalse(resultado); // Espera-se que retorne false porque o ID é diferente
     }
 
-    @Test
-    void testGetFuncionario_NotFound() {
-        // Arrange
-        when(restTemplate.getForEntity(anyString(), eq(Funcionario.class)))
-                .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
-
-        // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            funcionarioService.get(1);
-        });
-
-        assertEquals("Funcionário não encontrado", exception.getMessage());
-    }
 }

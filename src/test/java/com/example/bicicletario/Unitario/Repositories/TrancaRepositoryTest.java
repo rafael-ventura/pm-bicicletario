@@ -34,8 +34,6 @@ class TrancaRepositoryTest {
 
     @Test
     void testDeleteById() {
-        Tranca tranca = new Tranca();
-        Tranca savedTranca = trancaRepository.save(tranca);
         trancaRepository.deleteById(1);
 
         Optional<Tranca> retrievedTranca = trancaRepository.findById(1);

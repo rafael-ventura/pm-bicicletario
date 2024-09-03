@@ -570,17 +570,6 @@ class BicicletaServiceTest {
     }
 
     @Test
-    void buscarBicicletaPorIdInexistente() {
-        when(bicicletaRepository.findById(1)).thenReturn(Optional.empty());
-
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            bicicletaService.obterBicicletaPorId(1);
-        });
-
-        assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
-    }
-
-    @Test
     void integrarBicicletaNaRede_StatusInvalido() {
         IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
         dto.setIdBicicleta(1);

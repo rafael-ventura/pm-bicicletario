@@ -81,9 +81,7 @@ class TotemServiceTest {
     void cadastrarNovoTotem_ThrowsInvalidDataException() {
         NovoTotemDTO novoTotem = new NovoTotemDTO();
 
-        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
-            totemService.cadastrarNovoTotem(novoTotem);
-        });
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> totemService.cadastrarNovoTotem(novoTotem));
 
         assertEquals(Constantes.DADOS_INVALIDOS, exception.getMessage());
     }
@@ -122,9 +120,7 @@ class TotemServiceTest {
         totemDTO.setLocalizacao("Nova Localizacao");
         totemDTO.setDescricao("Nova Descricao");
 
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            totemService.atualizarTotem(1, totemDTO);
-        });
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> totemService.atualizarTotem(1, totemDTO));
 
         assertEquals(Constantes.TOTEM_NAO_ENCONTRADO, exception.getMessage());
     }
@@ -138,9 +134,7 @@ class TotemServiceTest {
 
         NovoTotemDTO totemDTO = new NovoTotemDTO();
 
-        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
-            totemService.atualizarTotem(1, totemDTO);
-        });
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> totemService.atualizarTotem(1, totemDTO));
 
         assertEquals(Constantes.DADOS_INVALIDOS, exception.getMessage());
     }
@@ -174,9 +168,7 @@ class TotemServiceTest {
     void excluirTotem_ThrowsResourceNotFoundException() {
         when(totemRepository.existsById(any(Integer.class))).thenReturn(false);
 
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            totemService.excluirTotem(1);
-        });
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> totemService.excluirTotem(1));
 
         assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
@@ -213,9 +205,7 @@ class TotemServiceTest {
         when(totemRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            totemService.listarTrancasPorTotem(1);
-        });
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> totemService.listarTrancasPorTotem(1));
 
         assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
@@ -237,7 +227,6 @@ class TotemServiceTest {
         tranca.setStatus(StatusTranca.OCUPADA);
 
         List<Tranca> trancas = List.of(tranca);
-        List<Bicicleta> bicicletas = List.of(bicicleta);
 
         Totem totem = new Totem();
         totem.setId(1);
@@ -262,9 +251,7 @@ class TotemServiceTest {
         when(totemRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            totemService.listarBicicletasPorTotem(1);
-        });
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> totemService.listarBicicletasPorTotem(1));
 
         assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
@@ -273,9 +260,7 @@ class TotemServiceTest {
     void cadastrarNovoTotem_DadosFaltantes_DeveLancarExcecao() {
         NovoTotemDTO totemDTO = new NovoTotemDTO(); // Faltando campos obrigatórios
 
-        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
-            totemService.cadastrarNovoTotem(totemDTO);
-        });
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> totemService.cadastrarNovoTotem(totemDTO));
 
         assertEquals(Constantes.DADOS_INVALIDOS, exception.getMessage());
     }
@@ -284,9 +269,7 @@ class TotemServiceTest {
     void listarTrancasPorTotem_TotemNaoExistente_DeveLancarExcecao() {
         when(totemRepository.findById(1)).thenReturn(Optional.empty());
 
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            totemService.listarTrancasPorTotem(1);
-        });
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> totemService.listarTrancasPorTotem(1));
 
         assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
@@ -301,9 +284,7 @@ class TotemServiceTest {
         when(totemRepository.get(1)).thenReturn(totem);
         when(trancaRepository.findTrancaByLocalizacao("Localizacao")).thenReturn(Collections.emptyList());
 
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            totemService.listarBicicletasPorTotem(1);
-        });
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> totemService.listarBicicletasPorTotem(1));
 
         assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
