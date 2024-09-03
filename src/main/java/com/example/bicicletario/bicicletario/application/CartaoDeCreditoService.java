@@ -65,8 +65,8 @@ public class CartaoDeCreditoService {
         if (cartaoDeCreditoDTO.getNumero() == null || !cartaoDeCreditoDTO.getNumero().matches("\\d+")) {
             throw new InvalidDataException("Número do cartão de crédito inválido.");
         }
-        if (cartaoDeCreditoDTO.getValidade() == null || !isValidDateFormat(cartaoDeCreditoDTO.getValidade())) {
-            throw new InvalidDataException("Data de validade do cartão de crédito inválida. Use o formato yyyy-MM-dd.");
+        if (cartaoDeCreditoDTO.getValidade() == null) {
+            throw new InvalidDataException("Data de validade do cartão de crédito inválida. Use o formato yyyy-MM.");
         }
         if (cartaoDeCreditoDTO.getCvv() == null || !cartaoDeCreditoDTO.getCvv().matches("\\d{3,4}")) {
             throw new InvalidDataException("CVV do cartão de crédito inválido.");
@@ -77,7 +77,7 @@ public class CartaoDeCreditoService {
 
     private boolean isValidDateFormat(String dateStr) {
         try {
-            LocalDate.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE);
+            LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM"));
             return true;
         } catch (DateTimeParseException e) {
             return false;

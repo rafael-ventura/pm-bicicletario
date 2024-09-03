@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -47,15 +48,30 @@ public class CiclistaService {
 
     public Ciclista cadastrarCiclista(NovoCiclistaRequestDTO request) throws BadRequestException {
         logger.info("Cadastrando novo ciclista");
+
+        // 1. Validação do email
+        // 2. Validação dos dados pessoais
         validarCiclistaDto(request);
 
-        NovoCiclistaDTO novoCiclistaDTO = request.getCiclista();
-        Ciclista ciclista = ciclistaMapper.toEntity(novoCiclistaDTO);
+        // 3. Validação do cartão de crédito
+        cartaoDeCreditoService.validarCartaoDeCredito(request.getMeioDePagamento());
+
+        // 4. Mapeamento do DTO para a entidade Ciclista
+        Ciclista ciclista = request.getCiclista();
+        ciclista.setStatus(StatusCiclista.AGUARDANDO_CONFIRMACAO); // Define status inicial como aguardando confirmação
         ciclistaRepository.save(ciclista);
 
+        // 5. Registro do meio de pagamento
         cartaoDeCreditoService.save(request.getMeioDePagamento(), ciclista.getId());
 
-        emailService.enviarEmailConfirmacao(ciclista);
+        // 6. Envio de email de confirmação
+        try {
+            emailService.enviarEmailConfirmacao(ciclista);
+        } catch (Exception e) {
+            logger.error("Erro ao enviar email de confirmação para {}", ciclista.getEmail(), e);
+            throw new BadRequestException("Erro ao enviar email de confirmação. Por favor, tente novamente.");
+        }
+
         logger.info("Ciclista cadastrado com sucesso!");
         return ciclista;
     }
@@ -67,12 +83,9 @@ public class CiclistaService {
     }
 
     private void validarCiclistaParaAlterar(Ciclista ciclista) {
-        if (ciclista.getSenha() != null || ciclista.getConfirmacaoSenha() != null) {
-            validarSenhasIdenticas(ciclista.getSenha(), ciclista.getConfirmacaoSenha());
-        }
-
-        if (ciclista.getEmail() != null) {
-            validarEmail(ciclista.getEmail());
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+        if (ciclista.getEmail() == null || !ciclista.getEmail().matches(emailRegex)) {
+                throw new InvalidDataException("Email inválido.");
         }
 
         if (ciclista.getNacionalidade() == Nacionalidade.BRASILEIRO) {
@@ -93,18 +106,11 @@ public class CiclistaService {
                 .orElseThrow(() -> new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista)));
     }
 
-    private void validarSenhasIdenticas(String senha, String confirmacaoSenha) {
-        if (senha == null || !senha.equals(confirmacaoSenha)) {
-            throw new InvalidDataException("As senhas não são idênticas.");
-        }
-    }
-
     public Ciclista alterarCiclista(int idCiclista, NovoCiclistaDTO novoCiclista) throws BadRequestException {
         Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(
                 () -> new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista)
         );
         validarCiclistaParaAlterar(ciclista);
-        validarSenhasIdenticas(ciclista.getSenha(), ciclista.getConfirmacaoSenha());
         ciclista.setId(idCiclista);
 
         // atualizar ciclista com os dados do novoCiclista
@@ -150,21 +156,42 @@ public class CiclistaService {
         return ciclistaRepository.existsByEmail(email);
     }
 
-    private void validarCamposObrigatorios(NovoCiclistaDTO novoCiclistaDTO) {
-        if (novoCiclistaDTO.getNome() == null || novoCiclistaDTO.getNome().isEmpty() ||
-                novoCiclistaDTO.getEmail() == null || novoCiclistaDTO.getEmail().isEmpty() ||
-                novoCiclistaDTO.getNascimento() == null || novoCiclistaDTO.getNascimento().isEmpty() ||
-                novoCiclistaDTO.getNacionalidade() == null ||
-                (novoCiclistaDTO.getNacionalidade().equals(Nacionalidade.BRASILEIRO) &&
-                        (novoCiclistaDTO.getCpf() == null || novoCiclistaDTO.getCpf().isEmpty())) ||
-                (novoCiclistaDTO.getNacionalidade().equals(Nacionalidade.ESTRANGEIRO) &&
-                        novoCiclistaDTO.getPassaporte() == null)) {
+    private void validarCamposObrigatorios(Ciclista ciclista) {
+        if (ciclista.getNome() == null || ciclista.getNome().isEmpty() ||
+                ciclista.getEmail() == null || ciclista.getEmail().isEmpty() ||
+                ciclista.getNascimento() == null || ciclista.getNascimento().isEmpty() ||
+                ciclista.getNacionalidade() == null ||
+                (ciclista.getNacionalidade().equals(Nacionalidade.BRASILEIRO) &&
+                        (ciclista.getCpf() == null || ciclista.getCpf().isEmpty())) ||
+                (ciclista.getNacionalidade().equals(Nacionalidade.ESTRANGEIRO) &&
+                        ciclista.getPassaporte() == null)) {
             throw new BadRequestException("Todos os campos são obrigatórios.");
         }
 
-        if (novoCiclistaDTO.getNacionalidade().equals(Nacionalidade.BRASILEIRO)) {
-            validarCPF(novoCiclistaDTO.getCpf());
+        if (ciclista.getNacionalidade().equals(Nacionalidade.ESTRANGEIRO)) {
+            if (ciclista.getPassaporte() != null) {
+                if (ciclista.getPassaporte().getNumero() == null || ciclista.getPassaporte().getNumero().isEmpty() ||
+                        ciclista.getPassaporte().getValidade().isEmpty() ||
+                        validatePais(ciclista.getPassaporte().getPais()))
+                {
+                    throw new InvalidDataException("Número do passaporte é obrigatório.");
+                }
+                throw new InvalidDataException("Passaporte é obrigatório para estrangeiros.");
+            }
         }
+
+        if (ciclista.getNacionalidade().equals(Nacionalidade.BRASILEIRO)) {
+            validarCPF(ciclista.getCpf());
+        }
+
+        if (ciclista.getSenha() == null || ciclista.getSenha().isEmpty()) {
+            throw new InvalidDataException("Senha é obrigatória.");
+        }
+    }
+
+    private boolean validatePais(String pais) {
+        // formato do país: A-Z{2}
+        return pais == null || pais.length() != 2 || !pais.matches("[A-Z]{2}");
     }
 
     private void validarCPF(String cpf) {

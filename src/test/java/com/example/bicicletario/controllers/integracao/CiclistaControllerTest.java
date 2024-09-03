@@ -61,12 +61,6 @@ class CiclistaControllerTest {
 
     @Test
     void criarCiclista() throws Exception {
-        // Configurar DTOs e Ciclista
-        PassaporteDTO passaporteDTO = new PassaporteDTO();
-        passaporteDTO.setNumero("123456");
-        passaporteDTO.setValidade("2025-01-01");
-        passaporteDTO.setPais("Brasil");
-
         Passaporte passaporte = new Passaporte();
         passaporte.setNumero("123456");
         passaporte.setValidade("2025-01-01");
@@ -78,14 +72,14 @@ class CiclistaControllerTest {
         cartao.setValidade("2025-01-01");
         cartao.setCvv("123");
 
-        NovoCiclistaDTO novoCiclista = new NovoCiclistaDTO();
+        Ciclista novoCiclista = new Ciclista();
         novoCiclista.setNome("Joao Silva");
         novoCiclista.setCpf("12345678900");
         novoCiclista.setEmail("joao.silva@example.com");
         novoCiclista.setNascimento("2000-01-01");
         novoCiclista.setNacionalidade(Nacionalidade.BRASILEIRO);
         novoCiclista.setUrlFotoDocumento("http://example.com/foto.jpg");
-        novoCiclista.setPassaporte(passaporteDTO);
+        novoCiclista.setPassaporte(passaporte);
 
         NovoCiclistaRequestDTO dto = new NovoCiclistaRequestDTO();
         dto.setMeioDePagamento(cartao);

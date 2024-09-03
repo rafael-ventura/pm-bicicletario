@@ -19,16 +19,13 @@ import org.springframework.web.client.RestTemplate;
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
-    private final RestTemplate restTemplate;
-
-    private final String baseUrl = "http://ec2-3-91-187-43.compute-1.amazonaws.com:8060/api"; // URL definida diretamente no serviço
+    private final RestTemplate restTemplate = new RestTemplate();
 
     // Injeção via construtor para facilitar o mocking nos testes
-    public EmailService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
 
     public boolean enviarEmail(EmailDTO email) {
+        // URL definida diretamente no serviço
+        String baseUrl = "http://ec2-3-91-187-43.compute-1.amazonaws.com:8060/api";
         String url = baseUrl + "/enviarEmail";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

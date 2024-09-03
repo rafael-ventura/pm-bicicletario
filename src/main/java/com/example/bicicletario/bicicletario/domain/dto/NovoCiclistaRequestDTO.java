@@ -1,14 +1,16 @@
 package com.example.bicicletario.bicicletario.domain.dto;
 
+import com.example.bicicletario.bicicletario.domain.Ciclista;
+
 public class NovoCiclistaRequestDTO {
-    private NovoCiclistaDTO ciclista;
+    private Ciclista ciclista;
     private NovoCartaoDeCreditoDTO meioDePagamento;
 
-    public NovoCiclistaDTO getCiclista() {
+    public Ciclista getCiclista() {
         return ciclista;
     }
 
-    public void setCiclista(NovoCiclistaDTO ciclista) {
+    public void setCiclista(Ciclista ciclista) {
         this.ciclista = ciclista;
     }
 
