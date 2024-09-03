@@ -1,11 +1,12 @@
 package com.example.bicicletario.bicicletario.application;
 
+import com.example.bicicletario.bicicletario.domain.Constants;
 import com.example.bicicletario.bicicletario.domain.Funcionario;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.FuncionarioRepository;
-import com.example.bicicletario.bicicletario.mapper.FuncionarioMapper;
+import com.example.bicicletario.bicicletario.domain.mapper.FuncionarioMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

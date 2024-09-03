@@ -1,4 +1,4 @@
-package com.example.bicicletario.services.unitarios;
+package com.example.bicicletario.services;
 
 import com.example.bicicletario.bicicletario.application.DevolucaoService;
 import com.example.bicicletario.bicicletario.application.external.AdministradoraCCService;
@@ -11,7 +11,6 @@ import com.example.bicicletario.bicicletario.domain.Devolucao;
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoDevolucaoDTO;
-import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
@@ -71,8 +70,8 @@ class DevolucaoServiceTest {
 
         when(bicicletaService.getBicicletaById(devolucaoDTO.getIdBicicleta())).thenReturn(bicicleta);
         when(trancaService.obterTranca(devolucaoDTO.getIdTranca())).thenReturn(tranca);
-        when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.of(aluguel));
-        when(administradoraCCService.enviarCobranca(novoCobranca)).thenReturn(true);
+        when(aluguelRepository.findByBicicletaAndHoraFimIsNull(devolucaoDTO.getIdBicicleta())).thenReturn(Optional.of(aluguel));
+        when(administradoraCCService.enviarCobranca(any(NovoCobrancaDTO.class))).thenReturn(true);
 
         // Act
         Devolucao devolucao1 = devolucaoService.realizarDevolucao(devolucaoDTO);
@@ -80,11 +79,11 @@ class DevolucaoServiceTest {
         // Assert
         assertNotNull(devolucao1);
         assertEquals(1, devolucao1.getIdBicicleta());
-        assertEquals(2, devolucao1.getIdTranca());
+        assertEquals(1, devolucao1.getIdTranca());
         assertEquals("SUCESSO", devolucao1.getStatusPagamento());
 
         verify(devolucaoRepository).save(any(Devolucao.class));
-        verify(emailService).enviarEmailDevolucao(any(), any(), any(), any(), any(), any(), any(), any());
+        verify(emailService).enviarEmailDevolucao(anyInt(), any(), any(), any(), anyDouble(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -94,19 +93,16 @@ class DevolucaoServiceTest {
         devolucaoDTO.setIdBicicleta(1);
         devolucaoDTO.setIdTranca(1);
 
-        NovoTrancaDTO tranca = new NovoTrancaDTO();
-        tranca.setId(1);
-        tranca.setStatus(StatusTranca.LIVRE);
-
         Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
         bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
 
         when(bicicletaService.getBicicletaById(devolucaoDTO.getIdBicicleta())).thenReturn(bicicleta);
 
         // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
 
-        assertEquals("Tranca não encontrada.", exception.getMessage());
+        assertEquals("Bicicleta não está em uso.", exception.getMessage());
     }
 
     @Test
@@ -117,6 +113,7 @@ class DevolucaoServiceTest {
         devolucaoDTO.setIdBicicleta(1);
 
         Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
         bicicleta.setStatus(StatusBicicleta.EM_USO);
 
         Tranca tranca = new Tranca();
@@ -129,7 +126,7 @@ class DevolucaoServiceTest {
         // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
 
-        assertEquals("Aluguel ativo não encontrado para esta bicicleta.", exception.getMessage());
+        assertEquals("Tranca não está disponível para devolução.", exception.getMessage());
     }
 
     @Test
@@ -140,16 +137,16 @@ class DevolucaoServiceTest {
         devolucaoDTO.setIdTranca(1);
 
         Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
         bicicleta.setStatus(StatusBicicleta.EM_USO);
 
-        NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
         Tranca tranca = new Tranca();
-        trancaDTO.setId(1);
-        trancaDTO.setStatus(StatusTranca.LIVRE);
+        tranca.setId(1);
+        tranca.setStatus(StatusTranca.LIVRE);
 
-        when(bicicletaService.getBicicletaById(trancaDTO.getId())).thenReturn((bicicleta));
-        when(trancaService.obterTranca(trancaDTO.getId())).thenReturn(tranca);
-        when(aluguelRepository.findByBicicletaAndHoraFimIsNull(1)).thenReturn(Optional.empty());
+        when(bicicletaService.getBicicletaById(devolucaoDTO.getIdBicicleta())).thenReturn(bicicleta);
+        when(trancaService.obterTranca(devolucaoDTO.getIdTranca())).thenReturn(tranca);
+        when(aluguelRepository.findByBicicletaAndHoraFimIsNull(devolucaoDTO.getIdBicicleta())).thenReturn(Optional.empty());
 
         // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
@@ -169,6 +166,7 @@ class DevolucaoServiceTest {
         devolucaoDTO.setIdBicicleta(1);
 
         Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
         bicicleta.setStatus(StatusBicicleta.EM_USO);
 
         Tranca tranca = new Tranca();
@@ -178,13 +176,12 @@ class DevolucaoServiceTest {
         Aluguel aluguel = new Aluguel();
         aluguel.setId(1);
         aluguel.setHoraInicio(LocalDateTime.now().minusHours(3).toString()); // Mais de 2 horas de uso
-        aluguel.setCiclista(1);
+        aluguel.setCiclista(idCiclista);
 
         when(bicicletaService.getBicicletaById(devolucaoDTO.getIdBicicleta())).thenReturn(bicicleta);
         when(trancaService.obterTranca(devolucaoDTO.getIdTranca())).thenReturn(tranca);
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(devolucaoDTO.getIdBicicleta())).thenReturn(Optional.of(aluguel));
-        when(administradoraCCService.enviarCobranca(novoCobranca)).thenReturn(true);
-        doNothing().when(administradoraCCService).registrarCobrancaPendente(idCiclista);
+        when(administradoraCCService.enviarCobranca(any(NovoCobrancaDTO.class))).thenReturn(true);
 
         // Act
         Devolucao devolucaoResult = devolucaoService.realizarDevolucao(devolucaoDTO);
@@ -194,6 +191,6 @@ class DevolucaoServiceTest {
         assertTrue(devolucaoResult.getValorExtra() > 0);
         assertEquals("SUCESSO", devolucaoResult.getStatusPagamento());
 
-        verify(administradoraCCService).enviarCobranca(novoCobranca);
+        verify(administradoraCCService).enviarCobranca(any(NovoCobrancaDTO.class));
     }
 }

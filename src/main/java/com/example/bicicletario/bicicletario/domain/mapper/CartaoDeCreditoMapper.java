@@ -1,4 +1,4 @@
-package com.example.bicicletario.bicicletario.mapper;
+package com.example.bicicletario.bicicletario.domain.mapper;
 
 import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;

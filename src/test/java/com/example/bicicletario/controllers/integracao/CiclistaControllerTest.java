@@ -1,4 +1,4 @@
-package com.example.bicicletario.controllers;
+package com.example.bicicletario.controllers.integracao;
 
 import com.example.bicicletario.bicicletario.application.CiclistaService;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;

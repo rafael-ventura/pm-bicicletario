@@ -1,7 +1,7 @@
 package com.example.bicicletario.bicicletario.web;
 
 import com.example.bicicletario.bicicletario.application.CiclistaService;
-import com.example.bicicletario.bicicletario.application.Constants;
+import com.example.bicicletario.bicicletario.domain.Constants;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;

@@ -2,7 +2,7 @@ package com.example.bicicletario.bicicletario.web;
 
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
-import com.example.bicicletario.bicicletario.mapper.FuncionarioMapper;
+import com.example.bicicletario.bicicletario.domain.mapper.FuncionarioMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;

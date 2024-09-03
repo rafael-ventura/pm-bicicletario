@@ -1,8 +1,11 @@
-package com.example.bicicletario.services.unitarios;
+package com.example.bicicletario.services;
 
 import com.example.bicicletario.bicicletario.application.AluguelService;
+import com.example.bicicletario.bicicletario.application.external.AdministradoraCCService;
+import com.example.bicicletario.bicicletario.application.external.BicicletaService;
 import com.example.bicicletario.bicicletario.application.external.EmailService;
 import com.example.bicicletario.bicicletario.application.external.TrancaService;
+import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
@@ -12,8 +15,6 @@ import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
-import com.example.bicicletario.bicicletario.application.external.BicicletaService;
-import com.example.bicicletario.bicicletario.application.external.AdministradoraCCService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,7 +23,8 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class AluguelServiceTest {
 
@@ -49,35 +51,30 @@ class AluguelServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-   /* @Test
+    @Test
     void aluguel_success() {
         // Arrange
         int idCiclista = 1;
         int idTranca = 1;
-        NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
-        NovoCobrancaDTO cobrancaDTO = new NovoCobrancaDTO();
-        trancaDTO.setStatus(StatusTranca.OCUPADA);
-        trancaDTO.setBicicleta(1);
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.OCUPADA);
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
-        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
+        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+        tranca.setBicicleta(bicicleta);
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
-        when(trancaService.obterTranca(1)).thenReturn(Optional.of(trancaDTO));
-        when(bicicletaService.getBicicletaByTranca(1)).thenReturn(Optional.of(bicicleta));
-        when(administradoraCCService.enviarCobranca(cobrancaDTO)).thenReturn(true);
-        doNothing().when(administradoraCCService).registrarCobrancaPendente(anyInt());
+        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+        when(administradoraCCService.enviarCobranca(any())).thenReturn(true);
         when(aluguelRepository.save(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Act
         Aluguel aluguel = aluguelService.aluguel(idCiclista, idTranca);
 
-        // Assert
         assertNotNull(aluguel);
-        verify(bicicletaService).atualizarStatus(bicicleta, StatusBicicleta.EM_USO);
-        verify(trancaService).atualizarStatusTranca(idTranca, "DESTRANCAR");
-        verify(emailService).enviarEmailAluguel(idCiclista, aluguel, bicicleta, trancaDTO);
-    }*/
+        assertEquals(idCiclista, aluguel.getCiclista());
+        verify(trancaService).destrancarTranca(idTranca, bicicleta.getId());
+        verify(emailService).enviarEmailAluguel(idCiclista, aluguel, bicicleta, tranca);
+    }
 
     @Test
     void aluguel_trancaNaoEncontrada() {
@@ -179,5 +176,102 @@ class AluguelServiceTest {
 
         // Verificações
         assertEquals("Bicicleta não está disponível.", exception.getMessage());
+    }
+
+
+    @Test
+    void aluguel_bicicletaNaoEncontrada() {
+        int idCiclista = 1;
+        int idTranca = 1;
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.OCUPADA);
+
+        when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
+        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+        when(trancaService.getBicicletaByTranca(idTranca)).thenThrow(new ResourceNotFoundException("Bicicleta não encontrada."));
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> aluguelService.aluguel(idCiclista, idTranca));
+        assertEquals("Bicicleta não encontrada.", exception.getMessage());
+    }
+
+    @Test
+    void aluguel_bicicletaNaoDisponivel() {
+        int idCiclista = 1;
+        int idTranca = 1;
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.OCUPADA);
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatus(StatusBicicleta.EM_USO);
+        tranca.setBicicleta(bicicleta);
+
+        when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
+        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+
+        BadRequestException exception = assertThrows(BadRequestException.class,
+                () -> aluguelService.aluguel(idCiclista, idTranca));
+        assertEquals("Bicicleta não está disponível.", exception.getMessage());
+    }
+
+    @Test
+    void aluguel_bicicletaEmReparo() {
+        int idCiclista = 1;
+        int idTranca = 1;
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.OCUPADA);
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatus(StatusBicicleta.EM_REPARO);
+        tranca.setBicicleta(bicicleta);
+
+        when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
+        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+
+        BadRequestException exception = assertThrows(BadRequestException.class,
+                () -> aluguelService.aluguel(idCiclista, idTranca));
+        assertEquals("Bicicleta não pode ser alugada.", exception.getMessage());
+    }
+
+    @Test
+    void aluguel_pagamentoNaoAutorizado() {
+        int idCiclista = 1;
+        int idTranca = 1;
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.OCUPADA);
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+        tranca.setBicicleta(bicicleta);
+
+        when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
+        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+        when(administradoraCCService.enviarCobranca(any())).thenReturn(false);
+
+        BadRequestException exception = assertThrows(BadRequestException.class,
+                () -> aluguelService.aluguel(idCiclista, idTranca));
+        assertEquals("Pagamento não autorizado.", exception.getMessage());
+        verify(administradoraCCService).registrarCobrancaPendente(idCiclista);
+    }
+
+    @Test
+    void aluguel_sucesso() {
+        int idCiclista = 1;
+        int idTranca = 1;
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.OCUPADA);
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
+        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+        tranca.setBicicleta(bicicleta);
+
+        when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
+        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+        when(administradoraCCService.enviarCobranca(any())).thenReturn(true);
+        when(aluguelRepository.save(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Aluguel aluguel = aluguelService.aluguel(idCiclista, idTranca);
+
+        assertNotNull(aluguel);
+        assertEquals(idCiclista, aluguel.getCiclista());
+        verify(trancaService).destrancarTranca(idTranca, bicicleta.getId());
+        verify(emailService).enviarEmailAluguel(idCiclista, aluguel, bicicleta, tranca);
     }
 }

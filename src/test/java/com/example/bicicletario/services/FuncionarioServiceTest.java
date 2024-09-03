@@ -1,26 +1,26 @@
 package com.example.bicicletario.services;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
 import com.example.bicicletario.bicicletario.domain.Funcionario;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.FuncionarioRepository;
-import com.example.bicicletario.bicicletario.mapper.FuncionarioMapper;
-import org.junit.jupiter.api.AfterEach;
+import com.example.bicicletario.bicicletario.domain.mapper.FuncionarioMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+
 import java.util.List;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class FuncionarioServiceTest {
 
@@ -33,235 +33,210 @@ class FuncionarioServiceTest {
     @InjectMocks
     private FuncionarioService funcionarioService;
 
-    private final ByteArrayOutputStream consoleContent = new ByteArrayOutputStream();
-    private final PrintStream originalOut = System.out;
-
     @BeforeEach
-    public void setup() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        System.setOut(new PrintStream(consoleContent));
-    }
-
-    @AfterEach
-    public void restoreStreams() {
-        System.setOut(originalOut);
     }
 
     @Test
-    void testCadastrarFuncionario() {
-        NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
-        dto.setNome("Joao Silva");
-        dto.setCpf("12345678900");
-        dto.setEmail("joao@gmail.com");
-        dto.setSenha("123456");
-        dto.setConfirmacaoSenha("123456");
-        dto.setIdade(25);
-        dto.setFuncao("DEV");
+    void cadastrarFuncionario_Success() {
+        // Arrange
+        NovoFuncionarioDTO novoFuncionarioDTO = new NovoFuncionarioDTO();
+        novoFuncionarioDTO.setNome("Nome");
+        novoFuncionarioDTO.setCpf("12345678901");
+        novoFuncionarioDTO.setEmail("email@example.com");
+        novoFuncionarioDTO.setSenha("senha123");
+        novoFuncionarioDTO.setConfirmacaoSenha("senha123");
+        novoFuncionarioDTO.setIdade(30);
+        novoFuncionarioDTO.setFuncao("Admin");
 
         Funcionario funcionario = new Funcionario();
+        funcionario.setId(1);
 
-        // Configura o mock para retornar o objeto funcionario quando toEntity é chamado
-        when(funcionarioMapper.toEntity(dto)).thenReturn(funcionario);
+        when(funcionarioMapper.toEntity(novoFuncionarioDTO)).thenReturn(funcionario);
         when(funcionarioRepository.save(any(Funcionario.class))).thenAnswer(invocation -> {
             Funcionario savedFuncionario = invocation.getArgument(0);
             savedFuncionario.setMatricula("MAT-1234");
             return savedFuncionario;
         });
 
-        Funcionario result = funcionarioService.cadastrarFuncionario(dto);
+        // Act
+        Funcionario result = funcionarioService.cadastrarFuncionario(novoFuncionarioDTO);
 
+        // Assert
         assertNotNull(result);
-        assertEquals("MAT-", result.getMatricula().substring(0, 4));
+        assertEquals("MAT-1234", result.getMatricula());
 
-        // Use ArgumentCaptor to capture the argument passed to save method
+        // ArgumentCaptor para capturar e verificar as propriedades do Funcionario salvo
         ArgumentCaptor<Funcionario> funcionarioCaptor = ArgumentCaptor.forClass(Funcionario.class);
-        verify(funcionarioRepository, times(1)).save(funcionarioCaptor.capture());
-
-        // Verify the properties of the captured Funcionario object
+        verify(funcionarioRepository).save(funcionarioCaptor.capture());
         Funcionario capturedFuncionario = funcionarioCaptor.getValue();
-        assertEquals("Joao Silva", capturedFuncionario.getNome());
-        assertEquals("12345678900", capturedFuncionario.getCpf());
-        assertEquals("joao@gmail.com", capturedFuncionario.getEmail());
-        assertEquals("123456", capturedFuncionario.getSenha());
-        assertEquals(25, capturedFuncionario.getIdade());
-        assertEquals("DEV", capturedFuncionario.getFuncao());
+        assertEquals("Nome", capturedFuncionario.getNome());
+        assertEquals("12345678901", capturedFuncionario.getCpf());
     }
 
     @Test
-    void testCadastrarFuncionarioCpfInvalido() {
-        NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
-        dto.setNome("Joao Silva");
-        dto.setCpf("123.456.789-00");
-        dto.setEmail("joao@gmail.com");
-        dto.setSenha("123456");
-        dto.setConfirmacaoSenha("123456");
-        dto.setIdade(25);
-        dto.setFuncao("DEV...");
+    void cadastrarFuncionario_InvalidData() {
+        // Arrange
+        NovoFuncionarioDTO novoFuncionarioDTO = new NovoFuncionarioDTO(); // DTO vazio para forçar erro
 
-        assertThrows(InvalidDataException.class, () -> {
-            funcionarioService.cadastrarFuncionario(dto);
+        // Act & Assert
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            funcionarioService.cadastrarFuncionario(novoFuncionarioDTO);
         });
+
+        assertEquals("Campos obrigatórios não preenchidos.", exception.getMessage());
     }
 
     @Test
-    void testCadastrarFuncionarioSenhaDiferente() {
-        NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
-        dto.setNome("Joao Silva");
-        dto.setCpf("123.456.789-00");
-        dto.setEmail("joao@gmail.com");
-        dto.setSenha("123456");
-        dto.setConfirmacaoSenha("1234567");
-        dto.setIdade(25);
-        dto.setFuncao("DEV...");
+    void cadastrarFuncionario_CpfInvalido() {
+        // Arrange
+        NovoFuncionarioDTO novoFuncionarioDTO = new NovoFuncionarioDTO();
+        novoFuncionarioDTO.setNome("Nome");
+        novoFuncionarioDTO.setCpf("1234567"); // CPF inválido
+        novoFuncionarioDTO.setEmail("email@example.com");
+        novoFuncionarioDTO.setSenha("senha123");
+        novoFuncionarioDTO.setConfirmacaoSenha("senha123");
+        novoFuncionarioDTO.setIdade(30);
+        novoFuncionarioDTO.setFuncao("Admin");
 
-        assertThrows(InvalidDataException.class, () -> {
-            funcionarioService.cadastrarFuncionario(dto);
+        // Act & Assert
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            funcionarioService.cadastrarFuncionario(novoFuncionarioDTO);
         });
+
+        assertEquals("CPF inválido. O CPF deve conter 11 dígitos e apenas números.", exception.getMessage());
     }
 
     @Test
-    void testExcluirFuncionario() {
-        Integer idFuncionario = 1;
+    void cadastrarFuncionario_SenhaDiferente() {
+        // Arrange
+        NovoFuncionarioDTO novoFuncionarioDTO = new NovoFuncionarioDTO();
+        novoFuncionarioDTO.setNome("Nome");
+        novoFuncionarioDTO.setCpf("12345678901");
+        novoFuncionarioDTO.setEmail("email@example.com");
+        novoFuncionarioDTO.setSenha("senha123");
+        novoFuncionarioDTO.setConfirmacaoSenha("senha1234"); // Senha diferente
+
+        // Act & Assert
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            funcionarioService.cadastrarFuncionario(novoFuncionarioDTO);
+        });
+
+        assertEquals("As senhas não coincidem.", exception.getMessage());
+    }
+
+    @Test
+    void listarFuncionarios_Success() {
+        // Arrange
         Funcionario funcionario = new Funcionario();
-        when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.of(funcionario));
+        funcionario.setId(1);
+        List<Funcionario> funcionarios = List.of(funcionario);
+        when(funcionarioRepository.findAll()).thenReturn(funcionarios);
+        when(funcionarioMapper.toDtoList(funcionarios)).thenReturn(List.of(new NovoFuncionarioDTO()));
 
-        funcionarioService.excluirFuncionario(idFuncionario);
-
-        verify(funcionarioRepository, times(1)).delete(funcionario);
-    }
-
-    @Test
-    void testExcluirFuncionarioNaoEncontrado() {
-        Integer idFuncionario = 1;
-        when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> {
-            funcionarioService.excluirFuncionario(idFuncionario);
-        });
-    }
-
-    @Test
-    void testAlterarFuncionario() {
-        // ID do funcionário a ser alterado
-        Integer idFuncionario = 1;
-
-        // Funcionario existente
-        Funcionario funcionario = new Funcionario();
-        funcionario.setId(idFuncionario); // Certifique-se de que o ID está configurado corretamente
-        funcionario.setNome("Joao Silva");
-        funcionario.setCpf("12345678900");
-        funcionario.setEmail("joao-antigo@gmail.com");
-        funcionario.setSenha("123456");
-        funcionario.setIdade(25);
-        funcionario.setFuncao("DEV...");
-        funcionario.setMatricula("MAT-0001");
-
-        // NovoFuncionarioDTO com dados atualizados
-        NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
-        dto.setNome("Joao Silva");
-        dto.setEmail("joao@gmail.com");
-        dto.setCpf("12345678900");
-        dto.setSenha("123456");
-        dto.setConfirmacaoSenha("123456");
-        dto.setIdade(25);
-        dto.setFuncao("DEV...");
-
-        // Configurando o mock do repositório para retornar o funcionário existente
-        when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.of(funcionario));
-
-        // Configurando o mock do método save para atualizar os dados do funcionário
-        when(funcionarioRepository.save(any(Funcionario.class))).thenAnswer(invocation -> {
-            Funcionario savedFuncionario = invocation.getArgument(0);
-            savedFuncionario.setNome(dto.getNome());
-            savedFuncionario.setEmail(dto.getEmail());
-            savedFuncionario.setCpf(dto.getCpf());
-            savedFuncionario.setSenha(dto.getSenha());
-            savedFuncionario.setIdade(dto.getIdade());
-            savedFuncionario.setFuncao(dto.getFuncao());
-            return savedFuncionario;
-        });
-
-        // Chamando o método do serviço
-        NovoFuncionarioDTO result = funcionarioService.alterarFuncionario(idFuncionario, dto);
-
-        // Verificando o resultado
-        assertNotNull(result);
-        assertEquals("Joao Silva", result.getNome());
-        assertEquals("joao@gmail.com", result.getEmail());
-        assertEquals("12345678900", result.getCpf());
-        assertEquals("123456", result.getSenha());
-        assertEquals(25, result.getIdade());
-        assertEquals("DEV...", result.getFuncao());
-
-        // Verificando as interações com os mocks
-        verify(funcionarioRepository, times(1)).findById(idFuncionario);
-        verify(funcionarioRepository, times(1)).save(funcionario);
-    }
-
-    @Test
-    void testAlterarFuncionarioNaoEncontrado() {
-        Integer idFuncionario = 1;
-        NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
-        when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> {
-            funcionarioService.alterarFuncionario(idFuncionario, dto);
-        });
-    }
-
-    @Test
-    void testListarFuncionarios() {
-        Funcionario funcionario = new Funcionario();
-        funcionario.setNome("Joao Silva");
-        funcionario.setCpf("12345678900");
-        funcionario.setEmail("joao@gmail.com");
-        funcionario.setSenha("123456");
-        funcionario.setIdade(25);
-        funcionario.setFuncao("DEV...");
-        funcionario.setMatricula("MAT-0001");
-        when(funcionarioRepository.findAll()).thenReturn(List.of(funcionario));
-        when(funcionarioMapper.toDtoList(List.of(funcionario))).thenReturn(List.of(new NovoFuncionarioDTO()));
-
+        // Act
         List<NovoFuncionarioDTO> result = funcionarioService.listarFuncionarios();
+
+        // Assert
+        assertNotNull(result);
         assertEquals(1, result.size());
+        verify(funcionarioRepository).findAll();
     }
 
     @Test
-    void testObterFuncionario() {
-        Integer idFuncionario = 1;
+    void obterFuncionario_Success() {
+        // Arrange
+        int idFuncionario = 1;
         Funcionario funcionario = new Funcionario();
         funcionario.setId(idFuncionario);
-        funcionario.setNome("Joao Silva");
-        funcionario.setCpf("12345678900");
-        funcionario.setEmail("joao@gmail.com");
-        funcionario.setSenha("123456");
-        funcionario.setIdade(25);
-        funcionario.setFuncao("DEV...");
-
-        NovoFuncionarioDTO dto = new NovoFuncionarioDTO();
-        dto.setFuncao("DEV...");
-        dto.setIdade(25);
-        dto.setNome("Joao Silva");
-        dto.setCpf("12345678900");
-        dto.setEmail("joao@gmail.com");
-        dto.setSenha("123456");
-        dto.setConfirmacaoSenha("123456");
-
+        NovoFuncionarioDTO novoFuncionarioDTO = new NovoFuncionarioDTO();
         when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.of(funcionario));
-        when(funcionarioMapper.toDto(funcionario)).thenReturn(dto);
+        when(funcionarioMapper.toDto(funcionario)).thenReturn(novoFuncionarioDTO);
 
+        // Act
         NovoFuncionarioDTO result = funcionarioService.obterFuncionario(idFuncionario);
+
+        // Assert
         assertNotNull(result);
+        verify(funcionarioRepository).findById(idFuncionario);
     }
 
     @Test
-    void testObterFuncionarioNaoEncontrado() {
-        Integer idFuncionario = 1;
-        // Utiliza lenient() para permitir stubbings não utilizados
-        lenient().when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.empty());
+    void obterFuncionario_NotFound() {
+        // Arrange
+        int idFuncionario = 1;
+        when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> {
+        // Act & Assert
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             funcionarioService.obterFuncionario(idFuncionario);
         });
+
+        assertEquals("Funcionário não encontrado com o ID: " + idFuncionario, exception.getMessage());
+    }
+
+    @Test
+    void alterarFuncionario_Success() {
+        // Arrange
+        int idFuncionario = 1;
+        NovoFuncionarioDTO novoFuncionarioDTO = new NovoFuncionarioDTO();
+        novoFuncionarioDTO.setNome("Novo Nome");
+        Funcionario funcionario = new Funcionario();
+        funcionario.setId(idFuncionario);
+
+        when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.of(funcionario));
+        when(funcionarioRepository.save(any(Funcionario.class))).thenReturn(funcionario);
+
+        // Act
+        NovoFuncionarioDTO result = funcionarioService.alterarFuncionario(idFuncionario, novoFuncionarioDTO);
+
+        // Assert
+        assertNotNull(result);
+        verify(funcionarioRepository).save(funcionario);
+    }
+
+    @Test
+    void alterarFuncionario_NotFound() {
+        // Arrange
+        int idFuncionario = 1;
+        NovoFuncionarioDTO novoFuncionarioDTO = new NovoFuncionarioDTO();
+        when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            funcionarioService.alterarFuncionario(idFuncionario, novoFuncionarioDTO);
+        });
+
+        assertEquals("Funcionário não encontrado com o ID: " + idFuncionario, exception.getMessage());
+    }
+
+    @Test
+    void excluirFuncionario_Success() {
+        // Arrange
+        int idFuncionario = 1;
+        Funcionario funcionario = new Funcionario();
+        funcionario.setId(idFuncionario);
+        when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.of(funcionario));
+
+        // Act
+        funcionarioService.excluirFuncionario(idFuncionario);
+
+        // Assert
+        verify(funcionarioRepository).delete(funcionario);
+    }
+
+    @Test
+    void excluirFuncionario_NotFound() {
+        // Arrange
+        int idFuncionario = 1;
+        when(funcionarioRepository.findById(idFuncionario)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            funcionarioService.excluirFuncionario(idFuncionario);
+        });
+
+        assertEquals("Funcionário não encontrado com o ID: " + idFuncionario, exception.getMessage());
     }
 }

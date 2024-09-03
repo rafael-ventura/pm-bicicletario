@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FuncionarioRepositoryTestTest {
+class FuncionarioRepositoryTest {
 
     private FuncionarioRepository funcionarioRepository;
 
@@ -74,5 +74,45 @@ class FuncionarioRepositoryTestTest {
 
         assertTrue(funcionarioRepository.existsById(savedFuncionario.getId()));
         assertFalse(funcionarioRepository.existsById(999)); // ID not present
+
     }
+
+    @Test
+    void testDeleteFuncionario() {
+        // Arrange
+        Funcionario funcionario = new Funcionario();
+        funcionario.setNome("João");
+        Funcionario savedFuncionario = funcionarioRepository.save(funcionario);
+
+        // Act
+        funcionarioRepository.delete(savedFuncionario);
+        Optional<Funcionario> retrievedFuncionario = funcionarioRepository.findById(savedFuncionario.getId());
+
+        // Assert
+        assertFalse(retrievedFuncionario.isPresent());
+    }
+
+    @Test
+    void testExistsById_Success() {
+        // Arrange
+        Funcionario funcionario = new Funcionario();
+        funcionario.setNome("João");
+        Funcionario savedFuncionario = funcionarioRepository.save(funcionario);
+
+        // Act
+        boolean exists = funcionarioRepository.existsById(savedFuncionario.getId());
+
+        // Assert
+        assertTrue(exists);
+    }
+
+    @Test
+    void testExistsById_NotFound() {
+        // Act
+        boolean exists = funcionarioRepository.existsById(999);
+
+        // Assert
+        assertFalse(exists);
+    }
+
 }

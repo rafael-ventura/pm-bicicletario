@@ -7,11 +7,11 @@ import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;
+import com.example.bicicletario.bicicletario.domain.mapper.CartaoDeCreditoMapper;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.CartaoDeCreditoRepository;
 import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
-import com.example.bicicletario.bicicletario.mapper.CartaoDeCreditoMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -50,103 +50,141 @@ class CartaoDeCreditoServiceTest {
     }
 
     @Test
-    void testObterCartaoDeCredito() {
-        CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
-        when(cartaoDeCreditoRepository.findByCiclistaId(anyInt())).thenReturn(Optional.of(cartaoDeCredito));
+    void obterCartaoDeCredito_Success() {
+        // Arrange
+        CartaoDeCredito cartao = new CartaoDeCredito();
+        when(cartaoDeCreditoRepository.findByCiclistaId(1)).thenReturn(Optional.of(cartao));
 
+        // Act
         CartaoDeCredito result = cartaoDeCreditoService.obterCartaoDeCredito(1);
 
+        // Assert
         assertNotNull(result);
-        verify(cartaoDeCreditoRepository).findByCiclistaId(1);
+        assertEquals(cartao, result);
     }
 
     @Test
-    void testObterCartaoDeCreditoNotFound() {
-        when(cartaoDeCreditoRepository.findByCiclistaId(anyInt())).thenReturn(Optional.empty());
+    void obterCartaoDeCredito_NotFound() {
+        // Arrange
+        when(cartaoDeCreditoRepository.findByCiclistaId(1)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> cartaoDeCreditoService.obterCartaoDeCredito(1));
+        // Act & Assert
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            cartaoDeCreditoService.obterCartaoDeCredito(1);
+        });
+
+        assertEquals("Cartão de crédito não encontrado.", exception.getMessage());
     }
 
     @Test
-    void testAlterarCartaoDeCredito() {
-        Ciclista ciclista = new Ciclista();
-        ciclista.setId(1);
-        ciclista.setNome("Joao Silva");
-        ciclista.setEmail("joao.silva@example.com");
-
-        NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
-        novoCartaoDeCreditoDTO.setNomeTitular("Joao Silva");
-        novoCartaoDeCreditoDTO.setNumero("1234567890123456");
-        novoCartaoDeCreditoDTO.setValidade("2025-12-31");
-        novoCartaoDeCreditoDTO.setCvv("123");
+    void alterarCartaoDeCredito_Success() {
+        // Arrange
+        NovoCartaoDeCreditoDTO novoCartaoDTO = new NovoCartaoDeCreditoDTO();
+        novoCartaoDTO.setNomeTitular("Nome");
+        novoCartaoDTO.setNumero("1234567890123456");
+        novoCartaoDTO.setValidade("2025-12-31");
+        novoCartaoDTO.setCvv("123");
 
         CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
-        cartaoDeCredito.setId(1);
-        when(cartaoDeCreditoRepository.findByCiclistaId(anyInt())).thenReturn(Optional.of(cartaoDeCredito));
+        Ciclista ciclista = new Ciclista();
+        ciclista.setId(1);
+        ciclista.setEmail("test@example.com");
+
+        when(cartaoDeCreditoRepository.findByCiclistaId(1)).thenReturn(Optional.of(cartaoDeCredito));
         doNothing().when(administradoraCCService).validarCartao(any(NovoCartaoDeCreditoDTO.class));
-        when(ciclistaRepository.findById(anyInt())).thenReturn(Optional.of(ciclista));
+        when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
+        when(emailService.enviarEmail(any(EmailDTO.class))).thenReturn(true);
 
-        cartaoDeCreditoService.alterarCartaoDeCredito(1, novoCartaoDeCreditoDTO);
+        // Act
+        cartaoDeCreditoService.alterarCartaoDeCredito(1, novoCartaoDTO);
 
+        // Assert
         verify(cartaoDeCreditoRepository).save(cartaoDeCredito);
         verify(emailService).enviarEmail(any(EmailDTO.class));
     }
 
     @Test
-    void testAlterarCartaoDeCreditoNotFound() {
-        NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
-        // Configurando o mock para retornar vazio, simulando que o cartão não foi encontrado
-        when(cartaoDeCreditoRepository.findByCiclistaId(anyInt())).thenReturn(Optional.empty());
+    void alterarCartaoDeCredito_NotFound() {
+        // Arrange
+        NovoCartaoDeCreditoDTO novoCartaoDTO = new NovoCartaoDeCreditoDTO();
+        when(cartaoDeCreditoRepository.findByCiclistaId(1)).thenReturn(Optional.empty());
 
-        // Alterando a expectativa para ResourceNotFoundException
+        // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            cartaoDeCreditoService.alterarCartaoDeCredito(1, novoCartaoDeCreditoDTO);
+            cartaoDeCreditoService.alterarCartaoDeCredito(1, novoCartaoDTO);
         });
 
-        // Verificando se a mensagem da exceção é a esperada
         assertEquals("Cartão de crédito não encontrado.", exception.getMessage());
     }
 
-
     @Test
-    void testValidarCartaoDeCredito() {
-        NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
-        novoCartaoDeCreditoDTO.setNomeTitular("Nome");
-        novoCartaoDeCreditoDTO.setNumero("1234567890123456");
-        novoCartaoDeCreditoDTO.setValidade("2025-12-31");
-        novoCartaoDeCreditoDTO.setCvv("123");
-
-        // void
-        doNothing().when(administradoraCCService).validarCartao(any(NovoCartaoDeCreditoDTO.class));
-
-        assertDoesNotThrow(() -> cartaoDeCreditoService.validarCartaoDeCredito(novoCartaoDeCreditoDTO));
-    }
-
-    @Test
-    void testValidarCartaoDeCreditoInvalid() {
+    void validarCartaoDeCredito_Success() {
         // Arrange
-        NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
-        novoCartaoDeCreditoDTO.setNomeTitular("Nome");
-        novoCartaoDeCreditoDTO.setNumero("1234567890123456");
-        novoCartaoDeCreditoDTO.setValidade("2025-12-31");
-        novoCartaoDeCreditoDTO.setCvv("123");
+        NovoCartaoDeCreditoDTO novoCartaoDTO = new NovoCartaoDeCreditoDTO();
+        novoCartaoDTO.setNomeTitular("Nome");
+        novoCartaoDTO.setNumero("1234567890123456");
+        novoCartaoDTO.setValidade("2025-12-31");
+        novoCartaoDTO.setCvv("123");
 
-        // Mockando o método para retornar false
-        doThrow(InvalidDataException.class).when(administradoraCCService).validarCartao(any(NovoCartaoDeCreditoDTO.class));
+        doNothing().when(administradoraCCService).validarCartao(novoCartaoDTO);
 
         // Act & Assert
-        assertThrows(InvalidDataException.class, () -> cartaoDeCreditoService.validarCartaoDeCredito(novoCartaoDeCreditoDTO));
+        assertDoesNotThrow(() -> cartaoDeCreditoService.validarCartaoDeCredito(novoCartaoDTO));
     }
 
+    @Test
+    void validarCartaoDeCredito_InvalidData() {
+        // Arrange
+        NovoCartaoDeCreditoDTO novoCartaoDTO = new NovoCartaoDeCreditoDTO();
+        novoCartaoDTO.setNomeTitular(""); // Nome vazio para forçar erro
+
+        // Act & Assert
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            cartaoDeCreditoService.validarCartaoDeCredito(novoCartaoDTO);
+        });
+
+        assertEquals("Nome do titular do cartão é obrigatório.", exception.getMessage());
+    }
 
     @Test
-    void testSave() {
-        NovoCartaoDeCreditoDTO novoCartaoDeCreditoDTO = new NovoCartaoDeCreditoDTO();
+    void save_Success() {
+        // Arrange
+        NovoCartaoDeCreditoDTO novoCartaoDTO = new NovoCartaoDeCreditoDTO();
         CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
-        when(cartaoDeCreditoMapper.toEntity(any(NovoCartaoDeCreditoDTO.class))).thenReturn(cartaoDeCredito);
+        when(cartaoDeCreditoMapper.toEntity(novoCartaoDTO)).thenReturn(cartaoDeCredito);
 
-        cartaoDeCreditoService.save(novoCartaoDeCreditoDTO, 1);
+        // Act
+        cartaoDeCreditoService.save(novoCartaoDTO, 1);
 
+        // Assert
         verify(cartaoDeCreditoRepository).save(cartaoDeCredito);
+    }
+
+    @Test
+    void enviarEmailAlteracaoDeDados_Success() {
+        // Arrange
+        Ciclista ciclista = new Ciclista();
+        ciclista.setEmail("teste@exemplo.com");
+        when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
+        when(emailService.enviarEmail(any(EmailDTO.class))).thenReturn(true);
+
+        // Act
+        cartaoDeCreditoService.enviarEmailAlteracaoDeDados(1);
+
+        // Assert
+        verify(emailService).enviarEmail(any(EmailDTO.class));
+    }
+
+    @Test
+    void enviarEmailAlteracaoDeDados_CiclistaNotFound() {
+        // Arrange
+        when(ciclistaRepository.findById(1)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            cartaoDeCreditoService.enviarEmailAlteracaoDeDados(1);
+        });
+
+        assertEquals("Ciclista não encontrado com o ID:", exception.getMessage());
     }
 }

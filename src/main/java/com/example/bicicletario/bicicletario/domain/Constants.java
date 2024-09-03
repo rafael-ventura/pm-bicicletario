@@ -1,4 +1,4 @@
-package com.example.bicicletario.bicicletario.application;
+package com.example.bicicletario.bicicletario.domain;
 
 public class Constants {
     public static final String CICLISTA_NAO_ENCONTRADO = "Ciclista não encontrado com o ID: ";

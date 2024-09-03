@@ -15,7 +15,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import java.util.Optional;
 
-import static com.example.bicicletario.bicicletario.application.Constants.CICLISTA_NAO_ENCONTRADO;
+import static com.example.bicicletario.bicicletario.domain.Constants.CICLISTA_NAO_ENCONTRADO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;

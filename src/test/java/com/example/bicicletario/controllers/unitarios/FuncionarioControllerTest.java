@@ -3,7 +3,7 @@ package com.example.bicicletario.controllers.unitarios;
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
 import com.example.bicicletario.bicicletario.domain.Funcionario;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
-import com.example.bicicletario.bicicletario.mapper.FuncionarioMapper;
+import com.example.bicicletario.bicicletario.domain.mapper.FuncionarioMapper;
 import com.example.bicicletario.bicicletario.web.FuncionarioController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
