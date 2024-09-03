@@ -45,4 +45,6 @@ public class BicicletaRepository {
     public boolean existsById(Integer idBicicleta) {
         return bicicletas.stream().anyMatch(b -> Objects.equals(b.getId(), idBicicleta));
     }
+
+
 }

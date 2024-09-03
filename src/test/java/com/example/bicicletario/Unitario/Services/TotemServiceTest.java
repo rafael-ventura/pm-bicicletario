@@ -11,7 +11,6 @@ import com.example.bicicletario.bicicletario.domain.mapper.TotemMapper;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Totem;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
-import com.example.bicicletario.bicicletario.infraestructure.BicicletaRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TotemRepository;
 import com.example.bicicletario.bicicletario.infraestructure.TrancaRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,9 +37,6 @@ class TotemServiceTest {
 
     @Mock
     private TrancaRepository trancaRepository;
-
-    @Mock
-    private BicicletaRepository bicicletaRepository;
 
     @Mock
     private TotemMapper totemMapper;
@@ -151,24 +147,28 @@ class TotemServiceTest {
 
     @Test
     void excluirTotem() {
+        // Criando um Totem válido
         Totem totem = new Totem();
         totem.setId(1);
         totem.setLocalizacao("Localizacao");
 
+        // Mocking the repository methods
         when(totemRepository.findById(1)).thenReturn(Optional.of(totem));
         when(totemRepository.existsById(1)).thenReturn(true);
+        when(totemRepository.get(1)).thenReturn(totem);
+        when(totemService.listarTrancasPorTotem(1)).thenReturn(Collections.emptyList());
+        when(trancaRepository.findTrancaByLocalizacao(totem.getLocalizacao())).thenReturn(Collections.emptyList());
 
-        Tranca tranca = new Tranca();
-        tranca.setId(1);
-        tranca.setLocalizacao("Localizacao");
-
-        when(trancaRepository.findTrancaByLocalizacao("Localizacao")).thenReturn(Collections.singletonList(tranca));
+        // Mock the delete method
         doNothing().when(totemRepository).deleteById(1);
 
+        // Executa o método de exclusão
         totemService.excluirTotem(1);
 
+        // Verifica se o método delete foi chamado uma vez
         verify(totemRepository, times(1)).deleteById(1);
     }
+
 
     @Test
     void excluirTotem_ThrowsResourceNotFoundException() {
@@ -183,20 +183,27 @@ class TotemServiceTest {
 
     @Test
     void listarTrancas() {
+        // Criando um Totem válido
         Totem totem = new Totem();
         totem.setId(1);
         totem.setLocalizacao("Localizacao");
 
+        // Criando uma Tranca associada ao Totem
         Tranca tranca = new Tranca();
         tranca.setId(1);
         tranca.setLocalizacao("Localizacao");
 
-        when(totemRepository.findById(1)).thenReturn(Optional.of(totem));
+        // Mocking the repository methods
+        when(totemRepository.existsById(1)).thenReturn(true);
+        when(totemRepository.get(1)).thenReturn(totem);
         when(trancaRepository.findTrancaByLocalizacao("Localizacao")).thenReturn(List.of(tranca));
 
+        // Executa o método para listar trancas
         List<Tranca> result = totemService.listarTrancasPorTotem(1);
 
+        // Verifica o resultado
         assertEquals(1, result.size());
+        assertEquals(tranca.getLocalizacao(), result.get(0).getLocalizacao());
     }
 
 
@@ -237,9 +244,9 @@ class TotemServiceTest {
         totem.setLocalizacao("Localizacao");
         totem.setDescricao("Descricao");
 
-        when(totemRepository.findById(any(Integer.class))).thenReturn(Optional.of(totem));
-        when(trancaRepository.findTrancaByLocalizacao(any(String.class))).thenReturn(trancas);
-
+        when(totemRepository.existsById(1)).thenReturn(true);
+        when(totemRepository.get(1)).thenReturn(totem);
+        when(trancaRepository.findTrancaByLocalizacao("Localizacao")).thenReturn(trancas);
 
         List<Bicicleta> result = totemService.listarBicicletasPorTotem(1);
 

@@ -1,15 +1,17 @@
 package com.example.bicicletario.Integracao.Controllers;
 
-import com.example.bicicletario.bicicletario.application.services.BicicletaService;
-import com.example.bicicletario.bicicletario.application.services.TrancaService;
 import com.example.bicicletario.bicicletario.application.exceptions.GlobalExceptionHandler;
 import com.example.bicicletario.bicicletario.application.exceptions.InvalidDataException;
 import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
+import com.example.bicicletario.bicicletario.application.services.BicicletaService;
+import com.example.bicicletario.bicicletario.application.services.TrancaService;
 import com.example.bicicletario.bicicletario.domain.constants.Constantes;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusAcaoReparador;
+import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
+import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import com.example.bicicletario.bicicletario.web.TrancaController;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,8 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class TrancaControllerTest {
 
@@ -296,15 +297,18 @@ class TrancaControllerTest {
 
     @Test
     void obterBicicletaNaTranca() throws Exception {
-        Tranca tranca = new Tranca();
-        tranca.setId(1);
+        // Arrange
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
 
-        when(trancaService.obterBicicletaNaTranca(1)).thenReturn(tranca.getBicicleta());
+        when(trancaService.obterBicicletaNaTranca(any(Integer.class))).thenReturn(bicicleta);
 
+        // Act & Assert
         mockMvc.perform(get("/api/tranca/1/bicicleta"))
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(tranca)));
+                .andExpect(content().json(objectMapper.writeValueAsString(bicicleta)));
     }
+
 
     @Test
     void obterBicicletaNaTranca_ThrowsResourceNotFoundException() throws Exception {
@@ -335,12 +339,19 @@ class TrancaControllerTest {
 
     @Test
     void trancarTranca() throws Exception {
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        tranca.setStatus(StatusTranca.LIVRE);
+
+        when(trancaService.trancarTranca(any(Integer.class), any(Integer.class))).thenReturn(tranca);
+
         mockMvc.perform(post("/api/tranca/1/trancar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(1)))
                 .andExpect(status().isOk())
-                .andExpect(content().string(Constantes.DADOS_CADASTRADOS));
+                .andExpect(content().json(objectMapper.writeValueAsString(tranca))); // Verificando o retorno da Tranca
     }
+
 
     @Test
     void trancarTranca_ThrowsInvalidDataException() throws Exception {
@@ -366,12 +377,22 @@ class TrancaControllerTest {
 
     @Test
     void destrancarTranca() throws Exception {
+        // Arrange
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        tranca.setStatus(StatusTranca.LIVRE); // O status deve ser LIVRE após destrancar
+
+        when(trancaService.destrancarTranca(any(Integer.class), any(Integer.class))).thenReturn(tranca);
+
+        // Act & Assert
         mockMvc.perform(post("/api/tranca/1/destrancar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(1)))
                 .andExpect(status().isOk())
-                .andExpect(content().string(Constantes.DADOS_CADASTRADOS));
+                .andExpect(header().string("Message", Constantes.ACAO_BEM_SUCEDIDA)) // Verifica o cabeçalho
+                .andExpect(content().json(objectMapper.writeValueAsString(tranca)));  // Verifica o JSON retornado
     }
+
 
     @Test
     void destrancarTranca_ThrowsInvalidDataException() throws Exception {
@@ -397,11 +418,20 @@ class TrancaControllerTest {
 
     @Test
     void alterarStatusTranca() throws Exception {
+        // Arrange
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        tranca.setStatus(StatusTranca.LIVRE);
+
+        when(trancaService.alterarStatusTranca(any(Integer.class), any(String.class))).thenReturn(tranca);
+
+        // Act & Assert
         mockMvc.perform(post("/api/tranca/1/status/acao")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string(Constantes.DADOS_CADASTRADOS));
+                .andExpect(status().isOk())  // Verifica se o status é 200 OK
+                .andExpect(content().json(objectMapper.writeValueAsString(tranca)));  // Verifica se o corpo da resposta é o objeto Tranca
     }
+
 
     @Test
     void alterarStatusTranca_ThrowsInvalidDataException() throws Exception {

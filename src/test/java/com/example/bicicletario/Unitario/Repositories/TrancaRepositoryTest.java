@@ -23,7 +23,6 @@ class TrancaRepositoryTest {
     @Test
     void testSaveAndFindById() {
         Tranca tranca = new Tranca();
-        tranca.setId(1);
         tranca.setLocalizacao("Localizacao");
 
         trancaRepository.save(tranca);
@@ -33,13 +32,10 @@ class TrancaRepositoryTest {
         assertEquals(1, foundTranca.get().getId());
     }
 
-
     @Test
     void testDeleteById() {
         Tranca tranca = new Tranca();
-        tranca.setId(1);
-
-        trancaRepository.save(tranca);
+        Tranca savedTranca = trancaRepository.save(tranca);
         trancaRepository.deleteById(1);
 
         Optional<Tranca> retrievedTranca = trancaRepository.findById(1);
@@ -49,12 +45,7 @@ class TrancaRepositoryTest {
     @Test
     void testFindAll() {
         Tranca tranca1 = new Tranca();
-        tranca1.setId(1);
-        tranca1.setLocalizacao("Localizacao 1");
-
         Tranca tranca2 = new Tranca();
-        tranca2.setId(2);
-        tranca2.setLocalizacao("Localizacao 2");
 
         trancaRepository.save(tranca1);
         trancaRepository.save(tranca2);
@@ -64,15 +55,12 @@ class TrancaRepositoryTest {
         assertEquals(1, result.get(0).getId());
     }
 
-
-
     @Test
     void testExistsById() {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
 
         Tranca tranca = new Tranca();
-        tranca.setId(1);
         tranca.setBicicleta(bicicleta);
 
         trancaRepository.save(tranca);
@@ -80,18 +68,38 @@ class TrancaRepositoryTest {
         assertTrue(trancaRepository.existsByBicicletaId(1));
     }
 
-
     @Test
     void testFindTrancaByLocalizacao() {
         Tranca tranca = new Tranca();
-        tranca.setId(1);
         tranca.setLocalizacao("Localizacao");
 
         trancaRepository.save(tranca);
 
-        List<Tranca> trancas = trancaRepository.findTrancaByLocalizacao("Localizacao");
-        assertEquals(1, trancas.size());
-        assertEquals("Localizacao", trancas.get(0).getLocalizacao());
+        List<Tranca> result = trancaRepository.findTrancaByLocalizacao("Localizacao");
+        assertEquals(1, result.size());
+        assertEquals("Localizacao", result.get(0).getLocalizacao());
+    }
+
+
+    @Test
+    void testExistsById_NotFound() {
+        boolean exists = trancaRepository.existsByBicicletaId(999);
+        assertFalse(exists);
+    }
+
+    @Test
+    void testFindAll_Empty() {
+        List<Tranca> trancas = trancaRepository.findAll();
+        assertTrue(trancas.isEmpty());
+    }
+
+    @Test
+    void testDeleteById_NotFound() {
+        // Try to delete a tranca by a non-existent ID
+        trancaRepository.deleteById(999);
+
+        // Ensure no exceptions were thrown and repository is still consistent
+        assertTrue(trancaRepository.findAll().isEmpty());
     }
 
 }

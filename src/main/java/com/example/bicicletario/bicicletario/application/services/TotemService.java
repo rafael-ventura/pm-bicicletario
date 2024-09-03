@@ -56,14 +56,11 @@ public class TotemService {
 
     public List<Tranca> listarTrancasPorTotem(Integer idTotem) {
         Totem totem = recuperarTotem(idTotem);
-        List<Tranca> trancas = new ArrayList<>();
+        List<Tranca> trancas;
         try {
             trancas = trancaRepository.findTrancaByLocalizacao(totem.getLocalizacao());
         } catch (InvalidDataException e) {
             throw new ResourceNotFoundException(Constantes.DADOS_INVALIDOS);
-        }
-        if (trancas.isEmpty()) {
-            throw new ResourceNotFoundException(Constantes.NAO_ENCONTRADO);
         }
         return trancas;
     }

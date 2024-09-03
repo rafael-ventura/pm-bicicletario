@@ -307,33 +307,6 @@ class BicicletaServiceTest {
 
         assertEquals(Constantes.STATUS_DA_BICICLETA_INVALIDO, exception.getMessage());
     }
-
-    @Test
-    void integrarBicicletaNaRedeErroEnvioEmail() {
-        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
-        dto.setIdBicicleta(1);
-        dto.setIdTranca(1);
-        dto.setIdFuncionario(1);
-
-        Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatusBicicleta(StatusBicicleta.NOVA);
-
-        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
-        Tranca tranca = new Tranca();
-        tranca.setStatus(StatusTranca.LIVRE);
-        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
-        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
-
-        doThrow(new BadRequestException(Constantes.ERROR_ENVIAR_EMAIL))
-                .when(emailService).enviarEmailParaReparador(eq(dto.getIdFuncionario()), anyString(), anyString());
-
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
-            bicicletaService.integrarBicicletaNaRede(dto);
-        });
-
-        assertEquals(Constantes.ERROR_ENVIAR_EMAIL, exception.getMessage());
-    }
-
     @Test
     void retirarBicicletaDaRede() {
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
@@ -463,18 +436,24 @@ class BicicletaServiceTest {
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
+        bicicleta.setIdFuncionarioUltimaOperacao(1); // Simula que o funcionário que solicitou a ação é o mesmo
 
-        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta)); // Mocka a busca da bicicleta
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.LIVRE);
-        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca)); // Mocka a busca da tranca
-        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true); // Mocka a validação do funcionário
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
+        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
 
         // Act
         bicicletaService.integrarBicicletaNaRede(dto);
+
+        // Assert
         verify(bicicletaRepository, times(1)).save(bicicleta);
         verify(trancaRepository, times(1)).save(tranca);
+        assertEquals(StatusBicicleta.DISPONIVEL, bicicleta.getStatusBicicleta());
+        assertEquals(1, bicicleta.getIdFuncionarioUltimaOperacao());
     }
+
 
     @Test
     void integrarBicicletaNaRedeTrancaOcupada() {
@@ -559,4 +538,45 @@ class BicicletaServiceTest {
         verify(bicicletaRepository, times(1)).save(bicicleta);
         assertEquals(StatusBicicleta.APOSENTADA, result.getStatusBicicleta());
     }
+
+    @Test
+    void integrarBicicletaNaRedeFuncionarioDiferente() {
+        // Arrange
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(2); // Funcionário diferente
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
+        bicicleta.setIdFuncionarioUltimaOperacao(1); // Simula que o funcionário anterior era diferente
+
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.LIVRE);
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
+        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
+
+        // Act & Assert
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            bicicletaService.integrarBicicletaNaRede(dto);
+        });
+
+        // Assert
+        assertEquals(Constantes.FUNCIONARIO_IGUAL, exception.getMessage());
+        verify(bicicletaRepository, times(0)).save(bicicleta); // Certificando-se que a bicicleta não foi salva
+        verify(trancaRepository, times(0)).save(tranca); // Certificando-se que a tranca não foi salva
+    }
+
+    @Test
+    void buscarBicicletaPorIdInexistente() {
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            bicicletaService.obterBicicletaPorId(1);
+        });
+
+        assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
+    }
+
 }

@@ -116,6 +116,7 @@ public class TrancaService {
         return tranca;
     }
 
+
     public Tranca alterarStatusTranca(Integer idTranca, String acao) {
         Tranca tranca = obterTrancaPorId(idTranca);
         atualizarStatusTranca(tranca, acao);
