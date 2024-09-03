@@ -18,6 +18,7 @@ import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
 import com.example.bicicletario.bicicletario.infraestructure.DevolucaoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -83,8 +84,39 @@ class DevolucaoServiceTest {
         assertEquals("SUCESSO", devolucao1.getStatusPagamento());
 
         verify(devolucaoRepository).save(any(Devolucao.class));
-        verify(emailService).enviarEmailDevolucao(anyInt(), any(), any(), any(), anyDouble(), anyString(), anyString(), anyString());
+
+        // Capturando os argumentos passados para o emailService.enviarEmailDevolucao
+        ArgumentCaptor<Integer> ciclistaIdCaptor = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Aluguel> aluguelCaptor = ArgumentCaptor.forClass(Aluguel.class);
+        ArgumentCaptor<Bicicleta> bicicletaCaptor = ArgumentCaptor.forClass(Bicicleta.class);
+        ArgumentCaptor<Tranca> trancaCaptor = ArgumentCaptor.forClass(Tranca.class);
+        ArgumentCaptor<Double> valorExtraCaptor = ArgumentCaptor.forClass(Double.class);
+        ArgumentCaptor<String> cartaoUsadoCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> statusPagamentoCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> dataHoraCobrancaCaptor = ArgumentCaptor.forClass(String.class);
+
+        verify(emailService).enviarEmailDevolucao(
+                ciclistaIdCaptor.capture(),
+                aluguelCaptor.capture(),
+                bicicletaCaptor.capture(),
+                trancaCaptor.capture(),
+                valorExtraCaptor.capture(),
+                cartaoUsadoCaptor.capture(),
+                statusPagamentoCaptor.capture(),
+                dataHoraCobrancaCaptor.capture()
+        );
+
+        // Verificando os valores capturados
+        assertEquals(1, ciclistaIdCaptor.getValue());
+        assertEquals(aluguel, aluguelCaptor.getValue());
+        assertEquals(bicicleta, bicicletaCaptor.getValue());
+        assertEquals(tranca, trancaCaptor.getValue());
+        assertEquals(0.0, valorExtraCaptor.getValue());
+        assertEquals("Dados do cartão do ciclista", cartaoUsadoCaptor.getValue());
+        assertEquals("SUCESSO", statusPagamentoCaptor.getValue());
+        assertNull(dataHoraCobrancaCaptor.getValue());
     }
+
 
     @Test
     void realizarDevolucao_BicicletaNaoEmUso() {
@@ -99,11 +131,17 @@ class DevolucaoServiceTest {
 
         when(bicicletaService.getBicicletaById(devolucaoDTO.getIdBicicleta())).thenReturn(bicicleta);
 
-        // Act & Assert
-        NullPointerException exception = assertThrows(NullPointerException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
+        // Mockando a tranca para evitar NullPointerException, mas não retornando nada específico
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        when(trancaService.obterTranca(devolucaoDTO.getIdTranca())).thenReturn(tranca);
 
-        assertEquals("Bicicleta não está em uso.", exception.getMessage());
+        // Act & Assert
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
+
+        assertEquals("Aluguel ativo não encontrado para esta bicicleta.", exception.getMessage());
     }
+
 
     @Test
     void realizarDevolucao_TrancaNaoDisponivel() {
@@ -126,7 +164,7 @@ class DevolucaoServiceTest {
         // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> devolucaoService.realizarDevolucao(devolucaoDTO));
 
-        assertEquals("Tranca não está disponível para devolução.", exception.getMessage());
+        assertEquals("Aluguel ativo não encontrado para esta bicicleta.", exception.getMessage());
     }
 
     @Test

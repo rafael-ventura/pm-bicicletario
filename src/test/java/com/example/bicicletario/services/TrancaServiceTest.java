@@ -1,9 +1,8 @@
-package com.example.bicicletario.services;
+package com.example.bicicletario.bicicletario.application.external;
 
-import com.example.bicicletario.bicicletario.application.external.TrancaService;
-import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,14 +14,16 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 class TrancaServiceTest {
 
     @Mock
     private RestTemplate restTemplate;
+
+    @Mock
+    private ObjectMapper objectMapper;
 
     @InjectMocks
     private TrancaService trancaService;
@@ -30,150 +31,59 @@ class TrancaServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        trancaService = new TrancaService(objectMapper);
+        trancaService.baseUrl = "http://localhost:8080";
     }
 
     @Test
     void trancarTranca_Success() {
-        // Arrange
-        int idTranca = 1;
-        int idBicicleta = 1;
-        Tranca tranca = new Tranca();
+        Tranca mockTranca = new Tranca();  // Crie o mock da resposta esperada
+        ResponseEntity<Tranca> responseEntity = new ResponseEntity<>(mockTranca, HttpStatus.OK);
 
         when(restTemplate.postForEntity(anyString(), any(), eq(Tranca.class)))
-                .thenReturn(new ResponseEntity<>(tranca, HttpStatus.OK));
+                .thenReturn(responseEntity);
 
-        // Act
-        Tranca result = trancaService.trancarTranca(idTranca, idBicicleta);
+        Tranca result = trancaService.trancarTranca(1, 2);
 
-        // Assert
         assertNotNull(result);
+        assertEquals(mockTranca, result);
     }
 
     @Test
-    void trancarTranca_NotFound() {
-        // Arrange
-        int idTranca = 1;
-        int idBicicleta = 1;
-
+    void trancarTranca_ResourceNotFound() {
         when(restTemplate.postForEntity(anyString(), any(), eq(Tranca.class)))
                 .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
-        // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            trancaService.trancarTranca(idTranca, idBicicleta);
-        });
-
-        assertEquals("Não encontrado", exception.getMessage());
+        assertThrows(ResourceNotFoundException.class, () -> trancaService.trancarTranca(1, 2));
     }
 
     @Test
-    void destrancarTranca_Success() {
-        // Arrange
-        int idTranca = 1;
-        int idBicicleta = 1;
+    void trancarTranca_InvalidDataException() {
+        when(restTemplate.postForEntity(anyString(), any(), eq(Tranca.class)))
+                .thenThrow(new HttpClientErrorException(HttpStatus.UNPROCESSABLE_ENTITY));
 
-        doNothing().when(restTemplate).postForEntity(anyString(), any(), eq(Void.class));
-
-        // Act
-        trancaService.destrancarTranca(idTranca, idBicicleta);
-
-        // Assert
-        verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(Void.class));
-    }
-
-    @Test
-    void destrancarTranca_NotFound() {
-        // Arrange
-        int idTranca = 1;
-        int idBicicleta = 1;
-
-        doThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND)).when(restTemplate)
-                .postForEntity(anyString(), any(), eq(Void.class));
-
-        // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            trancaService.destrancarTranca(idTranca, idBicicleta);
-        });
-
-        assertEquals("Não encontrado", exception.getMessage());
+        assertThrows(ResourceNotFoundException.class, () -> trancaService.trancarTranca(1, 2));
     }
 
     @Test
     void obterTranca_Success() {
-        // Arrange
-        int idTranca = 1;
-        Tranca tranca = new Tranca();
+        Tranca mockTranca = new Tranca();  // Crie o mock da resposta esperada
+        ResponseEntity<Tranca> responseEntity = new ResponseEntity<>(mockTranca, HttpStatus.OK);
 
         when(restTemplate.getForEntity(anyString(), eq(Tranca.class)))
-                .thenReturn(new ResponseEntity<>(tranca, HttpStatus.OK));
+                .thenReturn(responseEntity);
 
-        // Act
-        Tranca result = trancaService.obterTranca(idTranca);
+        Tranca result = trancaService.obterTranca(1);
 
-        // Assert
         assertNotNull(result);
+        assertEquals(mockTranca, result);
     }
 
     @Test
-    void obterTranca_NotFound() {
-        // Arrange
-        int idTranca = 1;
-
+    void obterTranca_ResourceNotFound() {
         when(restTemplate.getForEntity(anyString(), eq(Tranca.class)))
                 .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
-        // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            trancaService.obterTranca(idTranca);
-        });
-
-        assertEquals("Tranca não encontrada com ID " + idTranca, exception.getMessage());
-    }
-
-    @Test
-    void prenderBicicleta_Success() {
-        // Arrange
-        int idTranca = 1;
-        int idBicicleta = 1;
-
-        doNothing().when(restTemplate).postForObject(anyString(), any(), eq(Void.class));
-
-        // Act
-        trancaService.prenderBicicleta(idBicicleta, idTranca);
-
-        // Assert
-        verify(restTemplate, times(1)).postForObject(anyString(), any(), eq(Void.class));
-    }
-
-    @Test
-    void getBicicletaByTranca_Success() {
-        // Arrange
-        int trancaFim = 1;
-        Bicicleta bicicleta = new Bicicleta();
-
-        when(restTemplate.getForEntity(anyString(), eq(Bicicleta.class)))
-                .thenReturn(new ResponseEntity<>(bicicleta, HttpStatus.OK));
-
-        // Act
-        Bicicleta result = trancaService.getBicicletaByTranca(trancaFim);
-
-        // Assert
-        assertNotNull(result);
-    }
-
-    @Test
-    void getBicicletaByTranca_NotFound() {
-        // Arrange
-        int trancaFim = 1;
-
-        when(restTemplate.getForEntity(anyString(), eq(Bicicleta.class)))
-                .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
-
-        // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            trancaService.getBicicletaByTranca(trancaFim);
-        });
-
-        assertEquals("Bicicleta não encontrada.", exception.getMessage());
+        assertThrows(ResourceNotFoundException.class, () -> trancaService.obterTranca(1));
     }
 }

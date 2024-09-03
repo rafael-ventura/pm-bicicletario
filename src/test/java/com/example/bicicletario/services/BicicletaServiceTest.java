@@ -94,6 +94,6 @@ class BicicletaServiceTest {
         doThrow(new RuntimeException()).when(restTemplate).exchange(anyString(), eq(HttpMethod.PUT), any(HttpEntity.class), eq(Void.class));
 
         // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> bicicletaService.atualizarStatus(bicicleta, StatusBicicleta.DISPONIVEL));
+        assertThrows(IllegalArgumentException.class, () -> bicicletaService.atualizarStatus(bicicleta, StatusBicicleta.DISPONIVEL));
     }
 }

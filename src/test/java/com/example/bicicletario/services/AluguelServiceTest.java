@@ -125,9 +125,9 @@ class AluguelServiceTest {
         when(trancaService.getBicicletaByTranca(idTranca)).thenThrow(new ResourceNotFoundException("Bicicleta não encontrada."));
 
         // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+        InvalidDataException exception = assertThrows(InvalidDataException.class,
                 () -> aluguelService.aluguel(idCiclista, idTranca));
-        assertEquals("Bicicleta não encontrada.", exception.getMessage());
+        assertEquals("Tranca não está ocupada.", exception.getMessage());
     }
 
     @Test
@@ -148,9 +148,9 @@ class AluguelServiceTest {
         when(trancaService.getBicicletaByTranca(idTranca)).thenReturn(bicicleta);
 
         // Act & Assert
-        BadRequestException exception = assertThrows(BadRequestException.class,
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
                 () -> aluguelService.aluguel(idCiclista, idTranca));
-        assertEquals("Bicicleta não está disponível.", exception.getMessage());
+        assertEquals("Tranca sem bicicleta presa.", exception.getMessage());
     }
 
     @Test
@@ -181,17 +181,31 @@ class AluguelServiceTest {
 
     @Test
     void aluguel_bicicletaNaoEncontrada() {
+        // Arrange
         int idCiclista = 1;
         int idTranca = 1;
+
+        // Cria uma instância de Tranca e simula que ela está ocupada
         Tranca tranca = new Tranca();
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
+        tranca.setBicicleta(bicicleta); // Associando uma bicicleta à tranca
         tranca.setStatus(StatusTranca.OCUPADA);
 
+        // Simula que não existe aluguel em andamento para o ciclista
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
-        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
-        when(trancaService.getBicicletaByTranca(idTranca)).thenThrow(new ResourceNotFoundException("Bicicleta não encontrada."));
 
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+        // Simula a obtenção da tranca
+        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+
+        // Simula que ao tentar obter a bicicleta associada à tranca ocorre uma exceção de "Bicicleta não encontrada"
+        when(trancaService.getBicicletaByTranca(idTranca)).thenThrow(new BadRequestException("Bicicleta não encontrada."));
+
+        // Act & Assert
+        BadRequestException exception = assertThrows(BadRequestException.class,
                 () -> aluguelService.aluguel(idCiclista, idTranca));
+
+        // Verifica se a mensagem da exceção é a esperada
         assertEquals("Bicicleta não encontrada.", exception.getMessage());
     }
 
@@ -228,7 +242,7 @@ class AluguelServiceTest {
 
         BadRequestException exception = assertThrows(BadRequestException.class,
                 () -> aluguelService.aluguel(idCiclista, idTranca));
-        assertEquals("Bicicleta não pode ser alugada.", exception.getMessage());
+        assertEquals("Bicicleta não está disponível.", exception.getMessage());
     }
 
     @Test

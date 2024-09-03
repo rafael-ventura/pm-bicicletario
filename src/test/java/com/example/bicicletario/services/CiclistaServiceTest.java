@@ -157,6 +157,8 @@ class CiclistaServiceTest {
         ciclista.setEmail(novoCiclista.getEmail());
         ciclista.setNome(novoCiclista.getNome());
         ciclista.setCpf(novoCiclista.getCpf());
+        ciclista.setSenha("123456");
+        ciclista.setConfirmacaoSenha("123456");
 
         when(ciclistaRepository.findById(idCiclista)).thenReturn(Optional.of(ciclista));  // Retorna o ciclista existente
         when(ciclistaMapper.toEntity(novoCiclista)).thenReturn(ciclista);

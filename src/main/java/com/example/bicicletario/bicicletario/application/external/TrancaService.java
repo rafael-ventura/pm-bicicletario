@@ -23,7 +23,7 @@ public class TrancaService {
     private final ObjectMapper jacksonObjectMapper;
 
     @Value("${equipamento.base-url}")
-    private String baseUrl;
+    String baseUrl;
 
     public TrancaService(ObjectMapper jacksonObjectMapper) {
         this.jacksonObjectMapper = jacksonObjectMapper;
