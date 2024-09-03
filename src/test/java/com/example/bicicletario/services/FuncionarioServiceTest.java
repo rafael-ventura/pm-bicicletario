@@ -3,10 +3,10 @@ package com.example.bicicletario.services;
 import com.example.bicicletario.bicicletario.application.FuncionarioService;
 import com.example.bicicletario.bicicletario.domain.Funcionario;
 import com.example.bicicletario.bicicletario.domain.dto.NovoFuncionarioDTO;
+import com.example.bicicletario.bicicletario.domain.mapper.FuncionarioMapper;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.FuncionarioRepository;
-import com.example.bicicletario.bicicletario.domain.mapper.FuncionarioMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -115,6 +115,8 @@ class FuncionarioServiceTest {
         novoFuncionarioDTO.setNome("Nome");
         novoFuncionarioDTO.setCpf("12345678901");
         novoFuncionarioDTO.setEmail("email@example.com");
+        novoFuncionarioDTO.setFuncao("Admin");
+        novoFuncionarioDTO.setIdade(30);
         novoFuncionarioDTO.setSenha("senha123");
         novoFuncionarioDTO.setConfirmacaoSenha("senha1234"); // Senha diferente
 

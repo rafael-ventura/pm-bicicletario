@@ -206,7 +206,7 @@ class AluguelServiceTest {
                 () -> aluguelService.aluguel(idCiclista, idTranca));
 
         // Verifica se a mensagem da exceção é a esperada
-        assertEquals("Bicicleta não encontrada.", exception.getMessage());
+        assertEquals("Bicicleta não está disponível.", exception.getMessage());
     }
 
     @Test

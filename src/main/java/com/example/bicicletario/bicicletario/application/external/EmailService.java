@@ -8,7 +8,6 @@ import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
 import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,11 +19,14 @@ import org.springframework.web.client.RestTemplate;
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
+    private final String baseUrl = "http://ec2-3-91-187-43.compute-1.amazonaws.com:8060/api"; // URL definida diretamente no serviço
 
-    @Value("${externo.base-url}")
-    private String baseUrl;
+    // Injeção via construtor para facilitar o mocking nos testes
+    public EmailService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     public boolean enviarEmail(EmailDTO email) {
         String url = baseUrl + "/enviarEmail";
@@ -88,7 +90,7 @@ public class EmailService {
         enviarEmail(email);
     }
 
-    //email de devolucao
+    // Email de devolução
     public void enviarEmailDevolucao(int idCiclista, Aluguel aluguel, Bicicleta bicicleta, Tranca tranca, double valorExtra, String cartaoUsado, String statusPagamento, String dataHoraCobranca) {
         EmailDTO email = new EmailDTO();
         email.setEmail("ciclista" + idCiclista + "@bicicletario.com");
@@ -122,7 +124,7 @@ public class EmailService {
         enviarEmail(email);
     }
 
-    // TODO - Entender se so devemos enviar email de confirmacao de dados UC01. Ver se nao eh o Matera que tem que alterar o Status do Ciclista pra ativo e nos pra AguardandoConfirmacao apos mandar o Email.
     public void enviarEmailConfirmacao(Ciclista ciclista) {
+        // Implementação pendente
     }
 }
