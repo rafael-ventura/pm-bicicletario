@@ -268,4 +268,45 @@ class TotemServiceTest {
 
         assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
     }
+
+    @Test
+    void cadastrarNovoTotem_DadosFaltantes_DeveLancarExcecao() {
+        NovoTotemDTO totemDTO = new NovoTotemDTO(); // Faltando campos obrigatórios
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            totemService.cadastrarNovoTotem(totemDTO);
+        });
+
+        assertEquals(Constantes.DADOS_INVALIDOS, exception.getMessage());
+    }
+
+    @Test
+    void listarTrancasPorTotem_TotemNaoExistente_DeveLancarExcecao() {
+        when(totemRepository.findById(1)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            totemService.listarTrancasPorTotem(1);
+        });
+
+        assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
+    }
+
+    @Test
+    void listarBicicletasPorTotem_TrancasSemBicicletas_DeveLancarExcecao() {
+        Totem totem = new Totem();
+        totem.setId(1);
+        totem.setLocalizacao("Localizacao");
+
+        when(totemRepository.existsById(1)).thenReturn(true);
+        when(totemRepository.get(1)).thenReturn(totem);
+        when(trancaRepository.findTrancaByLocalizacao("Localizacao")).thenReturn(Collections.emptyList());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            totemService.listarBicicletasPorTotem(1);
+        });
+
+        assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
+    }
+
+
 }

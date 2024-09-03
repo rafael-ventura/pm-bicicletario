@@ -343,5 +343,48 @@ class TrancaServiceTest {
         assertEquals(Constantes.DADOS_INVALIDOS, exception.getMessage());
     }
 
+    @Test
+    void incluirTrancaNaRede_TrancaOcupada_DeveLancarExcecao() {
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
+        dto.setIdTranca(1);
+
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.OCUPADA);
+
+        when(trancaRepository.findById(dto.getIdTranca())).thenReturn(Optional.of(tranca));
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            trancaService.incluirTrancaNaRede(dto);
+        });
+
+        assertEquals(Constantes.TRANCA_NAO_DISPONIVEL, exception.getMessage());
+    }
+
+    @Test
+    void alterarStatusTranca_Trancar_DeveAtualizarStatusParaOcupada() {
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.LIVRE);
+
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
+
+        trancaService.alterarStatusTranca(1, "trancar");
+
+        assertEquals(StatusTranca.OCUPADA, tranca.getStatus());
+        verify(trancaRepository, times(1)).save(tranca);
+    }
+
+    @Test
+    void alterarStatusTranca_StatusInvalido_DeveLancarExcecao() {
+        Tranca tranca = new Tranca();
+
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            trancaService.alterarStatusTranca(1, "invalido");
+        });
+
+        assertEquals(Constantes.DADOS_INVALIDOS, exception.getMessage());
+    }
+
 
 }

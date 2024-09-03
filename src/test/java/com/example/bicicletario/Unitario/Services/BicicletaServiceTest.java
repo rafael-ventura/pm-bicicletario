@@ -307,6 +307,7 @@ class BicicletaServiceTest {
 
         assertEquals(Constantes.STATUS_DA_BICICLETA_INVALIDO, exception.getMessage());
     }
+
     @Test
     void retirarBicicletaDaRede() {
         RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
@@ -577,6 +578,128 @@ class BicicletaServiceTest {
         });
 
         assertEquals(Constantes.NAO_ENCONTRADO, exception.getMessage());
+    }
+
+    @Test
+    void integrarBicicletaNaRede_StatusInvalido() {
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(1);
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.APOSENTADA);
+
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(new Tranca())); // Mock a valid Tranca
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            bicicletaService.integrarBicicletaNaRede(dto);
+        });
+
+        assertEquals(Constantes.STATUS_DA_BICICLETA_INVALIDO, exception.getMessage());
+    }
+
+
+    @Test
+    void integrarBicicletaNaRede_FuncionarioDiferenteEmReparo() {
+        IntegrarBicicletaNaRedeDTO dto = new IntegrarBicicletaNaRedeDTO();
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setIdFuncionario(2); // Funcionário diferente
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
+        bicicleta.setIdFuncionarioUltimaOperacao(1); // Simula que o funcionário anterior era diferente
+
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
+        Tranca tranca = new Tranca();
+        tranca.setStatus(StatusTranca.LIVRE);
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(tranca));
+        when(funcionarioService.isFuncionarioValido(dto.getIdFuncionario())).thenReturn(true);
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            bicicletaService.integrarBicicletaNaRede(dto);
+        });
+
+        assertEquals(Constantes.FUNCIONARIO_IGUAL, exception.getMessage());
+    }
+
+    @Test
+    void retirarBicicletaDaRede_StatusAcaoReparadorInvalido() {
+        RetirarBicicletaDaRedeDTO dto = new RetirarBicicletaDaRedeDTO();
+        dto.setIdBicicleta(1);
+        dto.setIdTranca(1);
+        dto.setStatusAcaoReparador(null); // Status inválido
+
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setStatusBicicleta(StatusBicicleta.REPARO_SOLICITADO);
+
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
+        when(trancaRepository.findById(1)).thenReturn(Optional.of(new Tranca())); // Mock a valid Tranca
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            bicicletaService.retirarBicicletaDaRede(dto);
+        });
+
+        assertEquals(Constantes.TRANCA_NAO_OCUPADA, exception.getMessage());
+    }
+
+
+    @Test
+    void atualizarBicicleta_CamposAtualizadosCorretamente() {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setMarca("marca antiga");
+        bicicleta.setModelo("modelo antigo");
+        bicicleta.setAno("2020");
+        bicicleta.setNumero(1);
+
+        NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
+        bicicletaDTO.setMarca("nova marca");
+        bicicletaDTO.setModelo("novo modelo");
+        bicicletaDTO.setAno("2022");
+        bicicletaDTO.setNumero(2);
+
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Bicicleta result = bicicletaService.atualizarBicicleta(1, bicicletaDTO);
+
+        assertEquals("nova marca", result.getMarca());
+        assertEquals("novo modelo", result.getModelo());
+        assertEquals("2022", result.getAno());
+        assertEquals(2, result.getNumero());
+    }
+
+    @Test
+    void atualizarBicicleta_ComCamposFaltantes_DeveLancarExcecao() {
+        // Arrange
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setMarca("marca antiga");
+        bicicleta.setModelo("modelo antigo");
+        bicicleta.setAno("2020");
+        bicicleta.setNumero(1);
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL); // Status atual
+
+        NovaBicicletaDTO bicicletaDTO = new NovaBicicletaDTO();
+        bicicletaDTO.setMarca("marca nova");
+        bicicletaDTO.setModelo("modelo novo");
+        bicicletaDTO.setAno("2021");
+        bicicletaDTO.setNumero(2);
+        // Note que o status não é incluído no DTO
+
+        when(bicicletaRepository.findById(1)).thenReturn(Optional.of(bicicleta));
+        when(bicicletaRepository.save(any(Bicicleta.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        Bicicleta bicicletaAtualizada = bicicletaService.atualizarBicicleta(1, bicicletaDTO);
+
+        // Assert
+        assertEquals("marca nova", bicicletaAtualizada.getMarca());
+        assertEquals("modelo novo", bicicletaAtualizada.getModelo());
+        assertEquals("2021", bicicletaAtualizada.getAno());
+        assertEquals(2, bicicletaAtualizada.getNumero());
+        assertEquals(StatusBicicleta.DISPONIVEL, bicicletaAtualizada.getStatusBicicleta()); // Certifique-se de que o status não mudou
     }
 
 }

@@ -6,11 +6,7 @@ import com.example.bicicletario.bicicletario.domain.dto.EmailDto;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Funcionario;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -18,13 +14,14 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class EmailService {
     private final FuncionarioService funcionarioService;
+    private final RestTemplate restTemplate;
 
-    public EmailService(FuncionarioService funcionarioService) {
+    public EmailService(FuncionarioService funcionarioService, RestTemplate restTemplate) {
         this.funcionarioService = funcionarioService;
+        this.restTemplate = restTemplate;
     }
 
     public void enviarEmail(String email, String assunto, String mensagem) {
-        RestTemplate restTemplate = new RestTemplate();
         String baseUrl = "http://ec2-3-91-187-43.compute-1.amazonaws.com:8060/api";
         String url = baseUrl + "/enviarEmail";
 
@@ -41,13 +38,10 @@ public class EmailService {
                 throw new BadRequestException("Erro ao enviar e-mail");
             }
         } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new ResourceNotFoundException("E-mail não encontrado");
-            } else if (e.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
-                throw new BadRequestException("Formato de e-mail inválido");
-            } else {
-                throw new BadRequestException("Erro ao enviar e-mail: " + e.getMessage());
+            if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                throw new BadRequestException("Erro ao enviar e-mail");
             }
+            throw e;
         }
     }
 
