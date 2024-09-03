@@ -25,6 +25,7 @@ public class AdministradoraCCService {
             cobrancaData.put("valor", valor);
 
             // Simulação de verificação
+            // #TODO fazer alguma coisa aqui sei lá integrar com alguem
             if (cartaoDeCredito.getNumero() == null || cartaoDeCredito.getValidade() == null ||
                     cartaoDeCredito.getCvv() == null || cartaoDeCredito.getNomeTitular() == null ||
                     valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {

@@ -12,6 +12,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 
@@ -21,6 +26,8 @@ import static org.mockito.Mockito.*;
 
 class CobrancaServiceTest {
 
+    @Mock
+    private RestTemplate restTemplate;
     @InjectMocks
     private CobrancaService cobrancaService;
 
@@ -50,8 +57,18 @@ class CobrancaServiceTest {
         novaCobranca.setCiclista(1);
         novaCobranca.setValor(BigDecimal.TEN);
 
-        when(administradoraCCService.enviarParaAdministradoraCC(any(CartaoDeCredito.class), any(BigDecimal.class))).thenReturn(true);
-        when(cobrancaRepository.save(any(Cobranca.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        CartaoDeCredito cartaoMock = new CartaoDeCredito(); // Simulação do objeto CartaoDeCredito retornado pela API
+        ResponseEntity<CartaoDeCredito> responseEntity = new ResponseEntity<>(cartaoMock, HttpStatus.OK);
+
+        // Configuração do mock para RestTemplate
+        when(restTemplate.exchange(anyString(), any(HttpMethod.class), any(HttpEntity.class), eq(CartaoDeCredito.class)))
+                .thenReturn(responseEntity);
+
+        when(administradoraCCService.enviarParaAdministradoraCC(any(CartaoDeCredito.class), any(BigDecimal.class)))
+                .thenReturn(true);
+
+        when(cobrancaRepository.save(any(Cobranca.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         Cobranca result = cobrancaService.realizarCobranca(novaCobranca);
 
@@ -60,14 +77,25 @@ class CobrancaServiceTest {
         verify(cobrancaRepository, times(1)).save(any(Cobranca.class));
     }
 
+
     @Test
     void realizarCobrancaComFalha() {
         NovoCobrancaDTO novaCobranca = new NovoCobrancaDTO();
         novaCobranca.setCiclista(1);
         novaCobranca.setValor(BigDecimal.TEN);
 
-        when(administradoraCCService.enviarParaAdministradoraCC(any(CartaoDeCredito.class), any(BigDecimal.class))).thenReturn(false);
-        when(cobrancaRepository.save(any(Cobranca.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        CartaoDeCredito cartaoMock = new CartaoDeCredito(); // Simulação do objeto CartaoDeCredito retornado pela API
+        ResponseEntity<CartaoDeCredito> responseEntity = new ResponseEntity<>(cartaoMock, HttpStatus.OK);
+
+        // Configuração do mock para RestTemplate
+        when(restTemplate.exchange(anyString(), any(HttpMethod.class), any(HttpEntity.class), eq(CartaoDeCredito.class)))
+                .thenReturn(responseEntity);
+
+        when(administradoraCCService.enviarParaAdministradoraCC(any(CartaoDeCredito.class), any(BigDecimal.class)))
+                .thenReturn(false);
+
+        when(cobrancaRepository.save(any(Cobranca.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         Cobranca result = cobrancaService.realizarCobranca(novaCobranca);
 

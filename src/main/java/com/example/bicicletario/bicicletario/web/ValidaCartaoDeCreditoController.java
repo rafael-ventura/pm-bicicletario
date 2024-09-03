@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/validaCartaoDeCredito")
+@RequestMapping("/api")
 public class ValidaCartaoDeCreditoController {
 
     private static final Logger logger = LoggerFactory.getLogger(ValidaCartaoDeCreditoController.class);
@@ -23,7 +23,7 @@ public class ValidaCartaoDeCreditoController {
     }
 
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/validaCartaoDeCredito", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> validarCartaoDeCredito(@RequestBody NovoCartaoDeCreditoDTO cartaoDeCredito) {
         logger.info("Validando cartão de credito");
         boolean isValid = validaCartaoDeCreditoService.validarCartao(cartaoDeCredito);

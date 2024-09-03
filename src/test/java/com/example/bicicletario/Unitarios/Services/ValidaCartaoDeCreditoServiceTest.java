@@ -19,10 +19,10 @@ class ValidaCartaoDeCreditoServiceTest {
     @Test
     void validarCartaoComSucesso() {
         NovoCartaoDeCreditoDTO cartaoDeCredito = new NovoCartaoDeCreditoDTO();
-        cartaoDeCredito.setNumero("5269 2079 9840 6777");
-        cartaoDeCredito.setValidade("23/05/2025");
-        cartaoDeCredito.setCvv("707");
-        cartaoDeCredito.setNomeTitular("JOAQUIM MAÇOMBO LEAO");
+        cartaoDeCredito.setNumero("4012001037141112"); // Número de cartão de crédito de teste
+        cartaoDeCredito.setValidade("2025-05"); // Validade no formato yyyy-MM
+        cartaoDeCredito.setCvv("707"); // CVV válido
+        cartaoDeCredito.setNomeTitular("JOAQUIM MAÇOMBO LEAO"); // Nome do titular
 
         boolean resultado = validaCartaoDeCreditoService.validarCartao(cartaoDeCredito);
         assertTrue(resultado);
