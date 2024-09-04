@@ -9,11 +9,11 @@ public class Bicicleta {
     private String modelo;
     private String ano;
     private int numero;
-    private StatusBicicleta status;
-//    private String dataInsercaoTranca;
-//    private String dataRemocaoTranca;
-//    private Tranca tranca;
-//    private Long idFuncionarioUltimaOperacao;
+    private StatusBicicleta statusBicicleta;
+    private String dataInsercaoTranca;
+    private String dataRemocaoTranca;
+    private Tranca tranca;
+    private Long idFuncionarioUltimaOperacao;
 
     // Getters e Setters
 
@@ -57,11 +57,43 @@ public class Bicicleta {
         this.numero = numero;
     }
 
-    public StatusBicicleta getStatus() {
-        return status;
+    public StatusBicicleta getStatusBicicleta() {
+        return statusBicicleta;
     }
 
-    public void setStatus(StatusBicicleta status) {
-        this.status = status;
+    public void setStatusBicicleta(StatusBicicleta statusBicicleta) {
+        this.statusBicicleta = statusBicicleta;
+    }
+
+    public String getDataInsercaoTranca() {
+        return dataInsercaoTranca;
+    }
+
+    public void setDataInsercaoTranca(String dataInsercaoTranca) {
+        this.dataInsercaoTranca = dataInsercaoTranca;
+    }
+
+    public String getDataRemocaoTranca() {
+        return dataRemocaoTranca;
+    }
+
+    public void setDataRemocaoTranca(String dataRemocaoTranca) {
+        this.dataRemocaoTranca = dataRemocaoTranca;
+    }
+
+    public Tranca getTranca() {
+        return tranca;
+    }
+
+    public void setTranca(Tranca tranca) {
+        this.tranca = tranca;
+    }
+
+    public Long getIdFuncionarioUltimaOperacao() {
+        return idFuncionarioUltimaOperacao;
+    }
+
+    public void setIdFuncionarioUltimaOperacao(Long idFuncionarioUltimaOperacao) {
+        this.idFuncionarioUltimaOperacao = idFuncionarioUltimaOperacao;
     }
 }

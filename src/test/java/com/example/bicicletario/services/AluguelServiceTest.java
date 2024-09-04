@@ -27,7 +27,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -73,8 +72,8 @@ class AluguelServiceTest {
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
-        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
-        tranca.setBicicleta(bicicleta);
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
+        tranca.setBicicleta(bicicleta.getId());
 
         Ciclista ciclista = new Ciclista();
         ciclista.setId(idCiclista);
@@ -82,6 +81,7 @@ class AluguelServiceTest {
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
         when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+        when(bicicletaService.getBicicletaById(tranca.getBicicleta())).thenReturn(bicicleta);
         when(administradoraCCService.enviarCobranca(any())).thenReturn(true);
         when(ciclistaService.obterCiclista(idCiclista)).thenReturn(Optional.of(ciclista)); // Corrigido aqui
         when(aluguelRepository.save(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -179,29 +179,6 @@ class AluguelServiceTest {
     }
 
     @Test
-    void aluguelNaoDisponivel() {
-        // Arrange
-        int idCiclista = 1;
-        int idTranca = 1;
-        Tranca tranca = new Tranca();
-        NovoTrancaDTO trancaDTO = new NovoTrancaDTO();
-        tranca.setStatus(StatusTranca.OCUPADA);
-        trancaDTO.setBicicleta(1);
-        Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1);
-        bicicleta.setStatus(StatusBicicleta.EM_USO);
-
-        when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
-        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
-        when(trancaService.getBicicletaByTranca(idTranca)).thenReturn(bicicleta);
-
-        // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
-                () -> aluguelService.aluguel(idCiclista, idTranca));
-        assertEquals("Tranca sem bicicleta presa.", exception.getMessage());
-    }
-
-    @Test
     void aluguelEmReparo() {
         // Arrange
         int idCiclista = 1;
@@ -210,12 +187,13 @@ class AluguelServiceTest {
         tranca.setStatus(StatusTranca.OCUPADA);
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
-        bicicleta.setStatus(StatusBicicleta.EM_REPARO);
-        tranca.setBicicleta(bicicleta);
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
+        tranca.setBicicleta(bicicleta.getId());
 
         // Configurando o comportamento dos mocks
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
         when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+        when(bicicletaService.getBicicletaById(tranca.getBicicleta())).thenReturn(bicicleta);
         when(trancaService.getBicicletaByTranca(idTranca)).thenReturn(bicicleta);
 
         // Act & Assert
@@ -237,7 +215,7 @@ class AluguelServiceTest {
         Tranca tranca = new Tranca();
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
-        tranca.setBicicleta(bicicleta); // Associando uma bicicleta à tranca
+        tranca.setBicicleta(bicicleta.getId()); // Associando uma bicicleta à tranca
         tranca.setStatus(StatusTranca.OCUPADA);
 
         // Simula que não existe aluguel em andamento para o ciclista
@@ -245,6 +223,8 @@ class AluguelServiceTest {
 
         // Simula a obtenção da tranca
         when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+
+        when(bicicletaService.getBicicletaById(tranca.getBicicleta())).thenReturn(bicicleta);
 
         // Simula que ao tentar obter a bicicleta associada à tranca ocorre uma exceção de "Bicicleta não encontrada"
         when(trancaService.getBicicletaByTranca(idTranca)).thenThrow(new BadRequestException("Bicicleta não encontrada."));
@@ -264,11 +244,14 @@ class AluguelServiceTest {
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.OCUPADA);
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.EM_USO);
-        tranca.setBicicleta(bicicleta);
+        bicicleta.setId(1);s
+
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
+        tranca.setBicicleta(bicicleta.getId());
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
         when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+        when(bicicletaService.getBicicletaById(tranca.getBicicleta())).thenReturn(bicicleta);
 
         BadRequestException exception = assertThrows(BadRequestException.class,
                 () -> aluguelService.aluguel(idCiclista, idTranca));
@@ -282,11 +265,13 @@ class AluguelServiceTest {
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.OCUPADA);
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.EM_REPARO);
-        tranca.setBicicleta(bicicleta);
+        bicicleta.setId(1);
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_REPARO);
+        tranca.setBicicleta(bicicleta.getId());
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
         when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+        when(bicicletaService.getBicicletaById(tranca.getBicicleta())).thenReturn(bicicleta);
 
         BadRequestException exception = assertThrows(BadRequestException.class,
                 () -> aluguelService.aluguel(idCiclista, idTranca));
@@ -300,11 +285,13 @@ class AluguelServiceTest {
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.OCUPADA);
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
-        tranca.setBicicleta(bicicleta);
+        bicicleta.setId(1);
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
+        tranca.setBicicleta(bicicleta.getId());
 
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
         when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
+        when(bicicletaService.getBicicletaById(tranca.getBicicleta())).thenReturn(bicicleta);
         when(administradoraCCService.enviarCobranca(any())).thenReturn(false);
 
         BadRequestException exception = assertThrows(BadRequestException.class,

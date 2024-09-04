@@ -1,5 +1,6 @@
 package com.example.bicicletario.bicicletario.application;
 
+import com.example.bicicletario.bicicletario.application.external.BicicletaService;
 import com.example.bicicletario.bicicletario.application.external.EmailService;
 import com.example.bicicletario.bicicletario.application.external.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
@@ -29,16 +30,18 @@ public class AluguelService {
     private final AdministradoraCCService administradoraCCService;
     private final EmailService emailService;
     private final CiclistaService ciclistaService;
+    private final BicicletaService bicicletaService;
 
     public AluguelService(AluguelRepository aluguelRepository,
                           TrancaService trancaService,
                           AdministradoraCCService administradoraCCService,
-                          EmailService emailService, CiclistaService ciclistaService) {
+                          EmailService emailService, CiclistaService ciclistaService, BicicletaService bicicletaService) {
         this.aluguelRepository = aluguelRepository;
         this.trancaService = trancaService;
         this.administradoraCCService = administradoraCCService;
         this.emailService = emailService;
         this.ciclistaService = ciclistaService;
+        this.bicicletaService = bicicletaService;
     }
 
     public Aluguel aluguel(int idCiclista, int idTranca) {
@@ -64,14 +67,14 @@ public class AluguelService {
             log.error("Tranca sem bicicleta presa. ID Tranca: {}", idTranca);
             throw new ResourceNotFoundException("Tranca sem bicicleta presa.");
         }
-        Bicicleta bicicleta = tranca.getBicicleta();
-        if (!StatusBicicleta.DISPONIVEL.equals(bicicleta.getStatus())) {
+        Bicicleta bicicleta = bicicletaService.getBicicletaById(tranca.getBicicleta());
+        if (!StatusBicicleta.DISPONIVEL.equals(bicicleta.getStatusBicicleta())) {
             log.warn("Bicicleta com status inválido. ID Bicicleta: {}", bicicleta.getId());
             throw new BadRequestException("Bicicleta não está disponível.");
         }
 
         // Verifica se a bicicleta não está em reparo
-        if (StatusBicicleta.EM_REPARO.equals(bicicleta.getStatus())) {
+        if (StatusBicicleta.EM_REPARO.equals(bicicleta.getStatusBicicleta())) {
             log.warn("Bicicleta em reparo. ID Bicicleta: {}", bicicleta.getId());
             throw new BadRequestException("Bicicleta não pode ser alugada.");
         }

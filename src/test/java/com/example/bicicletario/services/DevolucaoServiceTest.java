@@ -64,7 +64,7 @@ class DevolucaoServiceTest {
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
-        bicicleta.setStatus(StatusBicicleta.EM_USO);
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         Tranca tranca = new Tranca();
         tranca.setId(1);
@@ -133,7 +133,7 @@ class DevolucaoServiceTest {
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
-        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+        bicicleta.setStatusBicicleta(StatusBicicleta.DISPONIVEL);
 
         when(bicicletaService.getBicicletaById(devolucaoDTO.getIdBicicleta())).thenReturn(bicicleta);
 
@@ -158,7 +158,7 @@ class DevolucaoServiceTest {
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
-        bicicleta.setStatus(StatusBicicleta.EM_USO);
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         Tranca tranca = new Tranca();
         tranca.setId(1);
@@ -182,7 +182,7 @@ class DevolucaoServiceTest {
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
-        bicicleta.setStatus(StatusBicicleta.EM_USO);
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         Tranca tranca = new Tranca();
         tranca.setId(1);
@@ -211,7 +211,7 @@ class DevolucaoServiceTest {
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
-        bicicleta.setStatus(StatusBicicleta.EM_USO);
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
 
         Tranca tranca = new Tranca();
         tranca.setId(1);

@@ -51,8 +51,8 @@ public class DevolucaoService {
 
         // 1. Validação da bicicleta
         Bicicleta bicicleta = bicicletaService.getBicicletaById(bicicletaId);
-        bicicleta.setStatus(StatusBicicleta.EM_USO); // Simula a bicicleta sendo usada
-        if (!StatusBicicleta.EM_USO.equals(bicicleta.getStatus())) {
+        bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO); // Simula a bicicleta sendo usada
+        if (!StatusBicicleta.EM_USO.equals(bicicleta.getStatusBicicleta())) {
             throw new InvalidDataException("Bicicleta não está em uso.");
         }
 
