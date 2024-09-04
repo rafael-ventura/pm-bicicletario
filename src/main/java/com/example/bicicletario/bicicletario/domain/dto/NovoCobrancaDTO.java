@@ -4,9 +4,6 @@ public class NovoCobrancaDTO {
     private double valor;
     private int ciclista;
 
-    public NovoCobrancaDTO() {
-    }
-
     public double getValor() {
         return valor;
     }

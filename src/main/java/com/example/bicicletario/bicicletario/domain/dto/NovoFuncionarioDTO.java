@@ -9,9 +9,6 @@ public class NovoFuncionarioDTO {
     private Integer idade;
     private String funcao;
 
-    // Construtor vazio necessário para deserialização JSON
-    public NovoFuncionarioDTO() {}
-
     // Getters e Setters
     public String getNome() {
         return nome;
