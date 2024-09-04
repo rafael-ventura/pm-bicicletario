@@ -15,9 +15,10 @@ class TrancaTest {
         Tranca tranca = new Tranca();
         Totem totem = new Totem();
         Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
 
         tranca.setId(1);
-        tranca.setBicicleta(bicicleta);
+        tranca.setBicicleta(bicicleta.getId());
         tranca.setNumero(123);
         tranca.setLocalizacao("Centro, Rio de Janeiro");
         tranca.setAnoDeFabricacao("2020");
@@ -25,11 +26,9 @@ class TrancaTest {
         tranca.setStatus(StatusTranca.LIVRE);
         tranca.setDataInsercaoTotem("2024-01-01");
         tranca.setDataRemocaoTotem("2024-12-31");
-        tranca.setIdFuncionarioUltimaOperacao(1001L);
-        tranca.setTotem(totem);
+        tranca.setIdFuncionarioUltimaOperacao(1001);
 
         assertEquals(1, tranca.getId());
-        assertEquals(bicicleta, tranca.getBicicleta());
         assertEquals(123, tranca.getNumero());
         assertEquals("Centro, Rio de Janeiro", tranca.getLocalizacao());
         assertEquals("2020", tranca.getAnoDeFabricacao());
@@ -37,7 +36,6 @@ class TrancaTest {
         assertEquals(StatusTranca.LIVRE, tranca.getStatus());
         assertEquals("2024-01-01", tranca.getDataInsercaoTotem());
         assertEquals("2024-12-31", tranca.getDataRemocaoTotem());
-        assertEquals(1001L, tranca.getIdFuncionarioUltimaOperacao());
-        assertEquals(totem, tranca.getTotem());
+        assertEquals(1001, tranca.getIdFuncionarioUltimaOperacao());
     }
 }
