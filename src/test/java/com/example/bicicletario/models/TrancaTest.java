@@ -18,7 +18,7 @@ class TrancaTest {
         bicicleta.setId(1);
 
         tranca.setId(1);
-        tranca.setBicicleta(bicicleta.getId());
+        tranca.setBicicleta(bicicleta);
         tranca.setNumero(123);
         tranca.setLocalizacao("Centro, Rio de Janeiro");
         tranca.setAnoDeFabricacao("2020");

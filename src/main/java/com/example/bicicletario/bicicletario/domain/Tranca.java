@@ -5,7 +5,7 @@ import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 public class Tranca {
 
     private Integer id;
-    private Integer bicicleta;
+    private Bicicleta bicicleta;
     private Integer numero;
     private String localizacao;
     private String anoDeFabricacao;
@@ -26,11 +26,11 @@ public class Tranca {
         this.id = id;
     }
 
-    public Integer getBicicleta() {
+    public Bicicleta getBicicleta() {
         return bicicleta;
     }
 
-    public void setBicicleta(Integer bicicleta) {
+    public void setBicicleta(Bicicleta bicicleta) {
         this.bicicleta = bicicleta;
     }
 
