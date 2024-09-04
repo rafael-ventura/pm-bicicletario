@@ -6,6 +6,7 @@ import com.example.bicicletario.bicicletario.domain.CartaoDeCredito;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCartaoDeCreditoDTO;
+import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.CartaoDeCreditoRepository;
@@ -14,10 +15,6 @@ import com.example.bicicletario.bicicletario.domain.mapper.CartaoDeCreditoMapper
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 @Service
 public class CartaoDeCreditoService {
@@ -75,15 +72,6 @@ public class CartaoDeCreditoService {
         administradoraCCService.validarCartao(cartaoDeCreditoDTO);
     }
 
-    private boolean isValidDateFormat(String dateStr) {
-        try {
-            LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM"));
-            return true;
-        } catch (DateTimeParseException e) {
-            return false;
-        }
-    }
-
     public void enviarEmailAlteracaoDeDados(int idCiclista) {
         Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(() -> new ResourceNotFoundException("Ciclista não encontrado com o ID:"));
         logger.info("E-mail de confirmação enviado para: {}", ciclista.getEmail());
@@ -95,7 +83,7 @@ public class CartaoDeCreditoService {
         boolean emailEnviado = emailService.enviarEmail(email);
         if (!emailEnviado) {
             logger.error("Falha ao enviar email para {}", ciclista.getEmail());
-            throw new RuntimeException("Erro ao enviar e-mail de confirmação.");
+            throw new BadRequestException("Falha ao enviar email.");
         }
     }
 

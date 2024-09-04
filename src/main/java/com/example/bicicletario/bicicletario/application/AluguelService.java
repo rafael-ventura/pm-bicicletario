@@ -13,13 +13,11 @@ import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
-import com.example.bicicletario.bicicletario.application.external.BicicletaService;
 import com.example.bicicletario.bicicletario.application.external.AdministradoraCCService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class AluguelService {
@@ -27,19 +25,16 @@ public class AluguelService {
     private static final Logger log = LoggerFactory.getLogger(AluguelService.class);
 
     private final AluguelRepository aluguelRepository;
-    private final BicicletaService bicicletaService;
     private final TrancaService trancaService;
     private final AdministradoraCCService administradoraCCService;
     private final EmailService emailService;
     private final CiclistaService ciclistaService;
 
     public AluguelService(AluguelRepository aluguelRepository,
-                          BicicletaService bicicletaService,
                           TrancaService trancaService,
                           AdministradoraCCService administradoraCCService,
                           EmailService emailService, CiclistaService ciclistaService) {
         this.aluguelRepository = aluguelRepository;
-        this.bicicletaService = bicicletaService;
         this.trancaService = trancaService;
         this.administradoraCCService = administradoraCCService;
         this.emailService = emailService;

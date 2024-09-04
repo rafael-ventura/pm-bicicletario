@@ -36,7 +36,7 @@ public class TrancaService {
     public Tranca trancarTranca(int trancaId, int bicicletaId) {
         try {
             // Simulação da lógica de trancar a tranca
-            String url = baseUrl + "/tranca/" + trancaId + "/trancar";
+            String url = baseUrl + TRANCA_BASE_URL + trancaId + "/trancar";
             HttpEntity<Integer> request = new HttpEntity<>(bicicletaId);
             ResponseEntity<Tranca> response = restTemplate.postForEntity(url, request, Tranca.class);
             return response.getBody();

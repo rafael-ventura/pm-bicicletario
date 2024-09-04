@@ -20,7 +20,6 @@ import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -92,10 +91,9 @@ public class CiclistaService {
                 throw new InvalidDataException("CPF é obrigatório para brasileiros.");
             }
             validarCPF(ciclista.getCpf());
-        } else if (ciclista.getNacionalidade() == Nacionalidade.ESTRANGEIRO) {
-            if (ciclista.getPassaporte() == null) {
-                throw new InvalidDataException("Passaporte é obrigatório para estrangeiros.");
-            }
+        }
+        if (ciclista.getNacionalidade() == Nacionalidade.ESTRANGEIRO && ciclista.getPassaporte() == null) {
+            throw new InvalidDataException("Passaporte é obrigatório para estrangeiros.");
         }
     }
 
