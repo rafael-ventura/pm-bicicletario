@@ -26,7 +26,7 @@ class RegistroDevolucaoRepositoryTest {
         RegistroDevolucao savedRegistro = registroDevolucaoRepository.save(registro);
 
         // Assert
-        assertNotNull(savedRegistro.getId());
+        assertNotNull(savedRegistro);
         assertEquals(1, savedRegistro.getId()); // Como é o primeiro, o ID deve ser 1
     }
 
@@ -40,7 +40,7 @@ class RegistroDevolucaoRepositoryTest {
         RegistroDevolucao savedRegistro = registroDevolucaoRepository.save(registro);
 
         // Assert
-        assertNotNull(savedRegistro.getId());
+        assertNotNull(savedRegistro);
         assertEquals(1, savedRegistro.getId()); // O ID deve permanecer o mesmo
     }
 
@@ -55,6 +55,8 @@ class RegistroDevolucaoRepositoryTest {
         RegistroDevolucao savedRegistro2 = registroDevolucaoRepository.save(registro2);
 
         // Assert
+        assertNotNull(savedRegistro1);
+        assertNotNull(savedRegistro2);
         assertEquals(1, savedRegistro1.getId());
         assertEquals(2, savedRegistro2.getId()); // O segundo registro deve ter ID 2
     }
@@ -70,6 +72,7 @@ class RegistroDevolucaoRepositoryTest {
         RegistroDevolucao updatedRegistro = registroDevolucaoRepository.save(savedRegistro);
 
         // Assert
+        assertNotNull(updatedRegistro);
         assertEquals(savedRegistro.getId(), updatedRegistro.getId());
         assertEquals(1, updatedRegistro.getId()); // O ID deve permanecer o mesmo
     }

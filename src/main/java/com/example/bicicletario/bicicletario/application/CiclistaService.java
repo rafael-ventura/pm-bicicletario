@@ -35,6 +35,7 @@ public class CiclistaService {
     private final CartaoDeCreditoService cartaoDeCreditoService;
     private final EmailService emailService;
     private final PassaporteMapper passaporteMapper;
+    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@(.+)$";
 
     public CiclistaService(CiclistaRepository ciclistaRepository, CiclistaMapper ciclistaMapper, AluguelRepository aluguelRepository, BicicletaService bicicletaService, CartaoDeCreditoService cartaoDeCreditoService, EmailService emailService, PassaporteMapper passaporteMapper) {
         this.ciclistaRepository = ciclistaRepository;
@@ -83,8 +84,7 @@ public class CiclistaService {
     }
 
     private void validarCiclistaParaAlterar(Ciclista ciclista) {
-        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-        if (ciclista.getEmail() == null || !ciclista.getEmail().matches(emailRegex)) {
+        if (ciclista.getEmail() == null || !ciclista.getEmail().matches(EMAIL_REGEX)) {
                 throw new InvalidDataException("Email inválido.");
         }
 
@@ -150,8 +150,7 @@ public class CiclistaService {
     }
 
     public boolean existeEmail(String email) {
-        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-        if (email == null || !email.matches(emailRegex)) {
+        if (email == null || !email.matches(EMAIL_REGEX)) {
             throw new InvalidDataException("Dados inválidos.");
         }
         return ciclistaRepository.existsByEmail(email);
@@ -203,8 +202,7 @@ public class CiclistaService {
     }
 
     private void validarEmail(String email) {
-        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-        if (email == null || !email.matches(emailRegex)) {
+        if (email == null || !email.matches(EMAIL_REGEX)) {
             throw new InvalidDataException("Email inválido.");
         }
         if (ciclistaRepository.existsByEmail(email)) {
