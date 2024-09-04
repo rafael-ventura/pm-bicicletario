@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -93,6 +94,31 @@ class AluguelServiceTest {
         assertEquals(idCiclista, aluguel.getCiclista());
         verify(trancaService).destrancarTranca(idTranca, bicicleta.getId());
         verify(emailService).enviarEmailAluguel(emailCiclista, aluguel, bicicleta, tranca);
+    }
+
+    @Test
+    void aluguel_ciclistaJaPossuiAluguelAtivo() {
+        // Arrange
+        int idCiclista = 1;
+        String emailCiclista = "email@test.com";
+
+        Aluguel aluguelAtual = new Aluguel();
+        Ciclista ciclista = new Ciclista();
+        ciclista.setEmail(emailCiclista);
+
+        when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(true);
+        when(aluguelRepository.findByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(Optional.of(aluguelAtual));
+        when(ciclistaService.obterCiclista(idCiclista)).thenReturn(Optional.of(ciclista));
+
+        // Act & Assert
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> aluguelService.aluguel(idCiclista, 1));
+
+        // Assert
+        assertEquals("Ciclista já possui um aluguel ativo.", exception.getMessage());
+
+        // Verify that the email was sent with the current rental details
+        verify(emailService).enviarEmailAluguelExistente(emailCiclista, aluguelAtual);
+        verify(aluguelRepository, never()).save(any()); // Ensure no new rental is saved
     }
 
 
