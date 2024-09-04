@@ -229,7 +229,7 @@ class CartaoDeCreditoServiceTest {
             cartaoDeCreditoService.enviarEmailAlteracaoDeDados(1);
         });
 
-        assertEquals("Erro ao enviar e-mail de confirmação.", exception.getMessage());
+        assertEquals("Falha ao enviar email.", exception.getMessage());
     }
 
 }
