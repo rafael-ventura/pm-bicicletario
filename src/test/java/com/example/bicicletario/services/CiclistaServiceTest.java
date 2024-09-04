@@ -16,6 +16,7 @@ import com.example.bicicletario.bicicletario.domain.enums.Nacionalidade;
 import com.example.bicicletario.bicicletario.domain.enums.StatusCiclista;
 import com.example.bicicletario.bicicletario.domain.mapper.CiclistaMapper;
 import com.example.bicicletario.bicicletario.domain.mapper.PassaporteMapper;
+import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
 import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
@@ -24,7 +25,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -475,5 +478,143 @@ class CiclistaServiceTest {
         // Assert
         assertFalse(result);
     }*/
+
+    @Test
+    void testCadastrarCiclista_EmailInvalido() {
+        // Criando os DTOs
+        Passaporte passaporte = new Passaporte();
+        passaporte.setNumero("123456");
+        passaporte.setValidade("2025-01-01");
+        passaporte.setPais("Brasil");
+
+        NovoCartaoDeCreditoDTO cartao = new NovoCartaoDeCreditoDTO();
+        cartao.setNomeTitular("Joao Silva");
+        cartao.setNumero("1234567890123456");
+        cartao.setValidade("2025-01-01");
+        cartao.setCvv("123");
+
+        Ciclista novoCiclista = new Ciclista();
+        novoCiclista.setId(1);
+        novoCiclista.setNome("Joao Silva");
+        novoCiclista.setCpf("12345678900");
+        novoCiclista.setEmail("email_invalido");  // Email inválido
+        novoCiclista.setNascimento("2000-01-01");
+        novoCiclista.setNacionalidade(Nacionalidade.BRASILEIRO);
+        novoCiclista.setUrlFotoDocumento("http://example.com/foto.jpg");
+        novoCiclista.setPassaporte(passaporte);
+        novoCiclista.setSenha("minhaSenhaSecreta");
+        novoCiclista.setConfirmacaoSenha("minhaSenhaSecreta");
+
+        NovoCiclistaRequestDTO dto = new NovoCiclistaRequestDTO();
+        dto.setMeioDePagamento(cartao);
+        dto.setCiclista(novoCiclista);
+
+        // Mock do método save que não retorna nada
+        doNothing().when(cartaoDeCreditoService).save(any(), anyInt());
+
+        // mockar : emailService.enviarEmailConfirmacao(ciclista);
+        doNothing().when(emailService).enviarEmailConfirmacao(any(Ciclista.class));
+
+        // Mock do repositório
+        when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Chamando o método do serviço
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> ciclistaService.cadastrarCiclista(dto));
+
+        // Verificando o resultado
+        assertEquals("Email inválido.", exception.getMessage());
+    }
+
+    @Test
+    void testObterBicicletaAlugadaSemAluguel() {
+        Ciclista ciclista = new Ciclista();
+        ciclista.setId(1);
+
+        when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
+        when(aluguelRepository.findByCiclistaAndHoraFimIsNull(1)).thenReturn(Optional.empty());
+
+        Optional<Bicicleta> bicicletaAlugada = ciclistaService.obterBicicletaAlugada(1);
+
+        assertFalse(bicicletaAlugada.isPresent());
+    }
+
+    @Test
+    void testCadastrarCiclista_CpfInvalido() {
+        // Criando os DTOs
+        Passaporte passaporte = new Passaporte();
+        passaporte.setNumero("123456");
+        passaporte.setValidade("2025-01-01");
+        passaporte.setPais("Brasil");
+
+        NovoCartaoDeCreditoDTO cartao = new NovoCartaoDeCreditoDTO();
+        cartao.setNomeTitular("Joao Silva");
+        cartao.setNumero("1234567890123456");
+        cartao.setValidade("2025-01-01");
+        cartao.setCvv("123");
+
+        Ciclista novoCiclista = new Ciclista();
+        novoCiclista.setId(1);
+        novoCiclista.setNome("Joao Silva");
+        novoCiclista.setCpf("123");  // CPF inválido, pois não contém 11 dígitos
+        novoCiclista.setEmail("joao.silva@example.com");  // Email correto
+        novoCiclista.setNascimento("2000-01-01");
+        novoCiclista.setNacionalidade(Nacionalidade.BRASILEIRO);
+        novoCiclista.setUrlFotoDocumento("http://example.com/foto.jpg");
+        novoCiclista.setPassaporte(passaporte);
+        novoCiclista.setSenha("minhaSenhaSecreta");
+        novoCiclista.setConfirmacaoSenha("minhaSenhaSecreta");
+
+        NovoCiclistaRequestDTO dto = new NovoCiclistaRequestDTO();
+        dto.setMeioDePagamento(cartao);
+        dto.setCiclista(novoCiclista);
+
+        // Verifica se a exceção de CPF inválido é lançada
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> ciclistaService.cadastrarCiclista(dto));
+        assertEquals("CPF inválido. O CPF deve conter 11 dígitos e apenas números.", exception.getMessage());
+    }
+
+    @Test
+    void testEnviarEmailComFalha() {
+        // Criando os DTOs
+        Passaporte passaporte = new Passaporte();
+        passaporte.setNumero("123456");
+        passaporte.setValidade("2025-01-01");
+        passaporte.setPais("Brasil");
+
+        NovoCartaoDeCreditoDTO cartao = new NovoCartaoDeCreditoDTO();
+        cartao.setNomeTitular("Joao Silva");
+        cartao.setNumero("1234567890123456");
+        cartao.setValidade("2025-01-01");
+        cartao.setCvv("123");
+
+        Ciclista novoCiclista = new Ciclista();
+        novoCiclista.setId(1);
+        novoCiclista.setNome("Joao Silva");
+        novoCiclista.setCpf("123");  // CPF inválido, pois não contém 11 dígitos
+        novoCiclista.setEmail("joao.silva@example.com");  // Email correto
+        novoCiclista.setNascimento("2000-01-01");
+        novoCiclista.setNacionalidade(Nacionalidade.BRASILEIRO);
+        novoCiclista.setUrlFotoDocumento("http://example.com/foto.jpg");
+        novoCiclista.setPassaporte(passaporte);
+        novoCiclista.setSenha("minhaSenhaSecreta");
+        novoCiclista.setConfirmacaoSenha("minhaSenhaSecreta");
+
+        NovoCiclistaRequestDTO dto = new NovoCiclistaRequestDTO();
+        dto.setMeioDePagamento(cartao);
+        dto.setCiclista(novoCiclista);
+
+        // Mock do método save que não retorna nada
+        doNothing().when(cartaoDeCreditoService).save(any(), anyInt());
+
+        // Mock do repositório
+        when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Mock para garantir que o email é enviado
+        doThrow(new RuntimeException()).when(emailService).enviarEmailConfirmacao(any());
+
+        // Verifica se a exceção de CPF inválido é lançada
+        assertThrows(InvalidDataException.class, () -> ciclistaService.cadastrarCiclista(dto));
+    }
+
 
 }

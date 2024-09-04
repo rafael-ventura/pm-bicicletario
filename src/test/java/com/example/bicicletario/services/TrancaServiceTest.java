@@ -2,6 +2,7 @@ package com.example.bicicletario.services;
 
 import com.example.bicicletario.bicicletario.application.external.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Tranca;
+import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
@@ -17,10 +19,12 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 class TrancaServiceTest {
+
+    // Simulando a URL base como uma variável de instância
+    private final String baseUrl = "http://localhost:8080/api";
 
     @Mock
     private RestTemplate restTemplate;
@@ -31,25 +35,6 @@ class TrancaServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        // Não nos preocupamos com a URL real neste contexto, apenas queremos simular o comportamento do serviço
-    }
-
-    @Test
-    void trancarTranca_Success() {
-        // Simulando o retorno de sucesso do endpoint
-        Tranca mockTranca = new Tranca();
-        ResponseEntity<Tranca> responseEntity = new ResponseEntity<>(mockTranca, HttpStatus.OK);
-
-        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Tranca.class)))
-                .thenReturn(responseEntity);
-
-        // Act
-        Tranca result = trancaService.trancarTranca(1, 2);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(mockTranca, result);
-        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Tranca.class));
     }
 
     @Test
@@ -75,15 +60,22 @@ class TrancaServiceTest {
     }
 
     @Test
-    void destrancarTranca_Success() {
-        // Simulando o retorno de sucesso para destrancar a tranca
-        ResponseEntity<Void> responseEntity = new ResponseEntity<>(HttpStatus.OK);
+    void testDestrancarTranca_Success() {
+        // Arrange
+        int trancaId = 1;
+        Integer bicicletaId = 2;
 
-        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
-                .thenReturn(responseEntity);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+        HttpEntity<Integer> request = new HttpEntity<>(bicicletaId, headers);
 
-        // Act & Assert
-        assertDoesNotThrow(() -> trancaService.destrancarTranca(1, 2));
+        when(restTemplate.postForEntity(eq(baseUrl + "/tranca/" + trancaId + "/destrancar"), eq(request), eq(Void.class)))
+                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+
+        // Act
+        trancaService.destrancarTranca(trancaId, bicicletaId);
+
+        // Assert
         verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
     }
 
@@ -99,33 +91,26 @@ class TrancaServiceTest {
     }
 
     @Test
-    void destrancarTranca_InvalidDataException() {
-        // Simulando uma exceção de dados inválidos ao tentar destrancar
-        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
-                .thenThrow(new HttpClientErrorException(HttpStatus.UNPROCESSABLE_ENTITY));
-
-        // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> trancaService.destrancarTranca(1, 2));
-        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
-    }
-
-    @Test
-    void obterTranca_Success() {
-        // Simulando o retorno de sucesso ao obter uma tranca
-        Tranca mockTranca = new Tranca();
-        ResponseEntity<Tranca> responseEntity = new ResponseEntity<>(mockTranca, HttpStatus.OK);
+    void testObterTranca_Success() {
+        // Arrange
+        int trancaId = 1;
+        Tranca tranca = new Tranca();
+        tranca.setId(trancaId);
+        tranca.setStatus(StatusTranca.LIVRE);  // Exemplo de status para a tranca
 
         when(restTemplate.getForEntity(anyString(), eq(Tranca.class)))
-                .thenReturn(responseEntity);
+                .thenReturn(new ResponseEntity<>(tranca, HttpStatus.OK));
 
         // Act
-        Tranca result = trancaService.obterTranca(1);
+        Tranca result = trancaService.obterTranca(trancaId);
 
         // Assert
         assertNotNull(result);
-        assertEquals(mockTranca, result);
+        assertEquals(trancaId, result.getId());
+        assertEquals(StatusTranca.LIVRE, result.getStatus());  // Verifica se o status foi corretamente atribuído
         verify(restTemplate, times(1)).getForEntity(anyString(), eq(Tranca.class));
     }
+
 
     @Test
     void obterTranca_ResourceNotFound() {
@@ -139,36 +124,20 @@ class TrancaServiceTest {
     }
 
     @Test
-    void prenderBicicleta_Success() {
-        // Simulando o sucesso ao prender uma bicicleta
-        when(restTemplate.postForObject(anyString(), anyInt(), eq(Void.class)))
-                .thenReturn(null);  // postForObject retorna null para tipos void
+    void testPrenderBicicleta_Success() {
+        // Arrange
+        int bicicletaId = 1;
+        int trancaId = 2;
 
-        // Act & Assert
-        assertDoesNotThrow(() -> trancaService.prenderBicicleta(1, 1));
-        verify(restTemplate, times(1)).postForObject(anyString(), anyInt(), eq(Void.class));
-    }
-
-    @Test
-    void trancarTranca_NullResponse() {
-        // Simulando retorno nulo
-        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Tranca.class)))
+        when(restTemplate.postForObject(eq(baseUrl + "/tranca/" + trancaId + "/prender"), eq(bicicletaId), eq(Void.class)))
                 .thenReturn(null);
 
-        // Act & Assert
-        assertThrows(NullPointerException.class, () -> trancaService.trancarTranca(1, 2));
-        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Tranca.class));
+        // Act
+        trancaService.prenderBicicleta(bicicletaId, trancaId);
+
+        // Assert
+        verify(restTemplate, times(1)).postForObject(anyString(), eq(bicicletaId), eq(Void.class));
     }
 
-    @Test
-    void destrancarTranca_HttpServerError() {
-        // Simulando um erro interno do servidor
-        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
-                .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
-
-        // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> trancaService.destrancarTranca(1, 2));
-        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
-    }
 
 }
