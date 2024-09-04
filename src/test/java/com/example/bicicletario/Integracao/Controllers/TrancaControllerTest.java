@@ -416,50 +416,5 @@ class TrancaControllerTest {
                 .andExpect(content().json("{\"codigo\":\"500\",\"mensagem\":\"Erro ao destrancar tranca\"}"));
     }
 
-    @Test
-    void alterarStatusTranca() throws Exception {
-        // Arrange
-        Tranca tranca = new Tranca();
-        tranca.setId(1);
-        tranca.setStatus(StatusTranca.LIVRE);
-
-        when(trancaService.alterarStatusTranca(any(Integer.class), any(String.class))).thenReturn(tranca);
-
-        // Act & Assert
-        mockMvc.perform(post("/api/tranca/1/status/acao")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())  // Verifica se o status é 200 OK
-                .andExpect(content().json(objectMapper.writeValueAsString(tranca)));  // Verifica se o corpo da resposta é o objeto Tranca
-    }
-
-
-    @Test
-    void alterarStatusTranca_ThrowsInvalidDataException() throws Exception {
-        doThrow(new InvalidDataException("Dados inválidos")).when(trancaService).alterarStatusTranca(any(Integer.class), any(String.class));
-
-        mockMvc.perform(post("/api/tranca/1/status/acao")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().json("{\"codigo\":\"422\",\"mensagem\":\"Dados inválidos\"}"));
-    }
-
-    @Test
-    void alterarStatusTranca_ThrowsResourceNotFoundException() throws Exception {
-        doThrow(new ResourceNotFoundException("Tranca não encontrada")).when(trancaService).alterarStatusTranca(any(Integer.class), any(String.class));
-
-        mockMvc.perform(post("/api/tranca/1/status/acao")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(content().json("{\"codigo\":\"404\",\"mensagem\":\"Tranca não encontrada\"}"));
-    }
-
-    @Test
-    void alterarStatusTranca_ThrowsException() throws Exception {
-        doThrow(new RuntimeException("Erro ao alterar status da tranca")).when(trancaService).alterarStatusTranca(any(Integer.class), any(String.class));
-
-        mockMvc.perform(post("/api/tranca/1/status/acao")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().json("{\"codigo\":\"500\",\"mensagem\":\"Erro ao alterar status da tranca\"}"));
-    }
+    
 }

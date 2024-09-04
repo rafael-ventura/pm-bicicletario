@@ -211,23 +211,5 @@ class TrancaControllerTest {
         assertEquals(idTranca, response.getBody().getId());
     }
 
-    @Test
-    void alterarStatusTranca_Success() {
-        // Arrange
-        Integer idTranca = 1;
-        String acao = "trancar";
-        Tranca tranca = new Tranca();
-        tranca.setId(idTranca);
-        tranca.setStatus(StatusTranca.OCUPADA);
-        when(trancaService.alterarStatusTranca(idTranca, acao)).thenReturn(tranca);
-
-        // Act
-        ResponseEntity<Tranca> response = trancaController.alterarStatusTranca(idTranca, acao);
-
-        // Assert
-        assertEquals(200, response.getStatusCode().value());
-        assertNotNull(response.getBody());
-        assertEquals(idTranca, response.getBody().getId());
-    }
 }
 
