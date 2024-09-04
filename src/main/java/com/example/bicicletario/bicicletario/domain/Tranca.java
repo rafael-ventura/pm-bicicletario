@@ -26,9 +26,6 @@ public class Tranca {
 
     private Totem totem;
 
-    public Tranca() {
-    }
-
     // Getters e Setters
 
     public int getId() {
