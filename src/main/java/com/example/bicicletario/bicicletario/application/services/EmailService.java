@@ -2,6 +2,7 @@ package com.example.bicicletario.bicicletario.application.services;
 
 import com.example.bicicletario.bicicletario.application.exceptions.BadRequestException;
 import com.example.bicicletario.bicicletario.application.exceptions.ResourceNotFoundException;
+import com.example.bicicletario.bicicletario.domain.constants.Constantes;
 import com.example.bicicletario.bicicletario.domain.dto.EmailDto;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Funcionario;
@@ -37,13 +38,13 @@ public class EmailService {
             ResponseEntity<Void> response = restTemplate.postForEntity(url, request, Void.class);
 
             if (!response.getStatusCode().is2xxSuccessful()) {
-                throw new BadRequestException("Erro ao enviar e-mail");
+                throw new BadRequestException(Constantes.ERROR_ENVIAR_EMAIL);
             }
         } catch (HttpClientErrorException e) {
             // Certifique-se de que todas as exceções sejam retransformadas em BadRequestException
-            throw new BadRequestException("Erro ao enviar e-mail");
+            throw new BadRequestException(Constantes.ERROR_ENVIAR_EMAIL);
         } catch (Exception e) {
-            throw new BadRequestException("Erro ao enviar e-mail");
+            throw new BadRequestException(Constantes.ERROR_ENVIAR_EMAIL);
         }
     }
 
