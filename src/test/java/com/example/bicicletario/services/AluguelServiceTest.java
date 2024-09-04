@@ -244,7 +244,7 @@ class AluguelServiceTest {
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.OCUPADA);
         Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1);s
+        bicicleta.setId(1);
 
         bicicleta.setStatusBicicleta(StatusBicicleta.EM_USO);
         tranca.setBicicleta(bicicleta.getId());
