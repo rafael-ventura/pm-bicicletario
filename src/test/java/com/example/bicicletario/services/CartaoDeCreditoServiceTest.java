@@ -199,4 +199,37 @@ class CartaoDeCreditoServiceTest {
         verify(cartaoDeCreditoRepository).save(cartaoDeCredito);
     }
 
+    @Test
+    void validarCartaoDeCredito_InvalidNumber() {
+        // Arrange
+        NovoCartaoDeCreditoDTO novoCartaoDTO = new NovoCartaoDeCreditoDTO();
+        novoCartaoDTO.setNomeTitular("Nome");
+        novoCartaoDTO.setNumero(null);
+        novoCartaoDTO.setValidade("invalid-date"); // Invalid date format
+        novoCartaoDTO.setCvv("123");
+
+        // Act & Assert
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            cartaoDeCreditoService.validarCartaoDeCredito(novoCartaoDTO);
+        });
+
+        assertEquals("Número do cartão de crédito inválido.", exception.getMessage());
+    }
+
+    @Test
+    void enviarEmailAlteracaoDeDados_EmailNotSent() {
+        // Arrange
+        Ciclista ciclista = new Ciclista();
+        ciclista.setEmail("teste@exemplo.com");
+        when(ciclistaRepository.findById(1)).thenReturn(Optional.of(ciclista));
+        when(emailService.enviarEmail(any(EmailDTO.class))).thenReturn(false); // Simulate email failure
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            cartaoDeCreditoService.enviarEmailAlteracaoDeDados(1);
+        });
+
+        assertEquals("Erro ao enviar e-mail de confirmação.", exception.getMessage());
+    }
+
 }
