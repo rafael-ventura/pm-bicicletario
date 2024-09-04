@@ -16,6 +16,7 @@ import com.example.bicicletario.bicicletario.domain.enums.Nacionalidade;
 import com.example.bicicletario.bicicletario.domain.enums.StatusCiclista;
 import com.example.bicicletario.bicicletario.domain.mapper.CiclistaMapper;
 import com.example.bicicletario.bicicletario.domain.mapper.PassaporteMapper;
+import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
@@ -614,6 +615,65 @@ class CiclistaServiceTest {
 
         // Verifica se a exceção de CPF inválido é lançada
         assertThrows(InvalidDataException.class, () -> ciclistaService.cadastrarCiclista(dto));
+    }
+
+    @Test
+    void testValidarCamposObrigatorios_CamposFaltando() {
+        Ciclista ciclista = new Ciclista();
+        // Não definindo nenhum campo obrigatório
+        assertThrows(BadRequestException.class, () -> ciclistaService.validarCamposObrigatorios(ciclista), "Todos os campos são obrigatórios.");
+    }
+
+    @Test
+    void testValidarCamposObrigatorios_CPFVazioParaBrasileiro() {
+        Ciclista ciclista = new Ciclista();
+        ciclista.setNome("Joao Silva");
+        ciclista.setEmail("joao.silva@example.com");
+        ciclista.setNascimento("2000-01-01");
+        ciclista.setNacionalidade(Nacionalidade.BRASILEIRO);
+        ciclista.setCpf("");  // CPF vazio
+
+        assertThrows(BadRequestException.class, () -> ciclistaService.validarCamposObrigatorios(ciclista), "Todos os campos são obrigatórios.");
+    }
+
+    @Test
+    void testValidarCamposObrigatorios_PassaporteInvalidoParaEstrangeiro() {
+        Ciclista ciclista = new Ciclista();
+        ciclista.setNome("John Doe");
+        ciclista.setEmail("john.doe@example.com");
+        ciclista.setNascimento("1990-01-01");
+        ciclista.setNacionalidade(Nacionalidade.ESTRANGEIRO);
+
+        Passaporte passaporte = new Passaporte();
+        passaporte.setNumero("");  // Número de passaporte vazio
+        ciclista.setPassaporte(passaporte);
+
+        assertThrows(InvalidDataException.class, () -> ciclistaService.validarCamposObrigatorios(ciclista), "Número do passaporte é obrigatório.");
+    }
+
+    @Test
+    void testValidarCamposObrigatorios_PassaporteNuloParaEstrangeiro() {
+        Ciclista ciclista = new Ciclista();
+        ciclista.setNome("John Doe");
+        ciclista.setEmail("john.doe@example.com");
+        ciclista.setNascimento("1990-01-01");
+        ciclista.setNacionalidade(Nacionalidade.ESTRANGEIRO);
+        ciclista.setPassaporte(null);  // Passaporte nulo
+
+        assertThrows(BadRequestException.class, () -> ciclistaService.validarCamposObrigatorios(ciclista), "Passaporte é obrigatório para estrangeiros.");
+    }
+
+    @Test
+    void testValidarCamposObrigatorios_SenhaNula() {
+        Ciclista ciclista = new Ciclista();
+        ciclista.setNome("Joao Silva");
+        ciclista.setEmail("joao.silva@example.com");
+        ciclista.setNascimento("2000-01-01");
+        ciclista.setNacionalidade(Nacionalidade.BRASILEIRO);
+        ciclista.setCpf("12345678900");  // CPF correto
+        ciclista.setSenha(null);  // Senha nula
+
+        assertThrows(InvalidDataException.class, () -> ciclistaService.validarCamposObrigatorios(ciclista), "Senha é obrigatória.");
     }
 
 

@@ -10,18 +10,17 @@ import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
 import com.example.bicicletario.bicicletario.domain.enums.Nacionalidade;
 import com.example.bicicletario.bicicletario.domain.enums.StatusCiclista;
+import com.example.bicicletario.bicicletario.domain.mapper.CiclistaMapper;
+import com.example.bicicletario.bicicletario.domain.mapper.PassaporteMapper;
 import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
 import com.example.bicicletario.bicicletario.infraestructure.CiclistaRepository;
-import com.example.bicicletario.bicicletario.domain.mapper.CiclistaMapper;
-import com.example.bicicletario.bicicletario.domain.mapper.PassaporteMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -156,7 +155,7 @@ public class CiclistaService {
         return ciclistaRepository.existsByEmail(email);
     }
 
-    private void validarCamposObrigatorios(Ciclista ciclista) {
+    public void validarCamposObrigatorios(Ciclista ciclista) {
         if (ciclista.getNome() == null || ciclista.getNome().isEmpty() ||
                 ciclista.getEmail() == null || ciclista.getEmail().isEmpty() ||
                 ciclista.getNascimento() == null || ciclista.getNascimento().isEmpty() ||
