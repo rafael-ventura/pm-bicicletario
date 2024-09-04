@@ -1,5 +1,6 @@
 package com.example.bicicletario.services;
 
+import com.example.bicicletario.bicicletario.application.CiclistaService;
 import com.example.bicicletario.bicicletario.application.DevolucaoService;
 import com.example.bicicletario.bicicletario.application.external.AdministradoraCCService;
 import com.example.bicicletario.bicicletario.application.external.BicicletaService;
@@ -7,6 +8,7 @@ import com.example.bicicletario.bicicletario.application.external.EmailService;
 import com.example.bicicletario.bicicletario.application.external.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.Devolucao;
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
@@ -35,6 +37,7 @@ class DevolucaoServiceTest {
     private TrancaService trancaService;
     private AdministradoraCCService administradoraCCService;
     private EmailService emailService;
+    private CiclistaService ciclistaService;
 
     @BeforeEach
     void setUp() {
@@ -44,8 +47,9 @@ class DevolucaoServiceTest {
         trancaService = mock(TrancaService.class);
         administradoraCCService = mock(AdministradoraCCService.class);
         emailService = mock(EmailService.class);
+        ciclistaService = mock(CiclistaService.class);
 
-        devolucaoService = new DevolucaoService(devolucaoRepository, aluguelRepository, bicicletaService, trancaService, administradoraCCService, emailService);
+        devolucaoService = new DevolucaoService(devolucaoRepository, aluguelRepository, bicicletaService, trancaService, administradoraCCService, emailService, ciclistaService);
     }
 
     @Test
@@ -55,6 +59,8 @@ class DevolucaoServiceTest {
         NovoDevolucaoDTO devolucaoDTO = new NovoDevolucaoDTO();
         devolucaoDTO.setIdBicicleta(1);
         devolucaoDTO.setIdTranca(1);
+
+        Ciclista ciclista = new Ciclista();
 
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
@@ -72,6 +78,7 @@ class DevolucaoServiceTest {
         when(bicicletaService.getBicicletaById(devolucaoDTO.getIdBicicleta())).thenReturn(bicicleta);
         when(trancaService.obterTranca(devolucaoDTO.getIdTranca())).thenReturn(tranca);
         when(aluguelRepository.findByBicicletaAndHoraFimIsNull(devolucaoDTO.getIdBicicleta())).thenReturn(Optional.of(aluguel));
+        when(ciclistaService.obterCiclista(aluguel.getCiclista())).thenReturn(Optional.of(ciclista));
         when(administradoraCCService.enviarCobranca(any(NovoCobrancaDTO.class))).thenReturn(true);
 
         // Act
@@ -86,7 +93,7 @@ class DevolucaoServiceTest {
         verify(devolucaoRepository).save(any(Devolucao.class));
 
         // Capturando os argumentos passados para o emailService.enviarEmailDevolucao
-        ArgumentCaptor<Integer> ciclistaIdCaptor = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<String> ciclistaIdCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Aluguel> aluguelCaptor = ArgumentCaptor.forClass(Aluguel.class);
         ArgumentCaptor<Bicicleta> bicicletaCaptor = ArgumentCaptor.forClass(Bicicleta.class);
         ArgumentCaptor<Tranca> trancaCaptor = ArgumentCaptor.forClass(Tranca.class);
@@ -107,7 +114,6 @@ class DevolucaoServiceTest {
         );
 
         // Verificando os valores capturados
-        assertEquals(1, ciclistaIdCaptor.getValue());
         assertEquals(aluguel, aluguelCaptor.getValue());
         assertEquals(bicicleta, bicicletaCaptor.getValue());
         assertEquals(tranca, trancaCaptor.getValue());

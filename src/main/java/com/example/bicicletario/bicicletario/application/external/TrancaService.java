@@ -4,34 +4,37 @@ import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 public class TrancaService {
 
     private static final Logger log = LoggerFactory.getLogger(TrancaService.class);
+
+    // Definição da constante para evitar duplicação
+    private static final String TRANCA_BASE_URL = "/tranca/";
+
     private final RestTemplate restTemplate;
-    private final ObjectMapper jacksonObjectMapper;
+    private final String baseUrl;
 
-    @Value("${equipamento.base-url}")
-    String baseUrl;
-
-    public TrancaService(RestTemplate restTemplate, ObjectMapper jacksonObjectMapper) {
+    @Autowired
+    public TrancaService(RestTemplate restTemplate, @Value("${equipamento.base-url}") String baseUrl) {
         this.restTemplate = restTemplate;
-        this.jacksonObjectMapper = jacksonObjectMapper;
+        this.baseUrl = baseUrl;
     }
 
     public Tranca trancarTranca(int idTranca, Integer idBicicleta) {
-        String url = baseUrl + "/tranca/" + idTranca + "/trancar";
+        String url = baseUrl + TRANCA_BASE_URL + idTranca + "/trancar";
         log.info("Trancando a tranca {} com bicicleta {}", idTranca, idBicicleta);
 
         HttpHeaders headers = new HttpHeaders();
@@ -47,11 +50,14 @@ public class TrancaService {
         } catch (HttpClientErrorException.UnprocessableEntity e) {
             log.error("Dados Inválidos ou tranca já se encontra trancada: Tranca {} com bicicleta {}", idTranca, idBicicleta, e);
             throw new InvalidDataException("Dados Inválidos ou tranca já se encontra trancada");
+        } catch (RestClientException e) {
+            log.error("Erro ao trancar a tranca {} com bicicleta {}", idTranca, idBicicleta, e);
+            throw new ResourceNotFoundException("Erro ao trancar a tranca.");
         }
     }
 
     public void destrancarTranca(int idTranca, Integer idBicicleta) {
-        String url = baseUrl + "/tranca/" + idTranca + "/destrancar";
+        String url = baseUrl + TRANCA_BASE_URL + idTranca + "/destrancar";
         log.info("Destrancando a tranca {} com bicicleta {}", idTranca, idBicicleta);
 
         HttpHeaders headers = new HttpHeaders();
@@ -66,11 +72,14 @@ public class TrancaService {
         } catch (HttpClientErrorException.UnprocessableEntity e) {
             log.error("Dados Inválidos: Tranca {} com bicicleta {}", idTranca, idBicicleta, e);
             throw new InvalidDataException("Dados Inválidos");
+        } catch (Exception e) {
+            log.error("Erro ao destrancar a tranca {} com bicicleta {}", idTranca, idBicicleta, e);
+            throw new ResourceNotFoundException("Erro ao destrancar a tranca.");
         }
     }
 
     public Tranca obterTranca(int idTranca) {
-        String url = baseUrl + "/tranca/" + idTranca;
+        String url = baseUrl + TRANCA_BASE_URL + idTranca;
         try {
             ResponseEntity<Tranca> response = restTemplate.getForEntity(url, Tranca.class);
             return response.getBody();
@@ -81,13 +90,13 @@ public class TrancaService {
     }
 
     public void prenderBicicleta(int idBicicleta, int idTranca) {
-        String url = baseUrl + "/tranca/" + idTranca + "/prender";
+        String url = baseUrl + TRANCA_BASE_URL + idTranca + "/prender";
         log.info("Prendendo bicicleta {} na tranca {}", idBicicleta, idTranca);
         restTemplate.postForObject(url, idBicicleta, Void.class);
     }
 
     public Bicicleta getBicicletaByTranca(int trancaFim) {
-        String url = baseUrl + "/tranca/" + trancaFim + "/bicicleta";
+        String url = baseUrl + TRANCA_BASE_URL + trancaFim + "/bicicleta";
         try {
             ResponseEntity<Bicicleta> response = restTemplate.getForEntity(url, Bicicleta.class);
             return response.getBody();
@@ -97,6 +106,9 @@ public class TrancaService {
         } catch (HttpClientErrorException.UnprocessableEntity e) {
             log.error("Id da tranca inválido: {}", trancaFim, e);
             throw new InvalidDataException("Id da tranca inválido.");
+        } catch (Exception e) {
+            log.error("Erro ao obter a bicicleta presa na tranca {}", trancaFim, e);
+            throw new ResourceNotFoundException("Erro ao obter a bicicleta presa na tranca.");
         }
     }
 }

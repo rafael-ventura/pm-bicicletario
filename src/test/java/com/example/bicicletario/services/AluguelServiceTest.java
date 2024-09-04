@@ -1,12 +1,14 @@
 package com.example.bicicletario.services;
 
 import com.example.bicicletario.bicicletario.application.AluguelService;
+import com.example.bicicletario.bicicletario.application.CiclistaService;
 import com.example.bicicletario.bicicletario.application.external.AdministradoraCCService;
 import com.example.bicicletario.bicicletario.application.external.BicicletaService;
 import com.example.bicicletario.bicicletario.application.external.EmailService;
 import com.example.bicicletario.bicicletario.application.external.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
@@ -20,6 +22,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,6 +42,9 @@ class AluguelServiceTest {
     private TrancaService trancaService;
 
     @Mock
+    private CiclistaService ciclistaService;
+
+    @Mock
     private AdministradoraCCService administradoraCCService;
 
     @Mock
@@ -54,27 +61,38 @@ class AluguelServiceTest {
     @Test
     void aluguel_success() {
         // Arrange
+        String emailCiclista = "email@test.com";
         int idCiclista = 1;
         int idTranca = 1;
+
         Tranca tranca = new Tranca();
         tranca.setStatus(StatusTranca.OCUPADA);
+
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(1);
         bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
         tranca.setBicicleta(bicicleta);
 
+        Ciclista ciclista = new Ciclista();
+        ciclista.setId(idCiclista);
+        ciclista.setEmail(emailCiclista);
+
         when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
         when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
         when(administradoraCCService.enviarCobranca(any())).thenReturn(true);
+        when(ciclistaService.obterCiclista(idCiclista)).thenReturn(Optional.of(ciclista)); // Corrigido aqui
         when(aluguelRepository.save(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
+        // Act
         Aluguel aluguel = aluguelService.aluguel(idCiclista, idTranca);
 
+        // Assert
         assertNotNull(aluguel);
         assertEquals(idCiclista, aluguel.getCiclista());
         verify(trancaService).destrancarTranca(idTranca, bicicleta.getId());
-        verify(emailService).enviarEmailAluguel(idCiclista, aluguel, bicicleta, tranca);
+        verify(emailService).enviarEmailAluguel(emailCiclista, aluguel, bicicleta, tranca);
     }
+
 
     @Test
     void aluguel_trancaNaoEncontrada() {
@@ -266,29 +284,4 @@ class AluguelServiceTest {
         assertEquals("Pagamento não autorizado.", exception.getMessage());
         verify(administradoraCCService).registrarCobrancaPendente(idCiclista);
     }
-
-    @Test
-    void aluguel_sucesso() {
-        int idCiclista = 1;
-        int idTranca = 1;
-        Tranca tranca = new Tranca();
-        tranca.setStatus(StatusTranca.OCUPADA);
-        Bicicleta bicicleta = new Bicicleta();
-        bicicleta.setId(1);
-        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
-        tranca.setBicicleta(bicicleta);
-
-        when(aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)).thenReturn(false);
-        when(trancaService.obterTranca(idTranca)).thenReturn(tranca);
-        when(administradoraCCService.enviarCobranca(any())).thenReturn(true);
-        when(aluguelRepository.save(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Aluguel aluguel = aluguelService.aluguel(idCiclista, idTranca);
-
-        assertNotNull(aluguel);
-        assertEquals(idCiclista, aluguel.getCiclista());
-        verify(trancaService).destrancarTranca(idTranca, bicicleta.getId());
-        verify(emailService).enviarEmailAluguel(idCiclista, aluguel, bicicleta, tranca);
-    }
-
 }

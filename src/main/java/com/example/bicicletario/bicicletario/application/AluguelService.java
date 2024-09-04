@@ -4,6 +4,7 @@ import com.example.bicicletario.bicicletario.application.external.EmailService;
 import com.example.bicicletario.bicicletario.application.external.TrancaService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
+import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.Tranca;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCobrancaDTO;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
@@ -30,17 +31,19 @@ public class AluguelService {
     private final TrancaService trancaService;
     private final AdministradoraCCService administradoraCCService;
     private final EmailService emailService;
+    private final CiclistaService ciclistaService;
 
     public AluguelService(AluguelRepository aluguelRepository,
                           BicicletaService bicicletaService,
                           TrancaService trancaService,
                           AdministradoraCCService administradoraCCService,
-                          EmailService emailService) {
+                          EmailService emailService, CiclistaService ciclistaService) {
         this.aluguelRepository = aluguelRepository;
         this.bicicletaService = bicicletaService;
         this.trancaService = trancaService;
         this.administradoraCCService = administradoraCCService;
         this.emailService = emailService;
+        this.ciclistaService = ciclistaService;
     }
 
     public Aluguel aluguel(int idCiclista, int idTranca) {
@@ -48,8 +51,9 @@ public class AluguelService {
         if (aluguelRepository.existsByCiclistaAndHoraFimIsNull(idCiclista)) {
             log.warn("Ciclista já possui um aluguel ativo. ID Ciclista: {}", idCiclista);
             // Envia email para o ciclista com os dados do aluguel atual
-            Optional<Aluguel> aluguelAtual = aluguelRepository.findByCiclistaAndHoraFimIsNull(idCiclista);
-            emailService.enviarEmailAluguelExistente(idCiclista, aluguelAtual.get());
+            Aluguel aluguelAtual = aluguelRepository.findByCiclistaAndHoraFimIsNull(idCiclista).orElseThrow();
+            String ciclista = ciclistaService.obterCiclista(idCiclista).map(Ciclista::getEmail).orElse("");
+            emailService.enviarEmailAluguelExistente(ciclista, aluguelAtual);
             throw new InvalidDataException("Ciclista já possui um aluguel ativo.");
         }
 
@@ -102,8 +106,9 @@ public class AluguelService {
          * */
         trancaService.destrancarTranca(idTranca, bicicleta.getId());
 
+        String ciclista = ciclistaService.obterCiclista(idCiclista).map(Ciclista::getEmail).orElse("");
         // Envia uma mensagem para o ciclista com os dados do aluguel (R4)
-        emailService.enviarEmailAluguel(idCiclista, aluguel, bicicleta, tranca);
+        emailService.enviarEmailAluguel(ciclista, aluguel, bicicleta, tranca);
 
         aluguelRepository.save(aluguel);
         log.info("Aluguel realizado com sucesso para ciclista: {}", idCiclista);

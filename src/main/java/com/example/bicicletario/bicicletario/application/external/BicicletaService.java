@@ -2,6 +2,7 @@ package com.example.bicicletario.bicicletario.application.external;
 
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.enums.StatusBicicleta;
+import com.example.bicicletario.bicicletario.exception.InvalidDataException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,21 +31,35 @@ public class BicicletaService {
             return response.getBody();
         } catch (HttpClientErrorException.NotFound e) {
             log.error("Bicicleta não encontrada com ID {}", idBicicleta, e);
-            throw new ResourceNotFoundException("Não encontrado");
+            throw new ResourceNotFoundException("Bicicleta não encontrada com ID " + idBicicleta);
         } catch (Exception e) {
             log.error("Erro ao obter a bicicleta com ID {}", idBicicleta, e);
-            throw new ResourceNotFoundException("Erro ao obter a bicicleta.");
+            throw new ResourceNotFoundException("Erro ao obter a bicicleta com ID " + idBicicleta);
         }
     }
 
     public void atualizarStatus(Bicicleta bicicleta, StatusBicicleta status) {
-        String url = baseUrl + "/bicicleta/" + bicicleta.getId() + "/status";
+        // Constrói a URL de acordo com a especificação Swagger
+        String url = baseUrl + "/bicicleta/" + bicicleta.getId() + "/status/" + status.name();
         log.info("Atualizando status da bicicleta {} para {}", bicicleta.getId(), status);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
 
-        HttpEntity<StatusBicicleta> entity = new HttpEntity<>(status, headers);
-        restTemplate.exchange(url, HttpMethod.PUT, entity, Void.class);
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        try {
+            // Faz a requisição POST com a URL ajustada
+            restTemplate.exchange(url, HttpMethod.POST, entity, Bicicleta.class);
+        } catch (HttpClientErrorException.NotFound e) {
+            log.error("Bicicleta não encontrada com ID {}", bicicleta.getId(), e);
+            throw new ResourceNotFoundException("Bicicleta não encontrada com ID " + bicicleta.getId());
+        } catch (HttpClientErrorException.UnprocessableEntity e) {
+            log.error("Dados inválidos para a bicicleta com ID {}", bicicleta.getId(), e);
+            throw new InvalidDataException("Dados inválidos para a bicicleta com ID " + bicicleta.getId());
+        } catch (Exception e) {
+            log.error("Erro ao atualizar o status da bicicleta com ID {}", bicicleta.getId(), e);
+            throw new ResourceNotFoundException("Erro ao atualizar o status da bicicleta.");
+        }
     }
 }

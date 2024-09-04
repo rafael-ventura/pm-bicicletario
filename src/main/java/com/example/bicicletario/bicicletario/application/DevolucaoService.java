@@ -23,19 +23,21 @@ public class DevolucaoService {
     private final TrancaService trancaService;
     private final AdministradoraCCService administradoraCCService;
     private final EmailService emailService;
+    private final CiclistaService ciclistaService;
 
     public DevolucaoService(DevolucaoRepository devolucaoRepository,
                             AluguelRepository aluguelRepository,
                             BicicletaService bicicletaService,
                             TrancaService trancaService,
                             AdministradoraCCService administradoraCCService,
-                            EmailService emailService) {
+                            EmailService emailService, CiclistaService ciclistaService) {
         this.devolucaoRepository = devolucaoRepository;
         this.aluguelRepository = aluguelRepository;
         this.bicicletaService = bicicletaService;
         this.trancaService = trancaService;
         this.administradoraCCService = administradoraCCService;
         this.emailService = emailService;
+        this.ciclistaService = ciclistaService;
     }
 
     public static final int TEMPO_LIMITE_GRATIS = 120; // 2 horas em minutos
@@ -114,7 +116,8 @@ public class DevolucaoService {
         devolucaoRepository.save(devolucao);
 
         // 10. Envio de e-mail ao ciclista
-        emailService.enviarEmailDevolucao(aluguel.getCiclista(), aluguel, bicicleta, tranca, valorExtra, devolucao.getCartaoUsado(), devolucao.getStatusPagamento(), devolucao.getDataHoraCobranca());
+        String email = ciclistaService.obterCiclista(aluguel.getCiclista()).map(Ciclista::getEmail).orElse("");
+        emailService.enviarEmailDevolucao(email, aluguel, bicicleta, tranca, valorExtra, devolucao.getCartaoUsado(), devolucao.getStatusPagamento(), devolucao.getDataHoraCobranca());
 
         return devolucao;
     }

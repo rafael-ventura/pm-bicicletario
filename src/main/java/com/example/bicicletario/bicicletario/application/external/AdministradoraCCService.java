@@ -75,6 +75,7 @@ public class AdministradoraCCService {
                 logger.info("Cobrança pendente registrada com sucesso para o ciclista {}", idCiclista);
             } else {
                 logger.error("Erro ao registrar cobrança pendente para o ciclista {}", idCiclista);
+                throw new BadRequestException("Erro ao registrar cobrança pendente.");
             }
         } catch (Exception e) {
             logger.error("Erro ao registrar cobrança pendente", e);

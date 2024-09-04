@@ -46,7 +46,8 @@ class AdministradoraCCServiceTest {
         NovoCartaoDeCreditoDTO cartaoDeCredito = new NovoCartaoDeCreditoDTO();
         cartaoDeCredito.setNumero("1234567890123456");
 
-        doNothing().when(restTemplate).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
+                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
 
         // Act & Assert
         assertDoesNotThrow(() -> administradoraCCService.validarCartao(cartaoDeCredito));

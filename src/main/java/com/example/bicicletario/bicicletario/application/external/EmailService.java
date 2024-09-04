@@ -18,13 +18,12 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class EmailService {
 
+    private static final String TOTEM_BICICLETAS_TRANCA_LABEL = "Totem de Bicicletas (Tranca): ";
+
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
     private final RestTemplate restTemplate = new RestTemplate();
 
-    // Injeção via construtor para facilitar o mocking nos testes
-
     public boolean enviarEmail(EmailDTO email) {
-        // URL definida diretamente no serviço
         String baseUrl = "http://ec2-3-91-187-43.compute-1.amazonaws.com:8060/api";
         String url = baseUrl + "/enviarEmail";
         HttpHeaders headers = new HttpHeaders();
@@ -46,9 +45,9 @@ public class EmailService {
         }
     }
 
-    public void enviarEmailAluguel(int idCiclista, Aluguel aluguel, Bicicleta bicicleta, Tranca tranca) {
+    public void enviarEmailAluguel(String ciclistaEmail, Aluguel aluguel, Bicicleta bicicleta, Tranca tranca) {
         EmailDTO email = new EmailDTO();
-        email.setEmail("ciclista" + idCiclista + "@bicicletario.com");
+        email.setEmail(ciclistaEmail);
         email.setAssunto("Aluguel de bicicleta");
 
         StringBuilder mensagem = new StringBuilder();
@@ -61,7 +60,8 @@ public class EmailService {
                 .append(") com sucesso!\n")
                 .append("Data/Hora da Retirada: ")
                 .append(aluguel.getHoraInicio())
-                .append("\nTotem de Bicicletas (Tranca): ")
+                .append("\n")
+                .append(TOTEM_BICICLETAS_TRANCA_LABEL)
                 .append(tranca.getId())
                 .append("\nValor Cobrado: R$ 10,00");
 
@@ -69,9 +69,9 @@ public class EmailService {
         enviarEmail(email);
     }
 
-    public void enviarEmailAluguelExistente(int idCiclista, Aluguel aluguel) {
+    public void enviarEmailAluguelExistente(String emailCiclista, Aluguel aluguel) {
         EmailDTO email = new EmailDTO();
-        email.setEmail("ciclista" + idCiclista + "@bicicletario.com");
+        email.setEmail(emailCiclista);
         email.setAssunto("Aluguel existente");
 
         StringBuilder mensagem = new StringBuilder();
@@ -80,7 +80,8 @@ public class EmailService {
                 .append(aluguel.getBicicleta())
                 .append("\nData/Hora da Retirada: ")
                 .append(aluguel.getHoraInicio())
-                .append("\nTotem de Bicicletas (Tranca): ")
+                .append("\n")
+                .append(TOTEM_BICICLETAS_TRANCA_LABEL)
                 .append(aluguel.getTrancaInicio());
 
         email.setMensagem(mensagem.toString());
@@ -88,9 +89,9 @@ public class EmailService {
     }
 
     // Email de devolução
-    public void enviarEmailDevolucao(int idCiclista, Aluguel aluguel, Bicicleta bicicleta, Tranca tranca, double valorExtra, String cartaoUsado, String statusPagamento, String dataHoraCobranca) {
+    public void enviarEmailDevolucao(String emailCiclista, Aluguel aluguel, Bicicleta bicicleta, Tranca tranca, double valorExtra, String cartaoUsado, String statusPagamento, String dataHoraCobranca) {
         EmailDTO email = new EmailDTO();
-        email.setEmail("ciclista" + idCiclista + "@bicicletario.com");
+        email.setEmail(emailCiclista);
         email.setAssunto("Devolução de bicicleta");
 
         StringBuilder mensagem = new StringBuilder();
@@ -103,7 +104,8 @@ public class EmailService {
                 .append(") com sucesso!\n")
                 .append("Data/Hora da Devolução: ")
                 .append(aluguel.getHoraFim())
-                .append("\nTotem de Bicicletas (Tranca): ")
+                .append("\n")
+                .append(TOTEM_BICICLETAS_TRANCA_LABEL)
                 .append(tranca.getId())
                 .append("\nValor Cobrado: R$ ")
                 .append(valorExtra > 0 ? valorExtra : "0,00 (sem cobrança extra)")
@@ -122,6 +124,29 @@ public class EmailService {
     }
 
     public void enviarEmailConfirmacao(Ciclista ciclista) {
-        // Implementação pendente
+        // Criação do objeto EmailDTO para enviar o email
+        EmailDTO email = new EmailDTO();
+
+        // Configura o email do ciclista para quem será enviado
+        email.setEmail(ciclista.getEmail());
+
+        // Define o assunto do email
+        email.setAssunto("Confirmação de Cadastro no Bicicletário");
+
+        // Construção da mensagem do email de confirmação
+        StringBuilder mensagem = new StringBuilder();
+        mensagem.append("Olá ").append(ciclista.getNome()).append(",\n\n");
+        mensagem.append("Seu cadastro no sistema Bicicletário foi realizado com sucesso!\n");
+        mensagem.append("Por favor, clique no link abaixo para confirmar seu cadastro e ativar sua conta:\n");
+        mensagem.append("https://bicicletario.com/confirmacao/").append(ciclista.getId()).append("\n\n");
+        mensagem.append("Caso você não tenha solicitado esse cadastro, por favor, ignore este email.\n\n");
+        mensagem.append("Atenciosamente,\nEquipe Bicicletário");
+
+        // Define a mensagem no objeto EmailDTO
+        email.setMensagem(mensagem.toString());
+
+        // Envia o email utilizando o serviço de email
+        enviarEmail(email);
     }
 }
+

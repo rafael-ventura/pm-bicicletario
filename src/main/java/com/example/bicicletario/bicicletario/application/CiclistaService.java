@@ -110,7 +110,8 @@ public class CiclistaService {
         Ciclista ciclista = ciclistaRepository.findById(idCiclista).orElseThrow(
                 () -> new ResourceNotFoundException(Constants.CICLISTA_NAO_ENCONTRADO + idCiclista)
         );
-        validarCiclistaParaAlterar(ciclista);
+        Ciclista novoCiclistaDomain = ciclistaMapper.toEntity(novoCiclista);
+        validarCiclistaParaAlterar(novoCiclistaDomain);
         ciclista.setId(idCiclista);
 
         // atualizar ciclista com os dados do novoCiclista

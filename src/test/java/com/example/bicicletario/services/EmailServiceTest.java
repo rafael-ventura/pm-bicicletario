@@ -111,7 +111,7 @@ class EmailServiceTest {
     @Test
     void enviarEmailAluguel_ComSucesso() {
         // Arrange
-        var idCiclista = 1;
+        var emailCiclista = "email@test.com";
         var aluguel = mock(Aluguel.class);
         var bicicleta = mock(Bicicleta.class);
         var tranca = mock(Tranca.class);
@@ -125,37 +125,16 @@ class EmailServiceTest {
                 .thenReturn(new ResponseEntity<>(HttpStatus.OK));
 
         // Act
-        emailService.enviarEmailAluguel(idCiclista, aluguel, bicicleta, tranca);
+        emailService.enviarEmailAluguel(emailCiclista, aluguel, bicicleta, tranca);
 
         // Assert
         verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
     }
 
-    /*@Test
-    void enviarEmailAluguelExistente_ComSucesso() {
-        // Arrange
-        var idCiclista = 1;
-        var bicicleta = mock(Bicicleta.class);
-        var aluguel = mock(Aluguel.class);
-
-        when(aluguel.getBicicleta()).thenReturn(bicicleta.getId());
-        when(aluguel.getHoraInicio()).thenReturn("10:00");
-        when(aluguel.getTrancaInicio()).thenReturn(1);
-
-        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
-                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
-
-        // Act
-        emailService.enviarEmailAluguelExistente(idCiclista, aluguel);
-
-        // Assert
-        verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
-    }*/
-
     @Test
     void enviarEmailDevolucao_ComSucesso() {
         // Arrange
-        var idCiclista = 1;
+        var emailCiclista = "email@test.com";
         var aluguel = mock(Aluguel.class);
         var bicicleta = mock(Bicicleta.class);
         var tranca = mock(Tranca.class);
@@ -170,7 +149,7 @@ class EmailServiceTest {
                 .thenReturn(new ResponseEntity<>(HttpStatus.OK));
 
         // Act
-        emailService.enviarEmailDevolucao(idCiclista, aluguel, bicicleta, tranca, 10.0, "1234", "Pago", "12:00");
+        emailService.enviarEmailDevolucao(emailCiclista, aluguel, bicicleta, tranca, 10.0, "1234", "Pago", "12:00");
 
         // Assert
         verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
@@ -179,7 +158,7 @@ class EmailServiceTest {
     @Test
     void enviarEmailDevolucao_Success() {
         // Arrange
-        var idCiclista = 1;
+        var emailCiclista = "email@test.com";
         var aluguel = mock(Aluguel.class);
         var bicicleta = mock(Bicicleta.class);
         var tranca = mock(Tranca.class);
@@ -188,7 +167,7 @@ class EmailServiceTest {
                 .thenReturn(new ResponseEntity<>(HttpStatus.OK));
 
         // Act
-        emailService.enviarEmailDevolucao(idCiclista, aluguel, bicicleta, tranca, 10.0, "1234", "Pago", "12:00");
+        emailService.enviarEmailDevolucao(emailCiclista, aluguel, bicicleta, tranca, 10.0, "1234", "Pago", "12:00");
 
         // Assert
         verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));

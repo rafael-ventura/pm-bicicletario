@@ -3,15 +3,19 @@ package com.example.bicicletario.services.unitarios;
 import com.example.bicicletario.bicicletario.application.CartaoDeCreditoService;
 import com.example.bicicletario.bicicletario.application.CiclistaService;
 import com.example.bicicletario.bicicletario.application.external.BicicletaService;
+import com.example.bicicletario.bicicletario.application.external.EmailService;
 import com.example.bicicletario.bicicletario.domain.Aluguel;
 import com.example.bicicletario.bicicletario.domain.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.Ciclista;
 import com.example.bicicletario.bicicletario.domain.Constants;
+import com.example.bicicletario.bicicletario.domain.Passaporte;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovoCiclistaRequestDTO;
+import com.example.bicicletario.bicicletario.domain.dto.PassaporteDTO;
 import com.example.bicicletario.bicicletario.domain.enums.Nacionalidade;
 import com.example.bicicletario.bicicletario.domain.enums.StatusCiclista;
 import com.example.bicicletario.bicicletario.domain.mapper.CiclistaMapper;
+import com.example.bicicletario.bicicletario.domain.mapper.PassaporteMapper;
 import com.example.bicicletario.bicicletario.exception.BadRequestException;
 import com.example.bicicletario.bicicletario.exception.ResourceNotFoundException;
 import com.example.bicicletario.bicicletario.infraestructure.AluguelRepository;
@@ -36,7 +40,13 @@ class CiclistaServiceTest {
     private CiclistaMapper ciclistaMapper;
 
     @Mock
+    private PassaporteMapper passaporteMapper;
+
+    @Mock
     private AluguelRepository aluguelRepository;
+
+    @Mock
+    private EmailService emailService;  // Certifique-se de mockar o EmailService
 
     @Mock
     private BicicletaService bicicletaService;
@@ -64,6 +74,13 @@ class CiclistaServiceTest {
         novoCiclistaDTO.setCpf("12345678900");
         novoCiclistaDTO.setNascimento("1990-01-01");
         novoCiclistaDTO.setNacionalidade(Nacionalidade.BRASILEIRO);
+        novoCiclistaDTO.setSenha("123456");
+
+        Passaporte passaporteDTO = new Passaporte();
+        passaporteDTO.setNumero("123456");
+        passaporteDTO.setPais("BR");
+
+        novoCiclistaDTO.setPassaporte(passaporteDTO);
 
         request.setCiclista(novoCiclistaDTO);
 
@@ -71,18 +88,25 @@ class CiclistaServiceTest {
         ciclista.setId(1);
 
         // Simular os comportamentos do Mapper e do Repositório
-        when(ciclistaRepository.save(any(Ciclista.class))).thenReturn(ciclista);
+        when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> {
+            Ciclista savedCiclista = invocation.getArgument(0);
+            savedCiclista.setId(1);  // Define o ID do ciclista salvo
+            return savedCiclista;
+        });
+
+        // Simular o envio de email
+        doNothing().when(emailService).enviarEmailConfirmacao(any(Ciclista.class));
 
         // Act
         Ciclista result = ciclistaService.cadastrarCiclista(request);
 
         // Assert
         assertNotNull(result);
-        assertEquals(ciclista.getId(), result.getId());
-        verify(cartaoDeCreditoService).save(request.getMeioDePagamento(), ciclista.getId());
-        verify(ciclistaRepository).save(ciclista);
+        assertEquals(1, result.getId());
+        verify(cartaoDeCreditoService).save(request.getMeioDePagamento(), result.getId());
+        verify(ciclistaRepository).save(result);
+        verify(emailService).enviarEmailConfirmacao(result);
     }
-
 
     @Test
     void cadastrarCiclista_InvalidData() {
@@ -142,6 +166,13 @@ class CiclistaServiceTest {
         novoCiclista.setNascimento("1990-01-01");
         novoCiclista.setNacionalidade(Nacionalidade.BRASILEIRO);
 
+        PassaporteDTO passaporteDTO = new PassaporteDTO();
+        passaporteDTO.setNumero("123456");
+        passaporteDTO.setPais("BR");
+        Passaporte passaporte = new Passaporte();
+        passaporte.setNumero("123456");
+        passaporte.setPais("BR");
+        novoCiclista.setPassaporte(passaporteDTO);
 
         // Simular o objeto Ciclista
         Ciclista ciclista = new Ciclista();
@@ -151,13 +182,15 @@ class CiclistaServiceTest {
         ciclista.setCpf(novoCiclista.getCpf());
         ciclista.setNascimento(novoCiclista.getNascimento());
         ciclista.setNacionalidade(novoCiclista.getNacionalidade());
+        ciclista.setPassaporte(passaporte);
         ciclista.setStatus(StatusCiclista.AGUARDANDO_CONFIRMACAO);
 
         // Simulando o comportamento dos mocks
         when(ciclistaRepository.existsById(idCiclista)).thenReturn(true);
         when(ciclistaMapper.toEntity(novoCiclista)).thenReturn(ciclista);
-        when(ciclistaRepository.save(any(Ciclista.class))).thenReturn(ciclista);
+        when(passaporteMapper.toEntity(novoCiclista.getPassaporte())).thenReturn(passaporte); // Corrigido
         when(ciclistaRepository.findById(idCiclista)).thenReturn(Optional.of(ciclista));
+        when(ciclistaRepository.save(any(Ciclista.class))).thenReturn(ciclista);
 
         // Act
         Ciclista result = ciclistaService.alterarCiclista(idCiclista, novoCiclista);
