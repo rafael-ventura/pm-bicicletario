@@ -117,7 +117,7 @@ public class TrancaService {
     }
 
 
-    public Tranca alterarStatusTranca(Integer idTranca, String acao) {
+    public Tranca alterarStatusTranca(Integer idTranca, StatusTranca acao) {
         Tranca tranca = obterTrancaPorId(idTranca);
         atualizarStatusTranca(tranca, acao);
         return tranca;
@@ -151,15 +151,15 @@ public class TrancaService {
         }
     }
 
-    private void atualizarStatusTranca(Tranca tranca, String acao) {
-        switch (acao.toLowerCase()) {
+    private void atualizarStatusTranca(Tranca tranca, StatusTranca acao) {
+        switch (acao.name().toLowerCase()) {
             case "livre":
                 tranca.setStatus(StatusTranca.LIVRE);
                 break;
             case "ocupada":
                 tranca.setStatus(StatusTranca.OCUPADA);
                 break;
-            case "em reparo":
+            case "em_reparo":
                 tranca.setStatus(StatusTranca.EM_REPARO);
                 break;
             case "nova":

@@ -4,6 +4,7 @@ import com.example.bicicletario.bicicletario.application.services.TrancaService;
 import com.example.bicicletario.bicicletario.domain.dto.IntegrarBicicletaNaRedeDTO;
 import com.example.bicicletario.bicicletario.domain.dto.NovaTrancaDTO;
 import com.example.bicicletario.bicicletario.domain.dto.RetirarTrancaDaRedeDTO;
+import com.example.bicicletario.bicicletario.domain.enums.StatusTranca;
 import com.example.bicicletario.bicicletario.domain.models.Bicicleta;
 import com.example.bicicletario.bicicletario.domain.models.Tranca;
 import org.springframework.http.ResponseEntity;
@@ -96,7 +97,7 @@ public class TrancaController {
     }
 
     @PostMapping("/{idTranca}/status/{acao}")
-    public ResponseEntity<Tranca> alterarStatusTranca(@PathVariable Integer idTranca, @PathVariable String acao) {
+    public ResponseEntity<Tranca> alterarStatusTranca(@PathVariable Integer idTranca, @PathVariable StatusTranca acao) {
         Tranca tranca = trancaService.alterarStatusTranca(idTranca, acao);
         return ResponseEntity.ok()
                 .header(MESSAGE, ACAO_BEM_SUCEDIDA)
